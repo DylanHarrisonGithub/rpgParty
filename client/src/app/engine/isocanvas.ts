@@ -81,19 +81,19 @@ export class IsoCanvas {
         this._halfResolution.x = this._canvas.width / 2;
         this._halfResolution.y = this._canvas.height / 2;
 
-        var size1 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
         }));
-        var size2 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
         }));
-        var size3 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': 0, 
             'y': 0
         }));
-        var size4 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
         }));
@@ -115,139 +115,110 @@ export class IsoCanvas {
 
     }
 
-    // Transformations
-    isoToCartesianCoords(isoCoord: {'x': number, 'y': number}) {
-        
-        switch (this._isoRotation) {
-            case 0: {
-                // r=4n+0
-                // [ cx, -cx][x]
-                // [-cy, -cy][y]             
-                return {
-                    'x': this._cellSize.x*(isoCoord.x - isoCoord.y),
-                    'y': -this._cellSize.y*(isoCoord.x + isoCoord.y)
+    public transformations = {
+        'isoToCartesian': (isoCoord: {'x': number, 'y': number}) => {
+            switch (this._isoRotation) {
+                case 0: {            
+                    return {
+                        'x': this._cellSize.x*(isoCoord.x - isoCoord.y),
+                        'y': -this._cellSize.y*(isoCoord.x + isoCoord.y)
+                    }
                 }
+                case 1: {
+                    return {
+                        'x': this._cellSize.x*(isoCoord.x + isoCoord.y),
+                        'y': this._cellSize.y*(isoCoord.x - isoCoord.y)
+                    }
+                }
+                case 2: {           
+                    return {
+                        'x': this._cellSize.x*(-isoCoord.x + isoCoord.y),
+                        'y': this._cellSize.y*(isoCoord.x + isoCoord.y)
+                    }
+                }
+                default: {
+                    return {
+                        'x': -this._cellSize.x*(isoCoord.x + isoCoord.y),
+                        'y': this._cellSize.y*(-isoCoord.x + isoCoord.y)
+                    }
+                }            
             }
-            case 1: {
-                // r=4n+1
-                // [ cx,  cx][x]
-                // [ cy, -cy][y]
-                return {
-                    'x': this._cellSize.x*(isoCoord.x + isoCoord.y),
-                    'y': this._cellSize.y*(isoCoord.x - isoCoord.y)
+        },
+        'cartesianToIso': (cartesianCoord:  {'x': number, 'y': number}) => {
+            switch (this._isoRotation) {
+                case 0: {                  
+                    return {
+                        'x': this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y,
+                        'y': -(this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y)
+                    };
                 }
+                case 1: {
+                    return {
+                        'x': this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y,
+                        'y': this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y
+                    };
+                }
+                case 2: {
+                    return {
+                        'x': -this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y,
+                        'y': this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y
+                    };
+                }
+                default: {
+                    return {
+                        'x': -this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y,
+                        'y': -this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y
+                    };
+                }            
             }
-            case 2: {
-                // r=4n+2
-                // [-cx,  cx][x]
-                // [ cy,  cy][y]             
-                return {
-                    'x': this._cellSize.x*(-isoCoord.x + isoCoord.y),
-                    'y': this._cellSize.y*(isoCoord.x + isoCoord.y)
-                }
-            }
-            default: {
-                // r=4n+3
-                // [-cx, -cx][x]
-                // [-cy,  cy][y]
-                return {
-                    'x': -this._cellSize.x*(isoCoord.x + isoCoord.y),
-                    'y': this._cellSize.y*(-isoCoord.x + isoCoord.y)
-                }
-            }            
+        },
+        'cartesianToCanvas': (cartesianCoord: {'x': number, 'y': number}) => {
+            return {
+                'x': (cartesianCoord.x - this._location.x)*this._zoom + this._canvas.width / 2,
+                'y': -(cartesianCoord.y - this._location.y)*this._zoom + this._canvas.height / 2
+            };
+        },
+        'canvasToCartesian': (screenCoordinate: {'x': number, 'y': number}) => {
+            return {
+                'x': (screenCoordinate.x - this._halfResolution.x)*this._zoomInverse + this._location.x,
+                'y': -(screenCoordinate.y - this._halfResolution.y)*this._zoomInverse + this._location.y
+            };
+        },
+        'isoToCanvas': (isoCoord: {'x': number, 'y': number}) => {            
+            return this.transformations.cartesianToCanvas(
+                this.transformations.isoToCartesian(isoCoord)
+            );
+        },
+        'canvasToIso': (canvasCoord: {'x': number, 'y': number}) => {                
+            return this.transformations.cartesianToIso(
+                this.transformations.canvasToCartesian(canvasCoord)
+            );
         }
-    }
-
-    cartesianToIsoCoords(cartesianCoord:  {'x': number, 'y': number}) {
-        switch (this._isoRotation) {
-            case 0: {               
-                // r=4n+0
-                // [ 2icx, -2icy][x]
-                // [-2icx, -2icy][y]                    
-                return {
-                    'x': this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y,
-                    'y': -(this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y)
-                };
-            }
-            case 1: {               
-                // r=4n+1
-                // [ 2icx, 2icy][x]
-                // [ 2icx,-2icy][y]
-                return {
-                    'x': this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y,
-                    'y': this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y
-                };
-            }
-            case 2: {               
-                // r=4n+2
-                // [-(2icx)  (2icy)][x]
-                // [ (2icx)  (2icy)][y]
-                return {
-                    'x': -this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y,
-                    'y': this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y
-                };
-            }
-            default: {               
-                // r=4n+3
-                // [-2icx, -2icy][x]
-                // [-2icx,  2icy][y]
-                return {
-                    'x': -this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y,
-                    'y': -this._doubleCellSizeInverse.x*cartesianCoord.x + this._doubleCellSizeInverse.y*cartesianCoord.y
-                };
-            }            
-        }
-    }
-
-    cartesianToCanvasCoords(cartesianCoord: {'x': number, 'y': number}) {
-        return {
-            'x': (cartesianCoord.x - this._location.x)*this._zoom + this._canvas.width / 2,
-            'y': -(cartesianCoord.y - this._location.y)*this._zoom + this._canvas.height / 2
-        };
-    }
-
-    canvasToCartesianCoordinates(screenCoordinate: {'x': number, 'y': number}) {
-        return {
-            'x': (screenCoordinate.x - this._halfResolution.x)*this._zoomInverse + this._location.x,
-            'y': -(screenCoordinate.y - this._halfResolution.y)*this._zoomInverse + this._location.y
-        }
-    };
-
-    isoToCanvasCoords(isoCoord: {'x': number, 'y': number}) {
-        return this.cartesianToCanvasCoords(
-            this.isoToCartesianCoords(isoCoord)
-        );
-    }
-
-    canvasToIsoCoords(canvasCoord: {'x': number, 'y': number}) {
-        return this.cartesianToIsoCoords(
-            this.canvasToCartesianCoordinates(canvasCoord)
-        );
     }
 
     setRotation(r: number) {
         if (r >= 0) {
-            let isoLoc = this.cartesianToIsoCoords(this._location);
+            let isoLoc = this.transformations.cartesianToIso(this._location);
             this._isoRotation = Math.floor(r) % 4;
-            var size1 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+            var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
                 'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
             }));
-            var size2 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+            var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
                 'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
             }));
-            var size3 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+            var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': 0, 
                 'y': 0
             }));
-            var size4 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+            var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
                 'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
-            this._location = this.isoToCartesianCoords(isoLoc);
+            this._location = this.transformations.isoToCartesian(isoLoc);
             this.paint();
         }       
     }
@@ -260,19 +231,19 @@ export class IsoCanvas {
 
     highlightCell(isoCoord: {'x': number, 'y': number}, ctx: CanvasRenderingContext2D) {
 
-        let a = this.isoToCanvasCoords({
+        let a = this.transformations.isoToCanvas({
             'x': isoCoord.x,
             'y': isoCoord.y
         });
-        let b = this.isoToCanvasCoords({           
+        let b = this.transformations.isoToCanvas({           
             'x': isoCoord.x + 1,
             'y': isoCoord.y
         });
-        let c = this.isoToCanvasCoords({
+        let c = this.transformations.isoToCanvas({
             'x': isoCoord.x + 1,
             'y': isoCoord.y + 1
         });
-        let d = this.isoToCanvasCoords({
+        let d = this.transformations.isoToCanvas({
             'x': isoCoord.x,
             'y': isoCoord.y + 1
         });
@@ -293,7 +264,7 @@ export class IsoCanvas {
 
             // todo: optimize with algebra
             // x coord of leftmost lowest tile
-            let cX = this.isoToCanvasCoords({
+            let cX = this.transformations.isoToCanvas({
                 'x': isoCoord.x + 0.5 
                     + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
                     + this._relativeIsoRotationDirections[this._isoRotation][2].x
@@ -304,7 +275,7 @@ export class IsoCanvas {
                     + this._relativeIsoRotationDirections[this._isoRotation][3].y
             });
             // y coord of uppermost tile
-            let cY = this.isoToCanvasCoords({
+            let cY = this.transformations.isoToCanvas({
                 'x': isoCoord.x + 0.5
                     + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
                     + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].x
@@ -336,10 +307,10 @@ export class IsoCanvas {
         // a----b
         // |    |
         // d----c
-        var a = this.canvasToIsoCoords({"x": 0, "y": 0});
-        var b = this.canvasToIsoCoords({'x': this._canvas.width, 'y': 0});
-        var c = this.canvasToIsoCoords({"x": this._canvas.width, "y": this._canvas.height});
-        var d = this.canvasToIsoCoords({'x': 0, 'y': this._canvas.height});
+        var a = this.transformations.canvasToIso({"x": 0, "y": 0});
+        var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
+        var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
+        var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
 
         // adjust so that corners form a perfect rectangle
         a.x = Math.floor(a.x);
@@ -435,16 +406,16 @@ export class IsoCanvas {
 
         var northWest = {"x":0, "y":0};
         var southEast = {"x": this._canvas.width, "y": this._canvas.height};
-        northWest = this.canvasToCartesianCoordinates(northWest);
-        southEast = this.canvasToCartesianCoordinates(southEast);
+        northWest = this.transformations.canvasToCartesian(northWest);
+        southEast = this.transformations.canvasToCartesian(southEast);
 
         if ((northWest.x <= 0) && (southEast.x >= 0)) {
             
             var topCoord = {"x":0, "y":northWest.y};
             var bottomCoord = {"x":0,"y":southEast.y};
             
-            topCoord = this.cartesianToCanvasCoords(topCoord);
-            bottomCoord = this.cartesianToCanvasCoords(bottomCoord);
+            topCoord = this.transformations.cartesianToCanvas(topCoord);
+            bottomCoord = this.transformations.cartesianToCanvas(bottomCoord);
 
             ctx.strokeStyle = this.axesColor;
             ctx.beginPath();
@@ -458,8 +429,8 @@ export class IsoCanvas {
             var leftCoord = {"x":northWest.x, "y":0};
             var rightCoord = {"x":southEast.x, "y":0};
 
-            leftCoord = this.cartesianToCanvasCoords(leftCoord);
-            rightCoord = this.cartesianToCanvasCoords(rightCoord);
+            leftCoord = this.transformations.cartesianToCanvas(leftCoord);
+            rightCoord = this.transformations.cartesianToCanvas(rightCoord);
 
             ctx.strokeStyle = this.axesColor;
             ctx.beginPath();
@@ -474,21 +445,21 @@ export class IsoCanvas {
 
         // find where x and y axis intersect canvas boundaries
         var xAxis = this._cartesianGetLineSegmentInCanvasBounds(
-            this.isoToCartesianCoords({'x': 0, 'y': 0}),
-            this.isoToCartesianCoords({'x': 1, 'y': 0})
+            this.transformations.isoToCartesian({'x': 0, 'y': 0}),
+            this.transformations.isoToCartesian({'x': 1, 'y': 0})
         );
 
         var yAxis = this._cartesianGetLineSegmentInCanvasBounds(
-            this.isoToCartesianCoords({'x': 0, 'y': 0}),
-            this.isoToCartesianCoords({'x': 0, 'y': 1})
+            this.transformations.isoToCartesian({'x': 0, 'y': 0}),
+            this.transformations.isoToCartesian({'x': 0, 'y': 1})
         );
         
         ctx.strokeStyle = this.axesColor;
         var u, v;
         if (xAxis) {
 
-            u = this.cartesianToCanvasCoords(xAxis.u);
-            v = this.cartesianToCanvasCoords(xAxis.v);
+            u = this.transformations.cartesianToCanvas(xAxis.u);
+            v = this.transformations.cartesianToCanvas(xAxis.v);
 
             ctx.beginPath();
             ctx.moveTo(u.x , u.y);
@@ -498,8 +469,8 @@ export class IsoCanvas {
 
         if (yAxis) {
 
-            u = this.cartesianToCanvasCoords(yAxis.u);
-            v = this.cartesianToCanvasCoords(yAxis.v);
+            u = this.transformations.cartesianToCanvas(yAxis.u);
+            v = this.transformations.cartesianToCanvas(yAxis.v);
 
             ctx.beginPath();
             ctx.moveTo(u.x , u.y);
@@ -515,10 +486,10 @@ export class IsoCanvas {
         // a----b
         // |    |
         // d----c
-        var a = this.canvasToIsoCoords({"x": 0, "y": 0});
-        var b = this.canvasToIsoCoords({'x': this._canvas.width, 'y': 0});
-        var c = this.canvasToIsoCoords({"x": this._canvas.width, "y": this._canvas.height});
-        var d = this.canvasToIsoCoords({'x': 0, 'y': this._canvas.height});
+        var a = this.transformations.canvasToIso({"x": 0, "y": 0});
+        var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
+        var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
+        var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
 
         a.x = Math.floor(a.x);
         a.y = Math.floor(a.y);
@@ -542,13 +513,13 @@ export class IsoCanvas {
         for (var x = minX; x < maxX; x++) {
 
             uv = this._cartesianGetLineSegmentInCanvasBounds(
-                this.isoToCartesianCoords({'x': x, 'y': 0}),
-                this.isoToCartesianCoords({'x': x, 'y': 1})
+                this.transformations.isoToCartesian({'x': x, 'y': 0}),
+                this.transformations.isoToCartesian({'x': x, 'y': 1})
             );
 
             if (uv) {
-                u = this.cartesianToCanvasCoords(uv.u);
-                v = this.cartesianToCanvasCoords(uv.v);
+                u = this.transformations.cartesianToCanvas(uv.u);
+                v = this.transformations.cartesianToCanvas(uv.v);
                 ctx.beginPath();
                 ctx.moveTo(u.x , u.y);
                 ctx.lineTo(v.x, v.y);
@@ -560,13 +531,13 @@ export class IsoCanvas {
         for (var y = minY; y < maxY; y++) {
 
             uv = this._cartesianGetLineSegmentInCanvasBounds(
-                this.isoToCartesianCoords({'x': 0, 'y': y}),
-                this.isoToCartesianCoords({'x': 1, 'y': y})
+                this.transformations.isoToCartesian({'x': 0, 'y': y}),
+                this.transformations.isoToCartesian({'x': 1, 'y': y})
             );
 
             if (uv) {
-                u = this.cartesianToCanvasCoords(uv.u);
-                v = this.cartesianToCanvasCoords(uv.v);
+                u = this.transformations.cartesianToCanvas(uv.u);
+                v = this.transformations.cartesianToCanvas(uv.v);
                 ctx.beginPath();
                 ctx.moveTo(u.x , u.y);
                 ctx.lineTo(v.x, v.y);
@@ -698,8 +669,8 @@ export class IsoCanvas {
         
         var centerDivRect = this._div.getBoundingClientRect();
         this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
-        this._mouseCartesian = this.canvasToCartesianCoordinates(this._mouseCanvas);
-        this._mouseIso = this.cartesianToIsoCoords(this._mouseCartesian);        
+        this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
+        this._mouseIso = this.transformations.cartesianToIso(this._mouseCartesian);        
         if ((this._mouseCell.x != Math.floor(this._mouseIso.x)) || (this._mouseCell.y != Math.floor(this._mouseIso.y))) {
             this._mouseCell.x = Math.floor(this._mouseIso.x);
             this._mouseCell.y = Math.floor(this._mouseIso.y);
@@ -717,19 +688,19 @@ export class IsoCanvas {
             this._zoomInverse = 1.0/this._zoom;			
         }
         
-        var size1 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
         }));
-        var size2 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
         }));
-        var size3 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': 0, 
             'y': 0
         }));
-        var size4 = this.cartesianToCanvasCoords(this.isoToCartesianCoords({
+        var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
             'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
         }));
@@ -742,7 +713,7 @@ export class IsoCanvas {
         
         var centerDivRect = this._div.getBoundingClientRect();
         this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
-        this._mouseCartesian = this.canvasToCartesianCoordinates(this._mouseCanvas);
+        this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
 
         this._location.x = this._mouseCartesian.x;
         this._location.y = this._mouseCartesian.y;
@@ -762,10 +733,10 @@ export class IsoCanvas {
         // a----b
         // |    |
         // d----c
-        var a = this.canvasToCartesianCoordinates({"x": 0, "y": 0});
-        var b = this.canvasToCartesianCoordinates({'x': this._canvas.width, 'y': 0});
-        var c = this.canvasToCartesianCoordinates({"x": this._canvas.width, "y": this._canvas.height});
-        var d = this.canvasToCartesianCoordinates({'x': 0, 'y': this._canvas.height});
+        var a = this.transformations.canvasToCartesian({"x": 0, "y": 0});
+        var b = this.transformations.canvasToCartesian({'x': this._canvas.width, 'y': 0});
+        var c = this.transformations.canvasToCartesian({"x": this._canvas.width, "y": this._canvas.height});
+        var d = this.transformations.canvasToCartesian({'x': 0, 'y': this._canvas.height});
 
         // find where screen boundaries and line uv intersect
         var intersections = [];        
@@ -850,4 +821,3 @@ export class IsoCanvas {
     }
 
 }
-
