@@ -104,7 +104,7 @@ export class IsoCanvas {
         //this.tiles.push(new isoTile.IsoTile(null, {isHidden: true, canStack: false}));
         //this.tiles.push(new isoTile.IsoTile(null, {isHidden: true}));
 
-        this._div.addEventListener('mousemove', (ev: UIEvent) => {this.defaultMouseMoveListener(ev)});
+        this._div.addEventListener('mousemove', (ev: UIEvent) => {this.eventListeners.defaultMouseMoveListener(ev)});
 
         window.addEventListener('resize', (ev: UIEvent) => {
             this._canvas.width = this._div.clientWidth;
@@ -665,62 +665,60 @@ export class IsoCanvas {
     }
 
     // Event Listeners
-    defaultMouseMoveListener(event) {
-        
-        var centerDivRect = this._div.getBoundingClientRect();
-        this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
-        this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
-        this._mouseIso = this.transformations.cartesianToIso(this._mouseCartesian);        
-        if ((this._mouseCell.x != Math.floor(this._mouseIso.x)) || (this._mouseCell.y != Math.floor(this._mouseIso.y))) {
-            this._mouseCell.x = Math.floor(this._mouseIso.x);
-            this._mouseCell.y = Math.floor(this._mouseIso.y);
-            this.paint();
-        }
-    }
-    
-    defaultMouseWheelListener(event) {
-        
-        if (event.deltaY < 0) {
-            this._zoom = this._zoom*(1.05);
-            this._zoomInverse = 1.0/this._zoom;
-        } else {
-            this._zoom = this._zoom*(0.95);
-            this._zoomInverse = 1.0/this._zoom;			
-        }
-        
-        var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
-        }));
-        var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
-        }));
-        var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': 0, 
-            'y': 0
-        }));
-        var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
-        }));
-        this._canvasTileSize.x = size2.x - size1.x;
-        this._canvasTileSize.y = size4.y - size3.y;
-        
-    }
-    
-    defaultMouseClickListener(event) {
-        
-        var centerDivRect = this._div.getBoundingClientRect();
-        this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
-        this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
+    public eventListeners = {
+        defaultMouseMoveListener: (event) => {
+            var centerDivRect = this._div.getBoundingClientRect();
+            this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
+            this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
+            this._mouseIso = this.transformations.cartesianToIso(this._mouseCartesian);        
+            if ((this._mouseCell.x != Math.floor(this._mouseIso.x)) || (this._mouseCell.y != Math.floor(this._mouseIso.y))) {
+                this._mouseCell.x = Math.floor(this._mouseIso.x);
+                this._mouseCell.y = Math.floor(this._mouseIso.y);
+                this.paint();
+            }
+        },
+        defaultMouseWheelListener: (event) => {
+            if (event.deltaY < 0) {
+                this._zoom = this._zoom*(1.05);
+                this._zoomInverse = 1.0/this._zoom;
+            } else {
+                this._zoom = this._zoom*(0.95);
+                this._zoomInverse = 1.0/this._zoom;			
+            }
+            
+            var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
+                'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
+                'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+            }));
+            var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
+                'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
+                'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+            }));
+            var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
+                'x': 0, 
+                'y': 0
+            }));
+            var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
+                'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
+                'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+            }));
+            this._canvasTileSize.x = size2.x - size1.x;
+            this._canvasTileSize.y = size4.y - size3.y;
+        },
+        defaultMouseClickListener: (event) => {
+            var centerDivRect = this._div.getBoundingClientRect();
+            this._mouseCanvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
+            this._mouseCartesian = this.transformations.canvasToCartesian(this._mouseCanvas);
 
-        this._location.x = this._mouseCartesian.x;
-        this._location.y = this._mouseCartesian.y;
-        
-        //this._mouseCanvas = {"x": this._halfResolution.x, "y": this._halfResolution.y};
-        //this._mouseCartesian = {"x": 0, "y": 0};
-
+            this._location.x = this._mouseCartesian.x;
+            this._location.y = this._mouseCartesian.y;
+        },
+        defaultWindowResizeListner: (ev: UIEvent) => {
+            this._canvas.width = this._div.clientWidth;
+            this._canvas.height = this._div.clientHeight;        
+            this._halfResolution.x = this._canvas.width / 2;
+            this._halfResolution.y = this._canvas.height / 2;
+        }
     }
     
     // helper methods

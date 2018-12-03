@@ -48,11 +48,11 @@ export class MapeditorComponent implements OnInit {
       this.myCanvas.paint();
     });
     document.getElementById('isocanvas').addEventListener('click', (ev) => {                                
-      this.myCanvas.defaultMouseClickListener(ev);
+      this.myCanvas.eventListeners.defaultMouseClickListener(ev);
       this.myCanvas.paint();
     });
     document.getElementById('isocanvas').addEventListener('wheel', (ev) => {
-      this.myCanvas.defaultMouseWheelListener(ev);
+      this.myCanvas.eventListeners.defaultMouseWheelListener(ev);
       this.myCanvas.paint();
     });
     document.onkeypress = (event) => {
