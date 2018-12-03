@@ -1,5 +1,3 @@
-// compile with 
-// tsc isocanvas --module amd
 import { IsoTile } from './isotile';
 export class IsoCanvas {
 
@@ -219,350 +217,338 @@ export class IsoCanvas {
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
             this._location = this.transformations.isoToCartesian(isoLoc);
-            this.paint();
+            this.drawing.paint();
         }       
     }
 
     // Drawing
-    clearCanvas(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.backgroundColor;
-        ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
-    }
-
-    highlightCell(isoCoord: {'x': number, 'y': number}, ctx: CanvasRenderingContext2D) {
-
-        let a = this.transformations.isoToCanvas({
-            'x': isoCoord.x,
-            'y': isoCoord.y
-        });
-        let b = this.transformations.isoToCanvas({           
-            'x': isoCoord.x + 1,
-            'y': isoCoord.y
-        });
-        let c = this.transformations.isoToCanvas({
-            'x': isoCoord.x + 1,
-            'y': isoCoord.y + 1
-        });
-        let d = this.transformations.isoToCanvas({
-            'x': isoCoord.x,
-            'y': isoCoord.y + 1
-        });
-
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.lineTo(c.x, c.y);
-        ctx.lineTo(d.x, d.y);
-        ctx.closePath();
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();        
-    }
-
-    drawIsoTile(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D) {
-
-        if (tile && tile.image && !tile.properties.isHidden) {
-
-            // todo: optimize with algebra
-            // x coord of leftmost lowest tile
-            let cX = this.transformations.isoToCanvas({
-                'x': isoCoord.x + 0.5 
-                    + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
-                    + this._relativeIsoRotationDirections[this._isoRotation][2].x
-                    + this._relativeIsoRotationDirections[this._isoRotation][3].x,
-                'y': isoCoord.y + 0.5
-                    + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y                    
-                    + this._relativeIsoRotationDirections[this._isoRotation][2].y
-                    + this._relativeIsoRotationDirections[this._isoRotation][3].y
+    public drawing = {
+        clearCanvas: (ctx: CanvasRenderingContext2D) => {
+            ctx.fillStyle = this.backgroundColor;
+            ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
+        },
+        highlightCell: (isoCoord: {'x': number, 'y': number}, ctx: CanvasRenderingContext2D) => {
+            let a = this.transformations.isoToCanvas({
+                'x': isoCoord.x,
+                'y': isoCoord.y
             });
-            // y coord of uppermost tile
-            let cY = this.transformations.isoToCanvas({
-                'x': isoCoord.x + 0.5
-                    + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
-                    + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].x
-                    + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].x
-                    + this._relativeIsoRotationDirections[this._isoRotation][2].x
-                    + this._relativeIsoRotationDirections[this._isoRotation][3].x,
-                'y': isoCoord.y + 0.5
-                    + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y 
-                    + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].y
-                    + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].y                    
-                    + this._relativeIsoRotationDirections[this._isoRotation][2].y
-                    + this._relativeIsoRotationDirections[this._isoRotation][3].y
+            let b = this.transformations.isoToCanvas({           
+                'x': isoCoord.x + 1,
+                'y': isoCoord.y
+            });
+            let c = this.transformations.isoToCanvas({
+                'x': isoCoord.x + 1,
+                'y': isoCoord.y + 1
+            });
+            let d = this.transformations.isoToCanvas({
+                'x': isoCoord.x,
+                'y': isoCoord.y + 1
             });
     
-            ctx.drawImage(
-                tile.image,
-                tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
-                cX.x, cY.y,
-                (0.5*tile.properties.cellWidth + 0.5*tile.properties.cellBreadth)*this._canvasTileSize.x,
-                (0.25*tile.properties.cellWidth + 0.25*tile.properties.cellBreadth + 0.5*tile.properties.cellHeight)*this._canvasTileSize.x
-            );
-        }
-    }
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.lineTo(c.x, c.y);
+            ctx.lineTo(d.x, d.y);
+            ctx.closePath();
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();        
+        },
+        drawIsoTile:(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D) => {
 
-    drawIsoTilesWithinCanvasFrame(ctx: CanvasRenderingContext2D) {
+            if (tile && tile.image && !tile.properties.isHidden) {
 
-        if (!this.map[0]) {return};
-        // get isometric coordinates of canvas boundary corners
-        // a----b
-        // |    |
-        // d----c
-        var a = this.transformations.canvasToIso({"x": 0, "y": 0});
-        var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
-        var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
-        var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
-
-        // adjust so that corners form a perfect rectangle
-        a.x = Math.floor(a.x);
-        a.y = Math.floor(a.y);
-        b.x = Math.floor(b.x);
-        b.y = a.y - b.x + a.x;     
-        c.y = Math.floor(c.y);
-        c.x = c.y - b.y + b.x;
-        d.x = ((c.x+c.y)+(a.x-a.y))/2;  // ?prove always divisible?
-        d.y = ((c.x+c.y)-(a.x-a.y))/2;
+                // todo: optimize with algebra
+                // x coord of leftmost lowest tile
+                let cX = this.transformations.isoToCanvas({
+                    'x': isoCoord.x + 0.5 
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
+                        + this._relativeIsoRotationDirections[this._isoRotation][2].x
+                        + this._relativeIsoRotationDirections[this._isoRotation][3].x,
+                    'y': isoCoord.y + 0.5
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y                    
+                        + this._relativeIsoRotationDirections[this._isoRotation][2].y
+                        + this._relativeIsoRotationDirections[this._isoRotation][3].y
+                });
+                // y coord of uppermost tile
+                let cY = this.transformations.isoToCanvas({
+                    'x': isoCoord.x + 0.5
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
+                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].x
+                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].x
+                        + this._relativeIsoRotationDirections[this._isoRotation][2].x
+                        + this._relativeIsoRotationDirections[this._isoRotation][3].x,
+                    'y': isoCoord.y + 0.5
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y 
+                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].y
+                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].y                    
+                        + this._relativeIsoRotationDirections[this._isoRotation][2].y
+                        + this._relativeIsoRotationDirections[this._isoRotation][3].y
+                });
         
-        a.x += this._relativeIsoRotationDirections[this._isoRotation][3].x;
-        a.y += this._relativeIsoRotationDirections[this._isoRotation][3].y;
-        b.x += this._relativeIsoRotationDirections[this._isoRotation][1].x;
-        b.y += this._relativeIsoRotationDirections[this._isoRotation][1].y;
-        c.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-        c.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
-        d.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-        d.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
+                ctx.drawImage(
+                    tile.image,
+                    tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
+                    cX.x, cY.y,
+                    (0.5*tile.properties.cellWidth + 0.5*tile.properties.cellBreadth)*this._canvasTileSize.x,
+                    (0.25*tile.properties.cellWidth + 0.25*tile.properties.cellBreadth + 0.5*tile.properties.cellHeight)*this._canvasTileSize.x
+                );
+            }
+        },
+        drawIsoTilesWithinCanvasFrame: (ctx: CanvasRenderingContext2D) => {
+            if (!this.map[0]) {return};
+            // get isometric coordinates of canvas boundary corners
+            // a----b
+            // |    |
+            // d----c
+            var a = this.transformations.canvasToIso({"x": 0, "y": 0});
+            var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
+            var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
+            var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
 
-/*         console.log(a, b, c, d);
-        this.highlightCell(a, ctx);
-        this.highlightCell(b, ctx);
-        this.highlightCell(c, ctx);
-        this.highlightCell(d, ctx); */
+            // adjust so that corners form a perfect rectangle
+            a.x = Math.floor(a.x);
+            a.y = Math.floor(a.y);
+            b.x = Math.floor(b.x);
+            b.y = a.y - b.x + a.x;     
+            c.y = Math.floor(c.y);
+            c.x = c.y - b.y + b.x;
+            d.x = ((c.x+c.y)+(a.x-a.y))/2;  // ?prove always divisible?
+            d.y = ((c.x+c.y)-(a.x-a.y))/2;
+            
+            a.x += this._relativeIsoRotationDirections[this._isoRotation][3].x;
+            a.y += this._relativeIsoRotationDirections[this._isoRotation][3].y;
+            b.x += this._relativeIsoRotationDirections[this._isoRotation][1].x;
+            b.y += this._relativeIsoRotationDirections[this._isoRotation][1].y;
+            c.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
+            c.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
+            d.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
+            d.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
 
-        // begin cursor in upper left corner of rectangle
-        let u = {
-            'x': a.x,
-            'y': a.y
-        }
-        let rowStart = {
-            'x': a.x, 
-            'y': a.y            
-        }
-        let rowEnd = {
-            'x': b.x + this._relativeIsoRotationDirections[this._isoRotation][0].x, 
-            'y': b.y  + this._relativeIsoRotationDirections[this._isoRotation][0].y
-        };
-        let terminator = {
-            'x': d.x + this._relativeIsoRotationDirections[this._isoRotation][5].x,
-            'y': d.y + this._relativeIsoRotationDirections[this._isoRotation][5].y,
-        }
-        let rowCounter = 0;
-        
-        while ((u.x != terminator.x) && (u.y != terminator.y)) {
+    /*         console.log(a, b, c, d);
+            this.highlightCell(a, ctx);
+            this.highlightCell(b, ctx);
+            this.highlightCell(c, ctx);
+            this.highlightCell(d, ctx); */
 
-            while ((u.x != rowEnd.x) && (u.y != rowEnd.y)) {
-                
+            // begin cursor in upper left corner of rectangle
+            let u = {
+                'x': a.x,
+                'y': a.y
+            }
+            let rowStart = {
+                'x': a.x, 
+                'y': a.y            
+            }
+            let rowEnd = {
+                'x': b.x + this._relativeIsoRotationDirections[this._isoRotation][0].x, 
+                'y': b.y  + this._relativeIsoRotationDirections[this._isoRotation][0].y
+            };
+            let terminator = {
+                'x': d.x + this._relativeIsoRotationDirections[this._isoRotation][5].x,
+                'y': d.y + this._relativeIsoRotationDirections[this._isoRotation][5].y,
+            }
+            let rowCounter = 0;
+            
+            while ((u.x != terminator.x) && (u.y != terminator.y)) {
 
-                if ((u.x > -1) && (u.x < this.map[0].length) && (u.y > -1) && (u.y < this.map.length)) {
-                    //this.highlightCell(u, ctx);
-                    // draw tiles from ground up
-                    var stackingHeight = 0;
-                    for (var level = 0; level < this.map[u.y][u.x].length; level++) {
-                        
-                        // todo: detect if tile is visible or obscured to speed up drawing
-                        let tileQ = Math.floor(this.map[u.y][u.x][level] / 4);
-                        let tileR = (this._isoRotation + this.map[u.y][u.x][level]) % 4;
-                        this.drawIsoTile({
-                            'x': u.x + this._relativeIsoRotationDirections[this._isoRotation][2].x*stackingHeight,
-                            'y': u.y + this._relativeIsoRotationDirections[this._isoRotation][2].y*stackingHeight   
-                        }, this.tiles[4*tileQ + tileR], ctx);
-                        stackingHeight += this.tiles[this.map[u.y][u.x][level]].properties.cellHeight;
-                    }                   
+                while ((u.x != rowEnd.x) && (u.y != rowEnd.y)) {
+                    
+
+                    if ((u.x > -1) && (u.x < this.map[0].length) && (u.y > -1) && (u.y < this.map.length)) {
+                        //this.highlightCell(u, ctx);
+                        // draw tiles from ground up
+                        var stackingHeight = 0;
+                        for (var level = 0; level < this.map[u.y][u.x].length; level++) {
+                            
+                            // todo: detect if tile is visible or obscured to speed up drawing
+                            let tileQ = Math.floor(this.map[u.y][u.x][level] / 4);
+                            let tileR = (this._isoRotation + this.map[u.y][u.x][level]) % 4;
+                            this.drawing.drawIsoTile({
+                                'x': u.x + this._relativeIsoRotationDirections[this._isoRotation][2].x*stackingHeight,
+                                'y': u.y + this._relativeIsoRotationDirections[this._isoRotation][2].y*stackingHeight   
+                            }, this.tiles[4*tileQ + tileR], ctx);
+                            stackingHeight += this.tiles[this.map[u.y][u.x][level]].properties.cellHeight;
+                        }                   
+                    }
+                    // move cursor left
+                    u.x += this._relativeIsoRotationDirections[this._isoRotation][0].x;
+                    u.y += this._relativeIsoRotationDirections[this._isoRotation][0].y;
                 }
-                // move cursor left
-                u.x += this._relativeIsoRotationDirections[this._isoRotation][0].x;
-                u.y += this._relativeIsoRotationDirections[this._isoRotation][0].y;
+                // proceed downward in zigzag fashion
+                // /  \
+                // \  /
+                // /  \
+                // ..
+                if (rowCounter % 2 == 1) {
+                    rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
+                    rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;                
+                    rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
+                    rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
+                } else {
+                    rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
+                    rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;                
+                    rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
+                    rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
+                }
+                rowCounter++;
+                u = {'x': rowStart.x, 'y': rowStart.y};   // set cursor to next row
             }
-            // proceed downward in zigzag fashion
-            // /  \
-            // \  /
-            // /  \
-            // ..
-            if (rowCounter % 2 == 1) {
-                rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-                rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;                
-                rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-                rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
-            } else {
-                rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-                rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;                
-                rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-                rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
+        },       
+        drawCartesianAxes: (ctx: CanvasRenderingContext2D) => {
+
+            var northWest = {"x":0, "y":0};
+            var southEast = {"x": this._canvas.width, "y": this._canvas.height};
+            northWest = this.transformations.canvasToCartesian(northWest);
+            southEast = this.transformations.canvasToCartesian(southEast);
+
+            if ((northWest.x <= 0) && (southEast.x >= 0)) {
+                
+                var topCoord = {"x":0, "y":northWest.y};
+                var bottomCoord = {"x":0,"y":southEast.y};
+                
+                topCoord = this.transformations.cartesianToCanvas(topCoord);
+                bottomCoord = this.transformations.cartesianToCanvas(bottomCoord);
+
+                ctx.strokeStyle = this.axesColor;
+                ctx.beginPath();
+                ctx.moveTo(topCoord.x, topCoord.y);
+                ctx.lineTo(bottomCoord.x, bottomCoord.y);
+                ctx.stroke();
             }
-            rowCounter++;
-            u = {'x': rowStart.x, 'y': rowStart.y};   // set cursor to next row
-        }
-    }
+            if ((northWest.y >= 0) && (southEast.y <= 0)) {
+                var leftCoord = {"x":northWest.x, "y":0};
+                var rightCoord = {"x":southEast.x, "y":0};
 
-    drawCartesianAxes(ctx: CanvasRenderingContext2D) {
+                leftCoord = this.transformations.cartesianToCanvas(leftCoord);
+                rightCoord = this.transformations.cartesianToCanvas(rightCoord);
 
-        var northWest = {"x":0, "y":0};
-        var southEast = {"x": this._canvas.width, "y": this._canvas.height};
-        northWest = this.transformations.canvasToCartesian(northWest);
-        southEast = this.transformations.canvasToCartesian(southEast);
+                ctx.strokeStyle = this.axesColor;
+                ctx.beginPath();
+                ctx.moveTo(leftCoord.x, leftCoord.y);
+                ctx.lineTo(rightCoord.x, rightCoord.y);
+                ctx.stroke();
+            }		
+        },
+        drawIsoAxes: (ctx: CanvasRenderingContext2D) => {
 
-        if ((northWest.x <= 0) && (southEast.x >= 0)) {
-            
-            var topCoord = {"x":0, "y":northWest.y};
-            var bottomCoord = {"x":0,"y":southEast.y};
-            
-            topCoord = this.transformations.cartesianToCanvas(topCoord);
-            bottomCoord = this.transformations.cartesianToCanvas(bottomCoord);
-
-            ctx.strokeStyle = this.axesColor;
-            ctx.beginPath();
-            ctx.moveTo(topCoord.x, topCoord.y);
-            ctx.lineTo(bottomCoord.x, bottomCoord.y);
-            ctx.stroke();
-            
-        }
-        if ((northWest.y >= 0) && (southEast.y <= 0)) {
-            
-            var leftCoord = {"x":northWest.x, "y":0};
-            var rightCoord = {"x":southEast.x, "y":0};
-
-            leftCoord = this.transformations.cartesianToCanvas(leftCoord);
-            rightCoord = this.transformations.cartesianToCanvas(rightCoord);
-
-            ctx.strokeStyle = this.axesColor;
-            ctx.beginPath();
-            ctx.moveTo(leftCoord.x, leftCoord.y);
-            ctx.lineTo(rightCoord.x, rightCoord.y);
-            ctx.stroke();
-            
-        }		
-    }
-
-    drawIsoAxes(ctx: CanvasRenderingContext2D) {
-
-        // find where x and y axis intersect canvas boundaries
-        var xAxis = this._cartesianGetLineSegmentInCanvasBounds(
-            this.transformations.isoToCartesian({'x': 0, 'y': 0}),
-            this.transformations.isoToCartesian({'x': 1, 'y': 0})
-        );
-
-        var yAxis = this._cartesianGetLineSegmentInCanvasBounds(
-            this.transformations.isoToCartesian({'x': 0, 'y': 0}),
-            this.transformations.isoToCartesian({'x': 0, 'y': 1})
-        );
-        
-        ctx.strokeStyle = this.axesColor;
-        var u, v;
-        if (xAxis) {
-
-            u = this.transformations.cartesianToCanvas(xAxis.u);
-            v = this.transformations.cartesianToCanvas(xAxis.v);
-
-            ctx.beginPath();
-            ctx.moveTo(u.x , u.y);
-            ctx.lineTo(v.x, v.y);
-            ctx.stroke();
-        }
-
-        if (yAxis) {
-
-            u = this.transformations.cartesianToCanvas(yAxis.u);
-            v = this.transformations.cartesianToCanvas(yAxis.v);
-
-            ctx.beginPath();
-            ctx.moveTo(u.x , u.y);
-            ctx.lineTo(v.x, v.y);
-            ctx.stroke();
-        }
-        
-    }
-
-    drawIsoGrid(ctx: CanvasRenderingContext2D) {
-
-        // get isometric coordinates of canvas boundary corners
-        // a----b
-        // |    |
-        // d----c
-        var a = this.transformations.canvasToIso({"x": 0, "y": 0});
-        var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
-        var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
-        var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
-
-        a.x = Math.floor(a.x);
-        a.y = Math.floor(a.y);
-        c.x = Math.floor(c.x) + 1;
-        c.y = Math.floor(c.y) + 1;
-
-        b.x = Math.floor(b.x) + 1;
-        b.y = Math.floor(b.y);
-        d.x = Math.floor(d.x);
-        d.y = Math.floor(d.y) + 1;
-
-        ctx.strokeStyle = this.gridColor;
-        var uv, u, v;
-        let minX = Math.min(a.x, b.x, c.x, d.x);
-        let maxX = Math.max(a.x, b.x, c.x, d.x);
-        
-        let minY = Math.min(a.y, b.y, c.y, d.y);
-        let maxY = Math.max(a.y, b.y, c.y, d.y);
-
-        // plot x gridlines
-        for (var x = minX; x < maxX; x++) {
-
-            uv = this._cartesianGetLineSegmentInCanvasBounds(
-                this.transformations.isoToCartesian({'x': x, 'y': 0}),
-                this.transformations.isoToCartesian({'x': x, 'y': 1})
+            // find where x and y axis intersect canvas boundaries
+            var xAxis = this._cartesianGetLineSegmentInCanvasBounds(
+                this.transformations.isoToCartesian({'x': 0, 'y': 0}),
+                this.transformations.isoToCartesian({'x': 1, 'y': 0})
             );
 
-            if (uv) {
-                u = this.transformations.cartesianToCanvas(uv.u);
-                v = this.transformations.cartesianToCanvas(uv.v);
+            var yAxis = this._cartesianGetLineSegmentInCanvasBounds(
+                this.transformations.isoToCartesian({'x': 0, 'y': 0}),
+                this.transformations.isoToCartesian({'x': 0, 'y': 1})
+            );
+            
+            ctx.strokeStyle = this.axesColor;
+            var u, v;
+            if (xAxis) {
+
+                u = this.transformations.cartesianToCanvas(xAxis.u);
+                v = this.transformations.cartesianToCanvas(xAxis.v);
+
                 ctx.beginPath();
                 ctx.moveTo(u.x , u.y);
                 ctx.lineTo(v.x, v.y);
                 ctx.stroke();
             }
-        }
 
-        // plot y gridlines
-        for (var y = minY; y < maxY; y++) {
+            if (yAxis) {
 
-            uv = this._cartesianGetLineSegmentInCanvasBounds(
-                this.transformations.isoToCartesian({'x': 0, 'y': y}),
-                this.transformations.isoToCartesian({'x': 1, 'y': y})
-            );
+                u = this.transformations.cartesianToCanvas(yAxis.u);
+                v = this.transformations.cartesianToCanvas(yAxis.v);
 
-            if (uv) {
-                u = this.transformations.cartesianToCanvas(uv.u);
-                v = this.transformations.cartesianToCanvas(uv.v);
                 ctx.beginPath();
                 ctx.moveTo(u.x , u.y);
                 ctx.lineTo(v.x, v.y);
                 ctx.stroke();
             }
+            
+        },
+        drawIsoGrid: (ctx: CanvasRenderingContext2D) => {
+            // get isometric coordinates of canvas boundary corners
+            // a----b
+            // |    |
+            // d----c
+            var a = this.transformations.canvasToIso({"x": 0, "y": 0});
+            var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
+            var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
+            var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
+
+            a.x = Math.floor(a.x);
+            a.y = Math.floor(a.y);
+            c.x = Math.floor(c.x) + 1;
+            c.y = Math.floor(c.y) + 1;
+
+            b.x = Math.floor(b.x) + 1;
+            b.y = Math.floor(b.y);
+            d.x = Math.floor(d.x);
+            d.y = Math.floor(d.y) + 1;
+
+            ctx.strokeStyle = this.gridColor;
+            var uv, u, v;
+            let minX = Math.min(a.x, b.x, c.x, d.x);
+            let maxX = Math.max(a.x, b.x, c.x, d.x);
+            
+            let minY = Math.min(a.y, b.y, c.y, d.y);
+            let maxY = Math.max(a.y, b.y, c.y, d.y);
+
+            // plot x gridlines
+            for (var x = minX; x < maxX; x++) {
+
+                uv = this._cartesianGetLineSegmentInCanvasBounds(
+                    this.transformations.isoToCartesian({'x': x, 'y': 0}),
+                    this.transformations.isoToCartesian({'x': x, 'y': 1})
+                );
+
+                if (uv) {
+                    u = this.transformations.cartesianToCanvas(uv.u);
+                    v = this.transformations.cartesianToCanvas(uv.v);
+                    ctx.beginPath();
+                    ctx.moveTo(u.x , u.y);
+                    ctx.lineTo(v.x, v.y);
+                    ctx.stroke();
+                }
+            }
+
+            // plot y gridlines
+            for (var y = minY; y < maxY; y++) {
+
+                uv = this._cartesianGetLineSegmentInCanvasBounds(
+                    this.transformations.isoToCartesian({'x': 0, 'y': y}),
+                    this.transformations.isoToCartesian({'x': 1, 'y': y})
+                );
+
+                if (uv) {
+                    u = this.transformations.cartesianToCanvas(uv.u);
+                    v = this.transformations.cartesianToCanvas(uv.v);
+                    ctx.beginPath();
+                    ctx.moveTo(u.x , u.y);
+                    ctx.lineTo(v.x, v.y);
+                    ctx.stroke();
+                }
+            }
+        },        
+        paint: () => {
+            var ctx = this._canvas.getContext('2d');
+            this.drawing.clearCanvas(ctx);
+
+            if (this.showGrid) {
+                this.drawing.drawIsoGrid(ctx);
+            }
+
+            if (this.showAxes) {
+                this.drawing.drawIsoAxes(ctx);
+            }
+
+            this.drawing.drawIsoTilesWithinCanvasFrame(ctx);
+            this.drawing.highlightCell(this._mouseCell, ctx);
         }
     }
-    
-    paint() {
 
-        var ctx = this._canvas.getContext('2d');
-        this.clearCanvas(ctx);
-
-        if (this.showGrid) {
-            this.drawIsoGrid(ctx);
-        }
-
-        if (this.showAxes) {
-            this.drawIsoAxes(ctx);
-        }
-
-        this.drawIsoTilesWithinCanvasFrame(ctx);
-        this.highlightCell(this._mouseCell, ctx);
-
-    }
 
     // map methods
     generateRandomMap(width: number, length: number, maxHeight: number) {
@@ -638,7 +624,7 @@ export class IsoCanvas {
                                         IsoTile.loadTileset(mapDataJSON.tileset, (tileset: IsoTile[]) => {
                                             this.tiles = tileset; 
                                             this.map = mapDataJSON.map;
-                                            this.paint();
+                                            this.drawing.paint();
                                         });
                                         
                                     } else {
@@ -674,7 +660,7 @@ export class IsoCanvas {
             if ((this._mouseCell.x != Math.floor(this._mouseIso.x)) || (this._mouseCell.y != Math.floor(this._mouseIso.y))) {
                 this._mouseCell.x = Math.floor(this._mouseIso.x);
                 this._mouseCell.y = Math.floor(this._mouseIso.y);
-                this.paint();
+                this.drawing.paint();
             }
         },
         defaultMouseWheelListener: (event) => {

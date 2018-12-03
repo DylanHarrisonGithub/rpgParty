@@ -45,22 +45,22 @@ export class MapeditorComponent implements OnInit {
           document.getElementById('toolpanel2').style.height = '0px';
         }
       }
-      this.myCanvas.paint();
+      this.myCanvas.drawing.paint();
     });
     document.getElementById('isocanvas').addEventListener('click', (ev) => {                                
       this.myCanvas.eventListeners.defaultMouseClickListener(ev);
-      this.myCanvas.paint();
+      this.myCanvas.drawing.paint();
     });
     document.getElementById('isocanvas').addEventListener('wheel', (ev) => {
       this.myCanvas.eventListeners.defaultMouseWheelListener(ev);
-      this.myCanvas.paint();
+      this.myCanvas.drawing.paint();
     });
     document.onkeypress = (event) => {
         if (event.key == 'r') {
           //this.myCanvas.setRotation(this.myCanvas._isoRotation + 1);
         }
     };
-    this.myCanvas.paint();
+    this.myCanvas.drawing.paint();
     
   }
 
