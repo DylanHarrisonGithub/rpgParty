@@ -7,10 +7,7 @@ export class IsoCanvas {
     private _cellSize = {'x': 64, 'y': 32}; // = 1/2 cell (width, height)
     private _doubleCellSizeInverse = {'x': 1.0 /(2*this._cellSize.x), 'y': 1.0 /(2*this._cellSize.y)};   
     private _canvasTileSize = {'x': this._cellSize.x, 'y': this._cellSize.y};
-    private _zoom = 1.0;
-    private _zoomInverse = 1.0;
     private _halfResolution = {'x': 0, 'y': 0};
-    private _isoRotation = 0;
     private _position = {
         'location': {'x': 0, 'y': 0},
         'zoom': 1.0,
@@ -107,20 +104,20 @@ export class IsoCanvas {
         this._halfResolution.y = this._canvas.height / 2;
 
         var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+            'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+            'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
         }));
         var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+            'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+            'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
         }));
         var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
             'x': 0, 
             'y': 0
         }));
         var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-            'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-            'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+            'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+            'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
         }));
         this._canvasTileSize.x = size2.x - size1.x;
         this._canvasTileSize.y = size4.y - size3.y;
@@ -142,7 +139,7 @@ export class IsoCanvas {
 
     public transformations = {
         'isoToCartesian': (isoCoord: {'x': number, 'y': number}) => {
-            switch (this._isoRotation) {
+            switch (this._position.rotation) {
                 case 0: {            
                     return {
                         'x': this._cellSize.x*(isoCoord.x - isoCoord.y),
@@ -170,7 +167,7 @@ export class IsoCanvas {
             }
         },
         'cartesianToIso': (cartesianCoord:  {'x': number, 'y': number}) => {
-            switch (this._isoRotation) {
+            switch (this._position.rotation) {
                 case 0: {                  
                     return {
                         'x': this._doubleCellSizeInverse.x*cartesianCoord.x - this._doubleCellSizeInverse.y*cartesianCoord.y,
@@ -199,14 +196,14 @@ export class IsoCanvas {
         },
         'cartesianToCanvas': (cartesianCoord: {'x': number, 'y': number}) => {
             return {
-                'x': (cartesianCoord.x - this._location.x)*this._zoom + this._canvas.width / 2,
-                'y': -(cartesianCoord.y - this._location.y)*this._zoom + this._canvas.height / 2
+                'x': (cartesianCoord.x - this._location.x)*this._position.zoom + this._canvas.width / 2,
+                'y': -(cartesianCoord.y - this._location.y)*this._position.zoom + this._canvas.height / 2
             };
         },
         'canvasToCartesian': (screenCoordinate: {'x': number, 'y': number}) => {
             return {
-                'x': (screenCoordinate.x - this._halfResolution.x)*this._zoomInverse + this._location.x,
-                'y': -(screenCoordinate.y - this._halfResolution.y)*this._zoomInverse + this._location.y
+                'x': (screenCoordinate.x - this._halfResolution.x)*this._position.zoomInverse + this._location.x,
+                'y': -(screenCoordinate.y - this._halfResolution.y)*this._position.zoomInverse + this._location.y
             };
         },
         'isoToCanvas': (isoCoord: {'x': number, 'y': number}) => {            
@@ -221,22 +218,22 @@ export class IsoCanvas {
         },
         'rotate': (r: number) => {
             let isoLoc = this.transformations.cartesianToIso(this._location);
-            this._isoRotation = (((this._isoRotation + Math.floor(r) % 4)) + 4) % 4;
+            this._position.rotation = (((this._position.rotation + Math.floor(r) % 4)) + 4) % 4;
             var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
             }));
             var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
             }));
             var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': 0, 
                 'y': 0
             }));
             var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
@@ -245,22 +242,22 @@ export class IsoCanvas {
         },
         'setRotation': (r: number) => {
             let isoLoc = this.transformations.cartesianToIso(this._location);
-            this._isoRotation = ((Math.floor(r) % 4) + 4) % 4;
+            this._position.rotation = ((Math.floor(r) % 4) + 4) % 4;
             var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
             }));
             var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
             }));
             var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': 0, 
                 'y': 0
             }));
             var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
@@ -269,24 +266,24 @@ export class IsoCanvas {
         },
         'zoom': (z: number) => {
             if (z > 0) {
-                this._zoom = this._zoom*z;
-                this._zoomInverse = 1.0/this._zoom;
+                this._position.zoom = this._position.zoom*z;
+                this._position.zoomInverse = 1.0/this._position.zoom;
                 
                 var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
                 }));
                 var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
                 }));
                 var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                     'x': 0, 
                     'y': 0
                 }));
                 var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
                 }));
                 this._canvasTileSize.x = size2.x - size1.x;
                 this._canvasTileSize.y = size4.y - size3.y;
@@ -294,24 +291,24 @@ export class IsoCanvas {
         },
         'setZoom': (z: number) => {
             if (z > 0) {
-                this._zoom = z;
-                this._zoomInverse = 1.0/this._zoom;
+                this._position.zoom = z;
+                this._position.zoomInverse = 1.0/this._position.zoom;
                 
                 var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
                 }));
                 var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
                 }));
                 var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                     'x': 0, 
                     'y': 0
                 }));
                 var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                    'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-                    'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+                    'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+                    'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
                 }));
                 this._canvasTileSize.x = size2.x - size1.x;
                 this._canvasTileSize.y = size4.y - size3.y;
@@ -360,28 +357,28 @@ export class IsoCanvas {
                 // x coord of leftmost lowest tile
                 let cX = this.transformations.isoToCanvas({
                     'x': isoCoord.x + 0.5 
-                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
-                        + this._relativeIsoRotationDirections[this._isoRotation][2].x
-                        + this._relativeIsoRotationDirections[this._isoRotation][3].x,
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._position.rotation][3].x
+                        + this._relativeIsoRotationDirections[this._position.rotation][2].x
+                        + this._relativeIsoRotationDirections[this._position.rotation][3].x,
                     'y': isoCoord.y + 0.5
-                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y                    
-                        + this._relativeIsoRotationDirections[this._isoRotation][2].y
-                        + this._relativeIsoRotationDirections[this._isoRotation][3].y
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._position.rotation][3].y                    
+                        + this._relativeIsoRotationDirections[this._position.rotation][2].y
+                        + this._relativeIsoRotationDirections[this._position.rotation][3].y
                 });
                 // y coord of uppermost tile
                 let cY = this.transformations.isoToCanvas({
                     'x': isoCoord.x + 0.5
-                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].x
-                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].x
-                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].x
-                        + this._relativeIsoRotationDirections[this._isoRotation][2].x
-                        + this._relativeIsoRotationDirections[this._isoRotation][3].x,
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._position.rotation][3].x
+                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._position.rotation][1].x
+                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._position.rotation][2].x
+                        + this._relativeIsoRotationDirections[this._position.rotation][2].x
+                        + this._relativeIsoRotationDirections[this._position.rotation][3].x,
                     'y': isoCoord.y + 0.5
-                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._isoRotation][3].y 
-                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._isoRotation][1].y
-                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._isoRotation][2].y                    
-                        + this._relativeIsoRotationDirections[this._isoRotation][2].y
-                        + this._relativeIsoRotationDirections[this._isoRotation][3].y
+                        + (tile.properties.cellWidth - 1)*this._relativeIsoRotationDirections[this._position.rotation][3].y 
+                        + (tile.properties.cellBreadth - 1)*this._relativeIsoRotationDirections[this._position.rotation][1].y
+                        + (tile.properties.cellHeight - 1)*this._relativeIsoRotationDirections[this._position.rotation][2].y                    
+                        + this._relativeIsoRotationDirections[this._position.rotation][2].y
+                        + this._relativeIsoRotationDirections[this._position.rotation][3].y
                 });
         
                 ctx.drawImage(
@@ -414,14 +411,14 @@ export class IsoCanvas {
             d.x = ((c.x+c.y)+(a.x-a.y))/2;  // ?prove always divisible?
             d.y = ((c.x+c.y)-(a.x-a.y))/2;
             
-            a.x += this._relativeIsoRotationDirections[this._isoRotation][3].x;
-            a.y += this._relativeIsoRotationDirections[this._isoRotation][3].y;
-            b.x += this._relativeIsoRotationDirections[this._isoRotation][1].x;
-            b.y += this._relativeIsoRotationDirections[this._isoRotation][1].y;
-            c.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-            c.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
-            d.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-            d.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
+            a.x += this._relativeIsoRotationDirections[this._position.rotation][3].x;
+            a.y += this._relativeIsoRotationDirections[this._position.rotation][3].y;
+            b.x += this._relativeIsoRotationDirections[this._position.rotation][1].x;
+            b.y += this._relativeIsoRotationDirections[this._position.rotation][1].y;
+            c.x += this._relativeIsoRotationDirections[this._position.rotation][7].x;
+            c.y += this._relativeIsoRotationDirections[this._position.rotation][7].y;
+            d.x += this._relativeIsoRotationDirections[this._position.rotation][5].x;
+            d.y += this._relativeIsoRotationDirections[this._position.rotation][5].y;
 
     /*         console.log(a, b, c, d);
             this.highlightCell(a, ctx);
@@ -439,12 +436,12 @@ export class IsoCanvas {
                 'y': a.y            
             }
             let rowEnd = {
-                'x': b.x + this._relativeIsoRotationDirections[this._isoRotation][0].x, 
-                'y': b.y  + this._relativeIsoRotationDirections[this._isoRotation][0].y
+                'x': b.x + this._relativeIsoRotationDirections[this._position.rotation][0].x, 
+                'y': b.y  + this._relativeIsoRotationDirections[this._position.rotation][0].y
             };
             let terminator = {
-                'x': d.x + this._relativeIsoRotationDirections[this._isoRotation][5].x,
-                'y': d.y + this._relativeIsoRotationDirections[this._isoRotation][5].y,
+                'x': d.x + this._relativeIsoRotationDirections[this._position.rotation][5].x,
+                'y': d.y + this._relativeIsoRotationDirections[this._position.rotation][5].y,
             }
             let rowCounter = 0;
             
@@ -461,17 +458,17 @@ export class IsoCanvas {
                             
                             // todo: detect if tile is visible or obscured to speed up drawing
                             let tileQ = Math.floor(this.map[u.y][u.x][level] / 4);
-                            let tileR = (this._isoRotation + this.map[u.y][u.x][level]) % 4;
+                            let tileR = (this._position.rotation + this.map[u.y][u.x][level]) % 4;
                             this.drawing.drawIsoTile({
-                                'x': u.x + this._relativeIsoRotationDirections[this._isoRotation][2].x*stackingHeight,
-                                'y': u.y + this._relativeIsoRotationDirections[this._isoRotation][2].y*stackingHeight   
+                                'x': u.x + this._relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
+                                'y': u.y + this._relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
                             }, this.tiles[4*tileQ + tileR], ctx);
                             stackingHeight += this.tiles[this.map[u.y][u.x][level]].properties.cellHeight;
                         }                   
                     }
                     // move cursor left
-                    u.x += this._relativeIsoRotationDirections[this._isoRotation][0].x;
-                    u.y += this._relativeIsoRotationDirections[this._isoRotation][0].y;
+                    u.x += this._relativeIsoRotationDirections[this._position.rotation][0].x;
+                    u.y += this._relativeIsoRotationDirections[this._position.rotation][0].y;
                 }
                 // proceed downward in zigzag fashion
                 // /  \
@@ -479,15 +476,15 @@ export class IsoCanvas {
                 // /  \
                 // ..
                 if (rowCounter % 2 == 1) {
-                    rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-                    rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;                
-                    rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-                    rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;
+                    rowStart.x += this._relativeIsoRotationDirections[this._position.rotation][5].x;
+                    rowStart.y += this._relativeIsoRotationDirections[this._position.rotation][5].y;                
+                    rowEnd.x += this._relativeIsoRotationDirections[this._position.rotation][7].x;
+                    rowEnd.y += this._relativeIsoRotationDirections[this._position.rotation][7].y;
                 } else {
-                    rowStart.x += this._relativeIsoRotationDirections[this._isoRotation][7].x;
-                    rowStart.y += this._relativeIsoRotationDirections[this._isoRotation][7].y;                
-                    rowEnd.x += this._relativeIsoRotationDirections[this._isoRotation][5].x;
-                    rowEnd.y += this._relativeIsoRotationDirections[this._isoRotation][5].y;
+                    rowStart.x += this._relativeIsoRotationDirections[this._position.rotation][7].x;
+                    rowStart.y += this._relativeIsoRotationDirections[this._position.rotation][7].y;                
+                    rowEnd.x += this._relativeIsoRotationDirections[this._position.rotation][5].x;
+                    rowEnd.y += this._relativeIsoRotationDirections[this._position.rotation][5].y;
                 }
                 rowCounter++;
                 u = {'x': rowStart.x, 'y': rowStart.y};   // set cursor to next row
@@ -763,28 +760,28 @@ export class IsoCanvas {
         },
         'defaultMouseWheelListener': (event) => {
             if (event.deltaY < 0) {
-                this._zoom = this._zoom*(1.05);
-                this._zoomInverse = 1.0/this._zoom;
+                this._position.zoom = this._position.zoom*(1.05);
+                this._position.zoomInverse = 1.0/this._position.zoom;
             } else {
-                this._zoom = this._zoom*(0.95);
-                this._zoomInverse = 1.0/this._zoom;			
+                this._position.zoom = this._position.zoom*(0.95);
+                this._position.zoomInverse = 1.0/this._position.zoom;			
             }
             
             var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][5].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][5].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][5].y
             }));
             var size2 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][7].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][7].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][7].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][7].y
             }));
             var size3 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': 0, 
                 'y': 0
             }));
             var size4 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
-                'x': this._relativeIsoRotationDirections[this._isoRotation][6].x, 
-                'y': this._relativeIsoRotationDirections[this._isoRotation][6].y
+                'x': this._relativeIsoRotationDirections[this._position.rotation][6].x, 
+                'y': this._relativeIsoRotationDirections[this._position.rotation][6].y
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
