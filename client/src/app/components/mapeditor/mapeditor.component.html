@@ -30,9 +30,9 @@
           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
             <div class="card-body">                
               <ul>
-                <li>location: ({{ myCanvas._location.x }}, {{ myCanvas._location.y }})</li>
-                <li>zoom: {{ myCanvas._zoom }}</li>
-                <li>rotation: {{ myCanvas._isoRotation }}</li>
+                <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
+                <li>zoom: {{ myCanvas._position.zoom }}</li>
+                <li>rotation: {{ myCanvas._position.rotation }}</li>
               </ul>
             </div>
           </div>
@@ -88,9 +88,9 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
           <div class="card-body">                
             <ul>
-              <li>location: ({{ myCanvas._location.x }}, {{ myCanvas._location.y }})</li>
-              <li>zoom: {{ myCanvas._zoom }}</li>
-              <li>rotation: {{ myCanvas._isoRotation }}</li>
+              <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
+              <li>zoom: {{ myCanvas._position.zoom }}</li>
+              <li>rotation: {{ myCanvas._position.rotation }}</li>
             </ul>
           </div>
         </div>

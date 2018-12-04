@@ -3,23 +3,53 @@ export class IsoCanvas {
 
     private _div: HTMLDivElement;
     private _canvas: HTMLCanvasElement;
-    private _location = {'x': 0, 'y': 0};
     private _cellSize = {'x': 64, 'y': 32}; // = 1/2 cell (width, height)
     private _doubleCellSizeInverse = {'x': 1.0 /(2*this._cellSize.x), 'y': 1.0 /(2*this._cellSize.y)};   
     private _canvasTileSize = {'x': this._cellSize.x, 'y': this._cellSize.y};
     private _halfResolution = {'x': 0, 'y': 0};
     private _position = {
         'location': {'x': 0, 'y': 0},
+        'isoLocation': {'x': 0, 'y': 0},
+        'cellLocation': {'x': 0, 'y': 0},
         'zoom': 1.0,
         'zoomInverse': 1.0,
         'rotation': 0
     }
     public position = {
+        'get': () => {return this._position;},
         'getLocation': () => {return this._position.location;},
         'getZoom': () => {return this._position.zoom;},
         'getZoomInverse': () => {return this._position.zoomInverse;},
         'getRotation': () => {return this._position.rotation;},
-        'setLocation': (cartesianCoord:  {'x': number, 'y': number}) => {},
+        'setLocation': (cartesianCoord:  {'x': number, 'y': number}) => {
+            this._position.location.x = cartesianCoord.x;
+            this._position.location.y = cartesianCoord.y;
+            this._position.isoLocation = this.transformations.cartesianToIso(this._position.location);
+            this._position.cellLocation = {
+                'x': Math.floor(this._position.isoLocation.x),
+                'y': Math.floor(this._position.isoLocation.y)
+            }
+        },
+        'setIsoLocation': (isoCoord:  {'x': number, 'y': number}) => {
+            this._position.isoLocation.x = isoCoord.x;
+            this._position.isoLocation.y = isoCoord.y;
+            this._position.location = this.transformations.isoToCartesian(this._position.isoLocation);
+            this._position.cellLocation = {
+                'x': Math.floor(this._position.isoLocation.x),
+                'y': Math.floor(this._position.isoLocation.y)
+            }
+        },
+        'setCellLocation': (cellCoord: {'x': number, 'y': number}) => {
+            this._position.isoLocation = {
+                'x': Math.floor(cellCoord.x) + 0.5, //center of cell
+                'y': Math.floor(cellCoord.y) + 0.5
+            }
+            this._position.cellLocation = {
+                'x': Math.floor(cellCoord.x),
+                'y': Math.floor(cellCoord.y)
+            }
+            this._position.location = this.transformations.isoToCartesian(this._position.isoLocation);
+        },
         'zoom': (z: number) => {this.transformations.zoom(z);},
         'setZoom:': (z: number) => {this.transformations.setZoom(z);},
         'rotate': (r: number) => {this.transformations.rotate(r);},
@@ -129,10 +159,11 @@ export class IsoCanvas {
         this._div.addEventListener('mousemove', (ev: UIEvent) => {this.eventListeners.defaultMouseMoveListener(ev)});
 
         window.addEventListener('resize', (ev: UIEvent) => {
+            this.eventListeners.defaultWindowResizeListner(ev);/* 
             this._canvas.width = this._div.clientWidth;
             this._canvas.height = this._div.clientHeight;        
             this._halfResolution.x = this._canvas.width / 2;
-            this._halfResolution.y = this._canvas.height / 2;
+            this._halfResolution.y = this._canvas.height / 2; */
         });
 
     }
@@ -196,14 +227,14 @@ export class IsoCanvas {
         },
         'cartesianToCanvas': (cartesianCoord: {'x': number, 'y': number}) => {
             return {
-                'x': (cartesianCoord.x - this._location.x)*this._position.zoom + this._canvas.width / 2,
-                'y': -(cartesianCoord.y - this._location.y)*this._position.zoom + this._canvas.height / 2
+                'x': (cartesianCoord.x - this._position.location.x)*this._position.zoom + this._canvas.width / 2,
+                'y': -(cartesianCoord.y - this._position.location.y)*this._position.zoom + this._canvas.height / 2
             };
         },
         'canvasToCartesian': (screenCoordinate: {'x': number, 'y': number}) => {
             return {
-                'x': (screenCoordinate.x - this._halfResolution.x)*this._position.zoomInverse + this._location.x,
-                'y': -(screenCoordinate.y - this._halfResolution.y)*this._position.zoomInverse + this._location.y
+                'x': (screenCoordinate.x - this._halfResolution.x)*this._position.zoomInverse + this._position.location.x,
+                'y': -(screenCoordinate.y - this._halfResolution.y)*this._position.zoomInverse + this._position.location.y
             };
         },
         'isoToCanvas': (isoCoord: {'x': number, 'y': number}) => {            
@@ -217,7 +248,7 @@ export class IsoCanvas {
             );
         },
         'rotate': (r: number) => {
-            let isoLoc = this.transformations.cartesianToIso(this._location);
+            let isoLoc = this.transformations.cartesianToIso(this._position.location);
             this._position.rotation = (((this._position.rotation + Math.floor(r) % 4)) + 4) % 4;
             var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
@@ -237,11 +268,10 @@ export class IsoCanvas {
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
-            this._location = this.transformations.isoToCartesian(isoLoc);
-            this.drawing.paint();
+            this._position.location = this.transformations.isoToCartesian(isoLoc);
         },
         'setRotation': (r: number) => {
-            let isoLoc = this.transformations.cartesianToIso(this._location);
+            let isoLoc = this.transformations.cartesianToIso(this._position.location);
             this._position.rotation = ((Math.floor(r) % 4) + 4) % 4;
             var size1 = this.transformations.cartesianToCanvas(this.transformations.isoToCartesian({
                 'x': this._relativeIsoRotationDirections[this._position.rotation][5].x, 
@@ -261,8 +291,7 @@ export class IsoCanvas {
             }));
             this._canvasTileSize.x = size2.x - size1.x;
             this._canvasTileSize.y = size4.y - size3.y;
-            this._location = this.transformations.isoToCartesian(isoLoc);
-            this.drawing.paint();
+            this._position.location = this.transformations.isoToCartesian(isoLoc);
         },
         'zoom': (z: number) => {
             if (z > 0) {
@@ -791,8 +820,8 @@ export class IsoCanvas {
             this._mouse.canvas = {"x": event.clientX-centerDivRect.left, "y": event.clientY-centerDivRect.top};
             this._mouse.cartesian = this.transformations.canvasToCartesian(this._mouse.canvas);
 
-            this._location.x = this._mouse.cartesian.x;
-            this._location.y = this._mouse.cartesian.y;
+            this._position.location.x = this._mouse.cartesian.x;
+            this._position.location.y = this._mouse.cartesian.y;
         },
         'defaultWindowResizeListner': (ev: UIEvent) => {
             this._canvas.width = this._div.clientWidth;
