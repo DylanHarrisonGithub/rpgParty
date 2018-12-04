@@ -1,6 +1,4 @@
-// compile with 
-// tsc isotileset --module amd
-import isoTile = require('./isotile');
+import { IsoTile } from './isotile';
 export class IsoTileSet {
 
     public properties = {
@@ -9,8 +7,8 @@ export class IsoTileSet {
         animationLoops: false,
         fps: 0.0
     };
-    private _images: HTMLImageElement[] = [];
-    private _isoTiles: isoTile.IsoTile[] = [];
+    public _images: HTMLImageElement[] = []; //should be private
+    public _isoTiles: IsoTile[] = []; //should be private
 
     constructor() {        
     }
@@ -96,7 +94,7 @@ export class IsoTileSet {
                             if (loadedCounter == numImages) {
                                 this._isoTiles = [];
                                 for (let tile of file.tiles) {
-                                    this._isoTiles.push(new isoTile.IsoTile(
+                                    this._isoTiles.push(new IsoTile(
                                         this._images[tile.index],
                                         tile.properties
                                     ));
@@ -125,36 +123,41 @@ export class IsoTileSet {
 
     loadFromServer(filename: string, onload: Function) {
         fetch(filename).then(res => res.json()).then(file => {
-            this.properties = file.properties;
-            this._images = [];                    
-            let numImages = file.images.length;
-            //console.log('numImages: ', numImages);
-            let loadedCounter = 0;
-            for (let fileImg of file.images) {
-                let newImage = new Image();
-                this._images.push(newImage);
-                newImage.onload = ((event) => {
-                    newImage.onload = null;
-                    loadedCounter++;
-                    //console.log('loading progress: ', loadedCounter);
-                    if (loadedCounter == numImages) {
-                        this._isoTiles = [];
-                        for (let tile of file.tiles) {
-                            this._isoTiles.push(new isoTile.IsoTile(
-                                this._images[tile.index],
-                                tile.properties
-                            ));
+            if (file.error) {
+                console.log(file);
+            } else {
+                this.properties = file.properties;
+                this._images = [];                    
+                let numImages = file.images.length;
+                //console.log('numImages: ', numImages);
+                let loadedCounter = 0;
+                for (let fileImg of file.images) {
+                    let newImage = new Image();
+                    this._images.push(newImage);
+                    newImage.onload = ((event) => {
+                        newImage.onload = null;
+                        loadedCounter++;
+                        //console.log('loading progress: ', loadedCounter);
+                        if (loadedCounter == numImages) {
+                            this._isoTiles = [];
+                            for (let tile of file.tiles) {
+                                this._isoTiles.push(new IsoTile(
+                                    this._images[tile.index],
+                                    tile.properties
+                                ));
+                            }
+                            //console.log('tileset loading complete');
+                            onload();
                         }
-                        //console.log('tileset loading complete');
-                        onload();
+                    });
+                    newImage.onerror = function(e) {
+                        console.log('image did not load', e);
+                        numImages--;
                     }
-                });
-                newImage.onerror = function(e) {
-                    console.log('image did not load', e);
-                    numImages--;
+                    newImage.src = fileImg;
                 }
-                newImage.src = fileImg;
             }
+            
             //onload();
         });
     }

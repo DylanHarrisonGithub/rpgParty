@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/DylanHarrisonGithub/rpgParty/issues"
   },
-  "homepage": "https://github.com/DylanHarrisonGithub/rpgParty#readme"
+  "homepage": "https://github.com/DylanHarrisonGithub/rpgParty#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.10"
+  }
 }

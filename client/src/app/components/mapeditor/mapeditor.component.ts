@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IsoCanvas } from '../../engine/isocanvas';
+import { IsoTile } from '../../engine/isotile';
+import { IsoTileSet } from '../../engine/isotileset';
 
 @Component({
   selector: 'app-mapeditor',
@@ -61,6 +63,13 @@ export class MapeditorComponent implements OnInit {
           this.myCanvas.drawing.paint();
         }
     };
+
+    let tset = new IsoTileSet();
+    tset.loadFromServer('http://localhost:3000/assets/tilesets/dirt.json', () => {
+      this.myCanvas._gameAssets.tiles = tset._isoTiles;
+      this.myCanvas.generateRandomMap(64, 64, 1);
+      this.myCanvas.drawing.paint();
+    });
     this.myCanvas.drawing.paint();
     
   }

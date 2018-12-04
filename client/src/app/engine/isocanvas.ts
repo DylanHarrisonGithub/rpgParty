@@ -24,7 +24,7 @@ export class IsoCanvas {
         'iso': {'x': 0, 'y': 0},
         'cell': {'x': 0, 'y': 0},
     };
-    private _gameAssets = {
+    public _gameAssets = { //should be private
         'map': [],
         'tiles': [],
         'tileSets': [],
