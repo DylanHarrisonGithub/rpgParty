@@ -57,7 +57,7 @@ export class MapeditorComponent implements OnInit {
     });
     document.onkeypress = (event) => {
         if (event.key == 'r') {
-          //this.myCanvas.setRotation(this.myCanvas._isoRotation + 1);
+          this.myCanvas.transformations.rotate(1);
         }
     };
     this.myCanvas.drawing.paint();

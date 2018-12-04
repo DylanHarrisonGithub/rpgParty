@@ -13,10 +13,7 @@
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">              
               <ul>
-                <li>mouseCanvas: ({{ myCanvas._mouseCanvas.x }}, {{ myCanvas._mouseCanvas.y }})</li>
-                <li>mouseCartesian: ({{ myCanvas._mouseCartesian.x }}, {{ myCanvas._mouseCartesian.y }})</li>
-                <li>mouseCell: ({{ myCanvas._mouseCell.x }}, {{ myCanvas._mouseCell.y }})</li>
-                <li>mouseIso: ({{ myCanvas._mouseIso.x }}, {{ myCanvas._mouseIso.y }})</li>
+                <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
               </ul>
             </div>
           </div>
@@ -74,10 +71,7 @@
         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
           <div class="card-body">              
             <ul>
-              <li>mouseCanvas: ({{ myCanvas._mouseCanvas.x }}, {{ myCanvas._mouseCanvas.y }})</li>
-              <li>mouseCartesian: ({{ myCanvas._mouseCartesian.x }}, {{ myCanvas._mouseCartesian.y }})</li>
-              <li>mouseCell: ({{ myCanvas._mouseCell.x }}, {{ myCanvas._mouseCell.y }})</li>
-              <li>mouseIso: ({{ myCanvas._mouseIso.x }}, {{ myCanvas._mouseIso.y }})</li>
+              <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
             </ul>
           </div>
         </div>
