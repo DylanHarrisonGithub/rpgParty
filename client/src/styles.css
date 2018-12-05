@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+.rp-titlebar { background-color: #40404a; width: 100%; height: 31px; position: absolute; border-radius: 1px;}
+.rp-titled-panel { background-color: #d9d9d9; width: 100%; top: 31px; bottom: 0px; position: absolute; overflow: auto; text-align: center;}
+.rp-ul { width: 100%; list-style: none; padding-left: 0; }
+.rp-li { background-color: white; width: 100%; height: 30px; border: 1px solid black; list-style-position: inside; border-radius: 5px; }
+.rp-li:hover { background-color: whitesmoke }
+.rp-li-key { left: 10px; position: absolute; }
+.rp-li-label { right: 10px; position: absolute; }
+.rp-li-input { width:60px; height: 26px; text-align: right; }

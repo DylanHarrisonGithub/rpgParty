@@ -2,116 +2,92 @@
   <div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
     <div id='toolpanel1' style="height:100%;width:300px;right:0px;background-color:blueviolet;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
       <div id="accordion">
-        <div class="card">
-          <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Mouse
-              </button>
-            </h5>
-          </div>      
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body">              
-              <ul>
-                <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
-              </ul>
+          <div class="card">
+              <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  <span style="color: rgb(37, 137, 204);">Cursor</span>
+              </div>      
+              <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
+                <div class="card-body">              
+                  <ul>
+                    <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header" id="headingTwo">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Position
-              </button>
-            </h5>
-          </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-            <div class="card-body">                
-              <ul>
-                <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
-                <li>zoom: {{ myCanvas._position.zoom }}</li>
-                <li>rotation: {{ myCanvas._position.rotation }}</li>
-              </ul>
+    
+            <div class="card">
+              <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <span style="color: rgb(37, 137, 204);">Tile Set</span>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+                <div class="card-body">                
+                  <ul>
+                    <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
+                    <li>zoom: {{ myCanvas._position.zoom }}</li>
+                    <li>rotation: {{ myCanvas._position.rotation }}</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header" id="headingThree">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                Layout
-              </button>
-            </h5>
-          </div>
-          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-            <div class="card-body">
-              <ul>
-                <li>layoutVertical: {{ layoutVertical }} </li>
-              </ul>              
+    
+            <div class="card">
+              <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <span style="color: rgb(37, 137, 204);">Images</span>
+              </div>
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
+                <div class="card-body">
+                  <ul>
+                    <li>layoutVertical: {{ layoutVertical }} </li>
+                  </ul>              
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
       </div>
 
     </div><div id='isocanvas' style="height:100%; left: 0; right: 300px; position:absolute;"></div>
   </div>
   <div id="toolpanel2" style="background-color:red; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
     <div id="accordion">
-      <div class="card">
-        <div class="card-header" id="headingOne">
-          <h5 class="mb-0">
-            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Mouse
-            </button>
-          </h5>
-        </div>      
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-          <div class="card-body">              
-            <ul>
-              <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
-            </ul>
+        <div class="card">
+            <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                <span style="color: rgb(37, 137, 204);">Cursor</span>
+            </div>      
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
+              <div class="card-body">              
+                <ul>
+                  <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header" id="headingTwo">
-          <h5 class="mb-0">
-            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              Position
-            </button>
-          </h5>
-        </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-          <div class="card-body">                
-            <ul>
-              <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
-              <li>zoom: {{ myCanvas._position.zoom }}</li>
-              <li>rotation: {{ myCanvas._position.rotation }}</li>
-            </ul>
+  
+          <div class="card">
+            <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              <span style="color: rgb(37, 137, 204);">Tile Set</span>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+              <div class="card-body">                
+                <ul>
+                  <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
+                  <li>zoom: {{ myCanvas._position.zoom }}</li>
+                  <li>rotation: {{ myCanvas._position.rotation }}</li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header" id="headingThree">
-          <h5 class="mb-0">
-            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              Layout
-            </button>
-          </h5>
-        </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-          <div class="card-body">
-            <ul>
-              <li>layoutVertical: {{ layoutVertical }} </li>
-            </ul>              
+  
+          <div class="card">
+            <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              <span style="color: rgb(37, 137, 204);">Images</span>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
+              <div class="card-body">
+                <ul>
+                  <li>layoutVertical: {{ layoutVertical }} </li>
+                </ul>              
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
