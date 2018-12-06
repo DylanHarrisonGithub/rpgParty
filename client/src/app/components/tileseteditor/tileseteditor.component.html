@@ -1,13 +1,14 @@
 <div style="width:100%; bottom: 0px; top: 57px; position:absolute; background-color: aquamarine;">
   <div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
-    <div id='toolpanel1' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
-      
-      <div id="accordion">
+    
+    <div id="toolpanelLeft" style="height:100%;width:300px;left:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">
+
+      <div id="accordianLeft">
         <div class="card">
           <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
               <span style="color: rgb(37, 137, 204);">Cursor</span>
           </div>      
-          <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
 
               <ul class="list-group">
                 <li class="list-group-item" *ngFor="let item of cursor | keyvalue">
@@ -27,7 +28,7 @@
           <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
             <span style="color: rgb(37, 137, 204);">Tile Set</span>
           </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+          <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
 
             <ul class="list-group">
               <li class="list-group-item text-center">
@@ -54,7 +55,7 @@
           <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
             <span style="color: rgb(37, 137, 204);">Images</span>
           </div>
-          <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
+          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
             
               <ul class="list-group">
                 <li class="list-group-item" *ngFor="let image of tileset._images">
@@ -66,15 +67,27 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+
+    <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white;"></div>
+
+    
+    <div id='toolpanelRight' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
+      
+      <div id="accordionRight">
+        
+
         <div class="card">
           <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">     
             <span style="color: rgb(37, 137, 204);">Tiles</span>              
           </div>
-          <div id="collapseFour" class="collapse" aria-labelledby="headingFour">
+          <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
             
               <ul class="list-group">
                 <li class="list-group-item" *ngFor="let tile of tileset._isoTiles">
-                  <img style="width:50px; height:50px;" src="{{ tile.image.src }}" (click)="selectedTile=tile">
+                  <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ tile.image.src }}" (click)="selectTile(tile)">
                   <span class="float-right"><button type="button" class="btn btn-primary btn-lg">Remove</button></span>
                 </li>
               </ul>
@@ -86,14 +99,14 @@
           <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
               <span style="color: rgb(37, 137, 204);">Tile Properties</span>  
           </div>
-          <div id="collapseFive" class="collapse" aria-labelledby="headingFive">
+          <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
               <ul class="list-group">
                 <li class="list-group-item" *ngFor="let item of selectedTile?.properties | keyvalue">
                   {{ item.key }}
                   <span class="float-right">
-                    <input type="checkbox" *ngIf="templating.isBoolean(item.value)" [(ngModel)]="item.value" name="test">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.isNumber(item.value)" [(ngModel)]="item.value">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.isString(item.value)" [(ngModel)]="item.value">
+                    <input type="checkbox" *ngIf="templating.isBoolean(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.isNumber(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.isString(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
                   </span>
                 </li>
               </ul>
@@ -102,9 +115,11 @@
       </div>
 
     </div>
-    <div id='isocanvas' style="height:100%; left: 0; right: 300px; position:absolute; background-color:white;"></div>
+  
+  
   </div>
-  <div id="toolpanel2" style="background-color: whitesmoke; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
+
+  <div id="toolpanelBottom" style="background-color: whitesmoke; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
       
     <div id="accordion">
       <div class="card">
