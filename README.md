@@ -1,4 +1,4 @@
 # rpgParty
 MEAN Stack multiplayer rpg
 # Screenshots
-![alt text](Screenshots/tileseteditor.png "Tileset Editor Screenshot")
+![alt text](screenshots/tileseteditor.png "Tileset Editor Screenshot")
