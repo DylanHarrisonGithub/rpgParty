@@ -1,189 +1,244 @@
 <div style="width:100%; bottom: 0px; top: 57px; position:absolute; background-color: aquamarine;">
+  
   <div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
     
+    <!--Horizontal Layout-->
     <div id="toolpanelLeft" style="height:100%;width:300px;left:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">
 
       <div id="accordianLeft">
+
+        <!--Cursor-->
         <div class="card">
           <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
               <span style="color: rgb(37, 137, 204);">Cursor</span>
           </div>      
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-
               <ul class="list-group">
-                <li class="list-group-item" *ngFor="let item of cursor | keyvalue">
+                <li class="list-group-item" *ngFor="let item of cursor.public | keyvalue; trackBy:templating.trackByFn">
                   {{ item.key }}
                   <span class="float-right">
-                    <input type="checkbox" *ngIf="templating.isBoolean(item.value)" [(ngModel)]="item.value" name="test">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.isNumber(item.value)" [(ngModel)]="item.value">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.isString(item.value)" [(ngModel)]="item.value">
+                    <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
                   </span>
                 </li>
               </ul>
-
           </div>
         </div>
 
+        <!--Tile Set-->
         <div class="card">
           <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
             <span style="color: rgb(37, 137, 204);">Tile Set</span>
           </div>
           <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
-
             <ul class="list-group">
               <li class="list-group-item text-center">
                 <div  class="float-none btn-group" role="group">
-                  <button type="button" class="btn btn-secondary">New</button>
-                  <button type="button" class="btn btn-secondary" (click)="loadtileset()">Load</button>
-                  <button type="button" class="btn btn-secondary">Save</button>
+                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.new()">New</button>
+                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.load()">Load</button>
+                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Save</button>
                 </div>
               </li>
-              <li class="list-group-item" *ngFor="let item of tileset.properties | keyvalue">
+              <li class="list-group-item" *ngFor="let item of tileset?.properties | keyvalue; trackBy:templating.trackByFn">
                 {{ item.key }}
                 <span class="float-right">
-                  <input type="checkbox" *ngIf="templating.isBoolean(item.value)" [(ngModel)]="item.value" name="test">
-                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.isNumber(item.value)" [(ngModel)]="item.value">
-                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.isString(item.value)" [(ngModel)]="item.value">
+                  <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
                 </span>
               </li>
             </ul>
-
           </div>
         </div>
 
+        <!--Images-->
         <div class="card">
           <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
             <span style="color: rgb(37, 137, 204);">Images</span>
           </div>
           <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-            
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let image of tileset._images">
-                  <img style="width:50px; height:50px;" src="{{ image.src }}">
-                  <span class="float-right"><button type="button" class="btn btn-primary btn-lg">Remove</button></span>
-                </li>
-              </ul>
-
+            <ul class="list-group">
+              <li class="list-group-item text-center">
+                <div  class="float-none btn-group" role="group">
+                  <button type="button" class="btn btn-primary" (click)="buttons.image.import()">Import</button>
+                </div>
+              </li>
+              <li class="list-group-item" *ngFor="let image of tileset._images">
+                <img style="width:50px; height:50px;" src="{{ image.src }}" (click)="buttons.image.assign(image)">
+                <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.image.remove(image)">Remove</button></span>
+              </li>
+            </ul>
           </div>
         </div>
 
       </div>
+
     </div>
 
-
-    <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white;"></div>
-
-    
+    <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white; overflow: auto;"></div>
+  
+    <!--Horizontal Layout-->
     <div id='toolpanelRight' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
       
       <div id="accordionRight">
         
-
+        <!--Tiles-->
         <div class="card">
           <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">     
             <span style="color: rgb(37, 137, 204);">Tiles</span>              
           </div>
           <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
-            
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let tile of tileset._isoTiles">
-                  <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ tile.image.src }}" (click)="selectTile(tile)">
-                  <span class="float-right"><button type="button" class="btn btn-primary btn-lg">Remove</button></span>
-                </li>
-              </ul>
-
+            <ul class="list-group">
+              <li class="list-group-item text-center">
+                <div  class="float-none btn-group" role="group">
+                  <button type="button" class="btn btn-primary" (click)="buttons.tile.new()">New</button>
+                  <button type="button" class="btn btn-primary rp-animate-button" (click)="buttons.tile.animate()">Animate</button>
+                </div>
+              </li>
+              <li class="list-group-item" *ngFor="let preview of tilePreviews; let i = index">
+                <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ preview.src }}" (click)="buttons.tile.select(tileset._isoTiles[i])">
+                <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.tile.remove(tileset._isoTiles[i])">Remove</button></span>
+              </li>
+            </ul>
           </div>
         </div>
 
+        <!--Tile Properties-->
         <div class="card">
           <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
               <span style="color: rgb(37, 137, 204);">Tile Properties</span>  
           </div>
           <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let item of selectedTile?.properties | keyvalue">
-                  {{ item.key }}
-                  <span class="float-right">
-                    <input type="checkbox" *ngIf="templating.isBoolean(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.isNumber(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.isString(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
-                  </span>
-                </li>
-              </ul>
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let item of selectedTile?.properties | keyvalue; trackBy:templating.trackByFn">
+                {{ item.key }}
+                <span class="float-right">
+                  <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
+
       </div>
 
     </div>
-  
-  
+
   </div>
 
+  <!--Vertical Layout-->
   <div id="toolpanelBottom" style="background-color: whitesmoke; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
       
     <div id="accordion">
+
+      <!--Cursor-->
       <div class="card">
         <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             <span style="color: rgb(37, 137, 204);">Cursor</span>
         </div>      
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
-          <div class="card-body">              
-            <ul></ul>
-          </div>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of cursor.public | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
 
+      <!--Tile Set-->
       <div class="card">
         <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
           <span style="color: rgb(37, 137, 204);">Tile Set</span>
         </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
-          <div class="card-body">                
-            <ul></ul>
-          </div>
+        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+          <ul class="list-group">
+            <li class="list-group-item text-center">
+              <div  class="float-none btn-group" role="group">
+                <button type="button" class="btn btn-primary" (click)="buttons.tileSet.new()">New</button>
+                <button type="button" class="btn btn-primary" (click)="buttons.tileSet.load()">Load</button>
+                <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Save</button>
+              </div>
+            </li>
+            <li class="list-group-item" *ngFor="let item of tileset?.properties | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
 
+      <!--Images-->
       <div class="card">
         <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
           <span style="color: rgb(37, 137, 204);">Images</span>
         </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
-          <div class="card-body">
-            <ul>
-              <li>layoutVertical: {{ layoutVertical }} </li>
-            </ul>              
-          </div>
+        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+          <ul class="list-group">
+            <li class="list-group-item text-center">
+              <div  class="float-none btn-group" role="group">
+                <button type="button" class="btn btn-primary" (click)="buttons.image.import()">Import</button>
+              </div>
+            </li>
+            <li class="list-group-item" *ngFor="let image of tileset._images">
+              <img style="width:50px; height:50px;" src="{{ image.src }}" (click)="buttons.image.assign(image)">
+              <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.image.remove(image)">Remove</button></span>
+            </li>
+          </ul>
         </div>
       </div>
 
+      <!--Tiles-->
       <div class="card">
         <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">     
           <span style="color: rgb(37, 137, 204);">Tiles</span>              
         </div>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingFour">
-          <div class="card-body">
-            <ul>
-              <li>layoutVertical: {{ layoutVertical }} </li>
-            </ul>              
-          </div>
+        <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
+          <ul class="list-group">
+            <li class="list-group-item text-center">
+              <div  class="float-none btn-group" role="group">
+                <button type="button" class="btn btn-primary" (click)="buttons.tile.new()">New</button>
+                <button type="button" class="btn btn-primary rp-animate-button" (click)="buttons.tile.animate()">Animate</button>
+              </div>
+            </li>
+            <li class="list-group-item" *ngFor="let preview of tilePreviews; let i = index">
+              <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ preview.src }}" (click)="buttons.tile.select(tileset._isoTiles[i])">
+              <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.tile.remove(tileset._isoTiles[i])">Remove</button></span>
+            </li>
+          </ul>
         </div>
       </div>
 
+      <!--Tile Properties-->
       <div class="card">
         <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-            <span style="color: rgb(37, 137, 204);">Tile Properties</span>  
+          <span style="color: rgb(37, 137, 204);">Tile Properties</span>  
         </div>
-        <div id="collapseFive" class="collapse" aria-labelledby="headingFive">
-          <div class="card-body">
-            <ul>
-              <li>layoutVertical: {{ layoutVertical }} </li>
-            </ul>              
-          </div>
+        <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let item of selectedTile?.properties | keyvalue; trackBy:templating.trackByFn">
+                {{ item.key }}
+                <span class="float-right">
+                  <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+                </span>
+              </li>
+            </ul>
         </div>
       </div>
 
     </div> 
-
   </div>
 </div>
