@@ -24,12 +24,94 @@ export class IsoCanvas {
         'iso': {'x': 0, 'y': 0},
         'cell': {'x': 0, 'y': 0},
     };
-    public _gameAssets = { //should be private
-        'map': [],
+    private _gameAssets = { //should be private
+        'map': [],          // should be its own object
+        'heightMap': [],
         'tiles': [],
         'tileSets': [],
-        'heightMap': [],
     };
+    public gameAssets = {
+        map: {
+            init: (width: number, breadth: number) => {
+                for (let y = 0; y < breadth; y++) {
+                    this._gameAssets.map.push([]);
+                    for (let x = 0; x < width; x++) {
+                        this._gameAssets.map[y].push([]);
+                    }
+                }
+            },
+            getWidth: () => {
+                if (this._gameAssets.map && this._gameAssets.map[0]) {
+                    return this._gameAssets.map[0].length;
+                } else {
+                    return null;
+                }
+            },
+            getBreadth: () => {
+                if (this._gameAssets.map) {
+                    return this._gameAssets.map.length;
+                } else {
+                    return null;
+                }
+            },
+            getCellStack: (x: number, y: number) => {
+                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
+                    return this._gameAssets.map[y][x];
+                } else {
+                    return null;
+                }
+            },
+            push: (x: number, y: number, tile: IsoTile) => {
+                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
+                    this._gameAssets.map[y][x].push(tile);
+                }
+            },
+            pop: (x: number, y: number) => {
+                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
+                    return this._gameAssets.map[y][x].pop();
+                } else {
+                    return null;
+                }                
+            }
+        },
+        heightMap: {
+            init: () => {
+
+            },
+            compute: () => {
+
+            },
+            computeCell: (x: number, y: number) => {
+                if (this._gameAssets.map) {
+                }
+            }
+
+        },
+        tiles: {
+            insertOne: (tile: IsoTile) => { this._gameAssets.tiles.push(tile); },
+            insertArray: (tileArray: IsoTile[]) => { 
+                for (let tile of tileArray) { 
+                    this._gameAssets.tiles.push(tile); 
+                }
+            },
+            removeOne: (tile: IsoTile) => { 
+                let index = this._gameAssets.tiles.indexOf(tile);
+                if (index > -1) {
+                    this._gameAssets.tiles.splice(index, 1);
+                }
+            },
+            removeArray: (tileArray: IsoTile[]) => {
+                for (let tile of tileArray) {
+                    this.gameAssets.tiles.removeOne(tile);
+                }
+            },
+            contains: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile) > -1) },
+            indexOf: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile)) }
+        },
+        tileSets: {
+
+        }
+    }
     private _metrics = {
         'cellSize': {'x': 64, 'y': 32}, // = 1/2 cell (width, height)
         'doubleCellSizeInverse': {'x': 1.0 /(2*64), 'y': 1.0 /(2*32)},

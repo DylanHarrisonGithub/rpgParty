@@ -66,7 +66,7 @@ export class MapeditorComponent implements OnInit {
 
     let tset = new IsoTileSet();
     tset.loadFromServer('http://localhost:3000/assets/tilesets/dirt.json', () => {
-      this.myCanvas._gameAssets.tiles = tset._isoTiles;
+      this.myCanvas.gameAssets.tiles.insertArray(tset._isoTiles);
       this.myCanvas.generateRandomMap(64, 64, 1);
       this.myCanvas.drawing.paint();
     });
