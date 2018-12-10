@@ -7,10 +7,47 @@ export class IsoTileSet {
         animationLoops: false,
         fps: 0.0
     };
-    public _images: HTMLImageElement[] = []; //should be private
-    public _isoTiles: IsoTile[] = []; //should be private
+    private _images: HTMLImageElement[] = [];    //should be private
+    public _isoTiles: IsoTile[] = [];           //should be private
 
     constructor() {        
+    }
+
+    tiles = {
+        getLength: () => { return this._isoTiles.length; },
+        get: (index: number) => {
+            if (index > -1 && index < this.tiles.getLength()) {
+                return this._isoTiles[index];
+            } else {
+                return null;
+            }
+        },
+        insertOne: (tile: IsoTile) => { this._isoTiles.push(tile); },
+        insertArray: (tileArray: IsoTile[]) => { 
+            for (let tile of tileArray) this._isoTiles.push(tile); 
+        },
+        removeOne: (tile: IsoTile) => { 
+            let index = this._isoTiles.indexOf(tile);
+            if (index > -1) this._isoTiles.splice(index, 1);
+        },
+        removeArray: (tileArray: IsoTile[]) => {
+            for (let tile of tileArray) this.tiles.removeOne(tile);
+        },
+        contains: (tile: IsoTile) => { return (this._isoTiles.indexOf(tile) > -1) },
+        indexOf: (tile: IsoTile) => { return (this._isoTiles.indexOf(tile)) },
+        forEach: (f: (value: IsoTile, index: number) => any) => { 
+            for (let i = 0; i < this._isoTiles.length; i++) {
+                f(this._isoTiles[i], i);
+            }
+        }
+    };
+    images = {
+        remove: (image: HTMLImageElement) => {
+            this._images.splice(this._images.indexOf(image), 1);
+            this._isoTiles.forEach(tile => {
+                if (tile.image == image) tile.image = null;
+            });
+        }
     }
 
     loadImageFromClient(onload: Function) { 

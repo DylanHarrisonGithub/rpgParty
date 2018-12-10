@@ -21,7 +21,7 @@ export class TileseteditorComponent implements OnInit {
       'y': 0
     }
   }
-  tileset = null;
+  tileset: IsoTileSet = null;
   selectedTile: IsoTile;
   tilePreviews: HTMLImageElement[] = [];
   tilePreviewSize = {'width': 50, 'height': 50};
@@ -163,7 +163,9 @@ export class TileseteditorComponent implements OnInit {
         }
       },       
       remove: (image: HTMLImageElement) => {
-        this.tileset._images.splice(this.tileset._isoTiles.indexOf(image), 1);
+        this.tileset.images.remove(image);
+        this.render.tilePreviews();
+        this.render.selectedTile();
       }
     },
     tile: {

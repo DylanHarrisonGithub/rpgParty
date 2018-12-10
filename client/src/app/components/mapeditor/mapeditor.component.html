@@ -9,7 +9,7 @@
               <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
                 <div class="card-body">              
                   <ul>
-                    <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
+                    <li *ngFor="let item of myCanvas?.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
                   </ul>
                 </div>
               </div>
@@ -22,9 +22,9 @@
               <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
                 <div class="card-body">                
                   <ul>
-                    <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
-                    <li>zoom: {{ myCanvas._position.zoom }}</li>
-                    <li>rotation: {{ myCanvas._position.rotation }}</li>
+                    <li>location: ({{ myCanvas?._position.location.x }}, {{ myCanvas?._position.location.y }})</li>
+                    <li>zoom: {{ myCanvas?._position.zoom }}</li>
+                    <li>rotation: {{ myCanvas?._position.rotation }}</li>
                   </ul>
                 </div>
               </div>
@@ -55,7 +55,7 @@
             <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
               <div class="card-body">              
                 <ul>
-                  <li *ngFor="let item of myCanvas.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
+                  <li *ngFor="let item of myCanvas?.mouse.get() | keyvalue">{{ item.key }}: ({{ item.value.x }}, {{ item.value.y }})</li>
                 </ul>
               </div>
             </div>
@@ -68,9 +68,9 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
               <div class="card-body">                
                 <ul>
-                  <li>location: ({{ myCanvas._position.location.x }}, {{ myCanvas._position.location.y }})</li>
-                  <li>zoom: {{ myCanvas._position.zoom }}</li>
-                  <li>rotation: {{ myCanvas._position.rotation }}</li>
+                  <li>location: ({{ myCanvas?._position.location.x }}, {{ myCanvas?._position.location.y }})</li>
+                  <li>zoom: {{ myCanvas?._position.zoom }}</li>
+                  <li>rotation: {{ myCanvas?._position.rotation }}</li>
                 </ul>
               </div>
             </div>

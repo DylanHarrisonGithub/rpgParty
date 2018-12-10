@@ -1,5 +1,6 @@
 import { IsoTile } from './isotile';
 import { IsoTileSet } from './isotileset';
+import { GameMap } from './gamemap';
 export class IsoCanvas {
 
     public axesColor = '#000000';
@@ -25,68 +26,12 @@ export class IsoCanvas {
         'cell': {'x': 0, 'y': 0},
     };
     private _gameAssets = { //should be private
-        'map': [],          // should be its own object
-        'heightMap': [],
+        'map': null,          // should be its own object
         'tiles': [],
         'tileSets': [],
     };
     public gameAssets = {
-        map: {
-            init: (width: number, breadth: number) => {
-                for (let y = 0; y < breadth; y++) {
-                    this._gameAssets.map.push([]);
-                    for (let x = 0; x < width; x++) {
-                        this._gameAssets.map[y].push([]);
-                    }
-                }
-            },
-            getWidth: () => {
-                if (this._gameAssets.map && this._gameAssets.map[0]) {
-                    return this._gameAssets.map[0].length;
-                } else {
-                    return null;
-                }
-            },
-            getBreadth: () => {
-                if (this._gameAssets.map) {
-                    return this._gameAssets.map.length;
-                } else {
-                    return null;
-                }
-            },
-            getCellStack: (x: number, y: number) => {
-                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
-                    return this._gameAssets.map[y][x];
-                } else {
-                    return null;
-                }
-            },
-            push: (x: number, y: number, tile: IsoTile) => {
-                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
-                    this._gameAssets.map[y][x].push(tile);
-                }
-            },
-            pop: (x: number, y: number) => {
-                if (x > -1 && y > -1 && x < this.gameAssets.map.getWidth() && y < this.gameAssets.map.getBreadth()) {
-                    return this._gameAssets.map[y][x].pop();
-                } else {
-                    return null;
-                }                
-            }
-        },
-        heightMap: {
-            init: () => {
-
-            },
-            compute: () => {
-
-            },
-            computeCell: (x: number, y: number) => {
-                if (this._gameAssets.map) {
-                }
-            }
-
-        },
+        getMap: () => { return this._gameAssets.map; },
         tiles: {
             insertOne: (tile: IsoTile) => { this._gameAssets.tiles.push(tile); },
             insertArray: (tileArray: IsoTile[]) => { 
@@ -210,7 +155,7 @@ export class IsoCanvas {
         'getCell': () => {return this._mouse.cell;}
     };
 
-    constructor(delagateDiv: HTMLDivElement) {
+    constructor(delagateDiv: HTMLDivElement, gameMap: GameMap) {
 
         this._div = delagateDiv;
         this._canvas = document.createElement('canvas');
@@ -248,6 +193,8 @@ export class IsoCanvas {
         window.addEventListener('resize', (ev: UIEvent) => {
             this.eventListeners.defaultWindowResizeListner(ev);
         });
+
+        this._gameAssets.map = gameMap;
 
     }
 
@@ -503,7 +450,7 @@ export class IsoCanvas {
             }
         },
         'drawIsoTilesWithinCanvasFrame': (ctx: CanvasRenderingContext2D) => {
-            if (!this._gameAssets.map[0]) {return};
+            //if (!this._gameAssets.map[0]) {return};
             // get isometric coordinates of canvas boundary corners
             // a----b
             // |    |
@@ -561,23 +508,22 @@ export class IsoCanvas {
 
                 while ((u.x != rowEnd.x) && (u.y != rowEnd.y)) {
                     
-
-                    if ((u.x > -1) && (u.x < this._gameAssets.map[0].length) && (u.y > -1) && (u.y < this._gameAssets.map.length)) {
+                    if ((u.x > -1) && (u.x < this._gameAssets.map.getSize.x()) && (u.y > -1) && (u.y < this._gameAssets.map.getSize.y())) {
                         //this.highlightCell(u, ctx);
                         // draw tiles from ground up
                         var stackingHeight = 0;
-                        for (var level = 0; level < this._gameAssets.map[u.y][u.x].length; level++) {
-                            
+                        let cell = this._gameAssets.map.getCell(u.x, u.y);
+                        for (var level = 0; level < cell.length; level++) {
                             // todo: detect if tile is visible or obscured to speed up drawing
-                            let tileQ = Math.floor(this._gameAssets.map[u.y][u.x][level] / 4);
-                            let tileR = (this._position.rotation + this._gameAssets.map[u.y][u.x][level]) % 4;
+                            let tileQ = Math.floor(cell[level] / 4);
+                            let tileR = (this._position.rotation + cell[level]) % 4;
                             this.drawing.drawIsoTile({
                                 'x': u.x + this._relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
                                 'y': u.y + this._relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
                             }, this._gameAssets.tiles[4*tileQ + tileR], ctx);
-                            stackingHeight += this._gameAssets.tiles[this._gameAssets.map[u.y][u.x][level]].properties.cellHeight;
+                            stackingHeight += this._gameAssets.tiles[cell[level]].properties.stackingHeight;
                         }                   
-                    }
+                    } 
                     // move cursor left
                     u.x += this._relativeIsoRotationDirections[this._position.rotation][0].x;
                     u.y += this._relativeIsoRotationDirections[this._position.rotation][0].y;
@@ -758,25 +704,6 @@ export class IsoCanvas {
 
 
     // map methods
-    generateRandomMap(width: number, length: number, maxHeight: number) {
-        let map = []
-        let height = 0;
-        for (let y = 0; y < length; y++) {
-            map.push([]);
-            for (let x = 0; x < width; x++) {
-                map[y].push([]);
-                height = 1 + Math.floor(Math.random()*maxHeight);
-                for (let h = 0; h < height; h++) {
-                    map[y][x].push(Math.floor(Math.random()*this._gameAssets.tiles.length));
-                    if (this._gameAssets.tiles[map[y][x][h]].properties.canStack == false) {
-                        break;
-                    }
-                }
-            }
-        }
-        this._gameAssets.map = map;
-    }
-
     saveMap(filename: string) {
         let tilesrc = [];
         for (let tile of this._gameAssets.tiles) {
