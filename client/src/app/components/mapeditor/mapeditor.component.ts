@@ -85,7 +85,7 @@ export class MapeditorComponent implements OnInit {
         this.mapedTools.push(new BrushTool(this, mapedtoolicons._isoTiles[1]));
         this.mapedTools.push(new LineTool(this.myCanvas, this.myMap, mapedtoolicons._isoTiles[2]));
         this.mapedTools.push(new BoxTool(this.myCanvas, this.myMap, mapedtoolicons._isoTiles[3]));
-        this.mapedTools.push(new BucketTool(this.myCanvas, this.myMap, mapedtoolicons._isoTiles[4]));
+        this.mapedTools.push(new BucketTool(this, mapedtoolicons._isoTiles[4]));
         this.mapedTools.push(new EraserTool(this, mapedtoolicons._isoTiles[5]));
         this.buttons.tools.select(this.mapedTools[0]);
         document.getElementById('isocanvas').addEventListener('click', (ev) => {

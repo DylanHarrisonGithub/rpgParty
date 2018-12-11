@@ -40,7 +40,7 @@ export class GameMap {
 
     getCellStackingHeight(x: number, y: number) {
         if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
-            return this._heightmap[x][y].stackingHeight;
+            return this._heightmap[y][x].stackingHeight;
         } else {
             return null;
         }
@@ -48,7 +48,7 @@ export class GameMap {
 
     getCellTileHeight(x: number, y: number) {
         if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
-            return this._heightmap[x][y].tileHeight;
+            return this._heightmap[y][x].tileHeight;
         } else {
             return null;
         }        

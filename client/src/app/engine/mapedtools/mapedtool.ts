@@ -112,24 +112,48 @@ export class BoxTool implements MapEdTool {
 
 export class BucketTool implements MapEdTool {
     icon: IsoTile;
+    delegateMapEditor: MapeditorComponent;
     properties: {}
-    isoCanvas: IsoCanvas;
-    map: GameMap;
-    constructor(isoCanvas: IsoCanvas, map: GameMap, icon: IsoTile) {
+    floodHeight: number;
+
+    constructor(delegateMapEditor: MapeditorComponent, icon: IsoTile) {
         this.icon = icon;
-        this.isoCanvas = isoCanvas;
-        this.map = map;
+        this.delegateMapEditor = delegateMapEditor;
     }
     mouseClickListener(ev) {
-        this.isoCanvas.eventListeners.defaultMouseClickListener(ev);
-        this.isoCanvas.drawing.paint();
+        this.floodHeight = this.delegateMapEditor.myMap.getCellStackingHeight(
+            this.delegateMapEditor.myCanvas.mouse.getCell().x,
+            this.delegateMapEditor.myCanvas.mouse.getCell().y,
+        );
+        if (this.floodHeight || this.floodHeight === 0) {
+            this.flood(
+                this.delegateMapEditor.myCanvas.mouse.getCell().x,
+                this.delegateMapEditor.myCanvas.mouse.getCell().y,
+            )
+            this.delegateMapEditor.myCanvas.drawing.paint();
+        }
     }
     mouseMoveListener(ev) {
-        this.isoCanvas.eventListeners.defaultMouseMoveListener(ev);
+        //this.isoCanvas.eventListeners.defaultMouseMoveListener(ev);
     }
     mouseWheelListener(ev) {
-        this.isoCanvas.eventListeners.defaultMouseWheelListener(ev);
-        this.isoCanvas.drawing.paint();
+        this.delegateMapEditor.myCanvas.eventListeners.defaultMouseWheelListener(ev);
+        this.delegateMapEditor.myCanvas.drawing.paint();
+    }
+
+    flood(x: number, y: number) {
+        let height = this.delegateMapEditor.myMap.getCellTileHeight(x, y);
+        if (height == this.floodHeight) {
+            console.log(height);
+            this.delegateMapEditor.myMap.push(
+                x, y,
+                this.delegateMapEditor.selectedTile
+            );
+            this.flood(x+1,y);
+            this.flood(x,y+1); 
+            this.flood(x-1,y); 
+            this.flood(x,y-1);
+        }
     }
 }
 
