@@ -29,6 +29,7 @@ export class IsoCanvas {
         'map': null,          // should be its own object
         'tiles': [],
         'tileSets': [],
+        'hightlightedCells': []
     };
     public gameAssets = {
         getMap: () => { return this._gameAssets.map; },
@@ -53,8 +54,21 @@ export class IsoCanvas {
             contains: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile) > -1) },
             indexOf: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile)) }
         },
-        tileSets: {
-
+        cells: {
+            highlightCell: (x: number, y: number) => {
+                if (this._gameAssets.hightlightedCells.filter(cell => cell.x == x && cell.y == y).length == 0) {
+                    this._gameAssets.hightlightedCells.push({
+                        'x': x,
+                        'y': y
+                    });
+                }
+            },
+            clearHighlightedCells: () => { this._gameAssets.hightlightedCells = []; },
+            forEach: (f:(cell: {'x': number, 'y': number}) => any) => { 
+                for (let cell of this._gameAssets.hightlightedCells) {
+                    f(cell);
+                }
+            }
         }
     }
     private _metrics = {
@@ -699,6 +713,9 @@ export class IsoCanvas {
 
             this.drawing.drawIsoTilesWithinCanvasFrame(ctx);
             this.drawing.highlightCell(this.mouse.getCell(), ctx);
+            for (let cell of this._gameAssets.hightlightedCells) {
+                this.drawing.highlightCell(cell, ctx);
+            }
         }
     };
 

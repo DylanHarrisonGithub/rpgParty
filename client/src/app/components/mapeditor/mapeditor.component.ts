@@ -83,19 +83,26 @@ export class MapeditorComponent implements OnInit {
         this.mapedTools = new Array<MapEdTool>();
         this.mapedTools.push(new HandTool(this.myCanvas, mapedtoolicons._isoTiles[0]));
         this.mapedTools.push(new BrushTool(this, mapedtoolicons._isoTiles[1]));
-        this.mapedTools.push(new LineTool(this.myCanvas, this.myMap, mapedtoolicons._isoTiles[2]));
-        this.mapedTools.push(new BoxTool(this.myCanvas, this.myMap, mapedtoolicons._isoTiles[3]));
+        this.mapedTools.push(new LineTool(this, mapedtoolicons._isoTiles[2]));
+        this.mapedTools.push(new BoxTool(this, mapedtoolicons._isoTiles[3]));
         this.mapedTools.push(new BucketTool(this, mapedtoolicons._isoTiles[4]));
         this.mapedTools.push(new EraserTool(this, mapedtoolicons._isoTiles[5]));
         this.buttons.tools.select(this.mapedTools[0]);
-        document.getElementById('isocanvas').addEventListener('click', (ev) => {
+        let ican = document.getElementById('isocanvas');
+        ican.addEventListener('click', (ev) => {
           this.selectedTool.mouseClickListener(ev);
         });
-        document.getElementById('isocanvas').addEventListener('mousemove', (ev) => {
+        ican.addEventListener('mousemove', (ev) => {
           this.selectedTool.mouseMoveListener(ev);
         });
-        document.getElementById('isocanvas').addEventListener('wheel', (ev) => {
+        ican.addEventListener('wheel', (ev) => {
           this.selectedTool.mouseWheelListener(ev);
+        });
+        ican.addEventListener('mousedown', (ev) => {
+          this.selectedTool.mouseDownListener(ev);
+        });
+        ican.addEventListener('mouseup', (ev) => {
+          this.selectedTool.mouseUpListener(ev);
         });
       });
 
