@@ -24,6 +24,7 @@ export class IsoCanvas {
         'cartesian': {'x': 0, 'y': 0},
         'iso': {'x': 0, 'y': 0},
         'cell': {'x': 0, 'y': 0},
+        'tileCell': {'x': 0, 'y': 0}
     };
     private _gameAssets = { //should be private
         'map': null,          // should be its own object
@@ -166,7 +167,38 @@ export class IsoCanvas {
         'getCanvas': () => {return this._mouse.canvas;},
         'getCartesian': () => {return this._mouse.cartesian;},
         'getIso': () => {return this._mouse.iso;},
-        'getCell': () => {return this._mouse.cell;}
+        'getCell': () => {return this._mouse.cell;},
+        'getTileCell': () => {return this._mouse.tileCell;},
+        'calcTileCell': (canCoord: {x: number, y: number}) => {
+            let startCellIso = this.transformations.canvasToIso(canCoord);
+            let startCell = {
+                'x': Math.floor(startCellIso.x),
+                'y': Math.floor(startCellIso.y)
+            }
+            let offset = {
+                'x': startCellIso.x - startCell.x,
+                'y': startCellIso.y - startCell.y
+            }
+            let tileCell = {
+                'x': startCell.x,
+                'y': startCell.y
+            }
+            let t = 0;
+            for (let n = 0; n < 5; n++) {
+
+                let x = n + (offset.x) - (<GameMap>this._gameAssets.map).getCellStackingHeight(startCell.x, startCell.y);
+                let y = n + (offset.y) - (<GameMap>this._gameAssets.map).getCellStackingHeight(startCell.x, startCell.y); 
+                
+                if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
+                    tileCell.x = startCell.x;
+                    tileCell.y = startCell.y;
+                }
+                startCell.x += this._relativeIsoRotationDirections[this._position.rotation][6].x;
+                startCell.y += this._relativeIsoRotationDirections[this._position.rotation][6].y;
+            }
+            return tileCell;
+
+        }
     };
 
     constructor(delagateDiv: HTMLDivElement, gameMap: GameMap) {
@@ -811,6 +843,8 @@ export class IsoCanvas {
             if ((this._mouse.cell.x != Math.floor(this._mouse.iso.x)) || (this._mouse.cell.y != Math.floor(this._mouse.iso.y))) {
                 this._mouse.cell.x = Math.floor(this._mouse.iso.x);
                 this._mouse.cell.y = Math.floor(this._mouse.iso.y);
+
+                this._mouse.tileCell = this.mouse.calcTileCell(this.mouse.getCanvas());
                 this.drawing.paint();
             }
         },

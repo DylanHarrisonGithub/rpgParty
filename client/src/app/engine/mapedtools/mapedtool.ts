@@ -54,8 +54,8 @@ export class BrushTool implements MapEdTool {
     mouseMoveListener(ev) {
         if (this.mousedown) {
             let cell = {
-                'x': this.delegateMapEditor.myCanvas.mouse.getCell().x,
-                'y': this.delegateMapEditor.myCanvas.mouse.getCell().y
+                'x': this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+                'y': this.delegateMapEditor.myCanvas.mouse.getTileCell().y
             }
             if (this.prevCell.x != cell.x || this.prevCell.y != cell.y) {
                 this.prevCell.x = cell.x;
@@ -68,8 +68,8 @@ export class BrushTool implements MapEdTool {
                     tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
                 }
                 this.delegateMapEditor.myMap.push(
-                    this.delegateMapEditor.myCanvas.mouse.getCell().x,
-                    this.delegateMapEditor.myCanvas.mouse.getCell().y,
+                    this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+                    this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
                     tile
                 );
                 this.delegateMapEditor.myCanvas.drawing.paint();
@@ -84,8 +84,8 @@ export class BrushTool implements MapEdTool {
     mouseDownListener(ev) {
 
         this.mousedown = true;
-        this.prevCell.x = this.delegateMapEditor.myCanvas.mouse.getCell().x;
-        this.prevCell.y = this.delegateMapEditor.myCanvas.mouse.getCell().y;
+        this.prevCell.x = this.delegateMapEditor.myCanvas.mouse.getTileCell().x;
+        this.prevCell.y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
 
         let tile = this.delegateMapEditor.selectedTile;
         if (!this.properties.exactTile) {
@@ -94,8 +94,8 @@ export class BrushTool implements MapEdTool {
             tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
         }
         this.delegateMapEditor.myMap.push(
-            this.delegateMapEditor.myCanvas.mouse.getCell().x,
-            this.delegateMapEditor.myCanvas.mouse.getCell().y,
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
             tile
         );
         this.delegateMapEditor.myCanvas.drawing.paint();
@@ -122,8 +122,8 @@ export class LineTool implements MapEdTool {
     mouseClickListener(ev) {}
     mouseMoveListener(ev) {
         if (this.mousedown) {
-            let x = this.delegateMapEditor.myCanvas.mouse.getCell().x;
-            let y = this.delegateMapEditor.myCanvas.mouse.getCell().y;
+            let x = this.delegateMapEditor.myCanvas.mouse.getTileCell().x;
+            let y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
             if (this.prevCell.x != x || this.prevCell.y != y) {
                 this.delegateMapEditor.myCanvas.gameAssets.cells.clearHighlightedCells();
                 // find major axis
@@ -150,8 +150,8 @@ export class LineTool implements MapEdTool {
     }
     mouseDownListener(ev) {
         this.mousedown = true;
-        let x = this.delegateMapEditor.myCanvas.mouse.getCell().x;
-        let y = this.delegateMapEditor.myCanvas.mouse.getCell().y;
+        let x = this.delegateMapEditor.myCanvas.mouse.getTileCell().x;
+        let y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
         this.p0.x = x;
         this.p0.y = y;
         this.prevCell.x = x;
@@ -193,8 +193,8 @@ export class BoxTool implements MapEdTool {
     mouseClickListener(ev) {}
     mouseMoveListener(ev) {
         if (this.mousedown) {
-            let x = this.delegateMapEditor.myCanvas.mouse.getCell().x;
-            let y = this.delegateMapEditor.myCanvas.mouse.getCell().y;
+            let x = this.delegateMapEditor.myCanvas.mouse.getTileCell().x;
+            let y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
             if (this.prevCell.x != x || this.prevCell.y != y) {
                 this.delegateMapEditor.myCanvas.gameAssets.cells.clearHighlightedCells();
                 for (let cellY = 0; Math.abs(cellY) < Math.abs(y - this.p0.y); cellY += Math.sign(y - this.p0.y)) {
@@ -211,8 +211,8 @@ export class BoxTool implements MapEdTool {
     }
     mouseDownListener(ev) {
         this.mousedown = true;
-        let x = this.delegateMapEditor.myCanvas.mouse.getCell().x;
-        let y = this.delegateMapEditor.myCanvas.mouse.getCell().y;
+        let x = this.delegateMapEditor.myCanvas.mouse.getTileCell().x;
+        let y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
         this.p0.x = x;
         this.p0.y = y;
         this.prevCell.x = x;
@@ -250,13 +250,13 @@ export class BucketTool implements MapEdTool {
     }
     mouseClickListener(ev) {
         this.floodHeight = this.delegateMapEditor.myMap.getCellStackingHeight(
-            this.delegateMapEditor.myCanvas.mouse.getCell().x,
-            this.delegateMapEditor.myCanvas.mouse.getCell().y,
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
         );
         if (this.floodHeight || this.floodHeight === 0) {
             this.flood(
-                this.delegateMapEditor.myCanvas.mouse.getCell().x,
-                this.delegateMapEditor.myCanvas.mouse.getCell().y,
+                this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+                this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
             )
             this.delegateMapEditor.myCanvas.drawing.paint();
         }
@@ -305,8 +305,8 @@ export class EraserTool implements MapEdTool {
     }
     mouseClickListener(ev) {
         this.delegateMapEditor.myMap.pop(
-            this.delegateMapEditor.myCanvas.mouse.getCell().x,
-            this.delegateMapEditor.myCanvas.mouse.getCell().y
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
+            this.delegateMapEditor.myCanvas.mouse.getTileCell().y
         );
         this.delegateMapEditor.myCanvas.drawing.paint();
     }
