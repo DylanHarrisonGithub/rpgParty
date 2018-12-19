@@ -26,6 +26,34 @@
           </div>
         </div>
 
+        <!--Auto Split-->
+        <div class="card">
+          <div class="card-header btn" id="headingAS" data-toggle="collapse" data-target="#collapseAS" aria-expanded="false" aria-controls="collapseAS">
+              <span style="color: rgb(37, 137, 204);">Auto Split</span>
+          </div>      
+          <div id="collapseAS" class="collapse show" aria-labelledby="headingAS">
+            <ul class="list-group">
+              <li class="list-group-item">
+                cellWidth
+                <span class="float-right">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' [(ngModel)]="autoSplit.cellWidth" name="cellWidth">
+                </span>
+              </li>
+              <li class="list-group-item">
+                cellDepth
+                <span class="float-right">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' [(ngModel)]="autoSplit.cellDepth" name="cellDepth">
+                </span>
+              </li>
+              <li class="list-group-item text-center">
+                <div  class="float-none btn-group" role="group">
+                  <button type="button" class="btn btn-primary" (click)="buttons.autoSplit.split()">Split</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <!--Tile Set-->
         <div class="card">
           <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -38,6 +66,7 @@
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.new()">New</button>
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.load()">Load</button>
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Save</button>
+                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Join</button>
                 </div>
               </li>
               <li class="list-group-item" *ngFor="let item of tileset?.properties | keyvalue; trackBy:templating.trackByFn">
@@ -98,7 +127,13 @@
               </li>
               <li class="list-group-item" *ngFor="let preview of tilePreviews; let i = index">
                 <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ preview.src }}" (click)="buttons.tile.select(tileset._isoTiles[i])">
-                <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.tile.remove(tileset._isoTiles[i])">Remove</button></span>
+                <span class="float-right">
+                  <button type="button" class="btn btn-primary btn-md" (click)="buttons.tile.remove(tileset._isoTiles[i])">Remove</button>
+                  <div class="btn-group-vertical">
+                    <button  type="button" class="btn btn-primary btn-sm" (click)="buttons.tile.moveUp(tileset._isoTiles[i])">^</button>
+                    <button  type="button" class="btn btn-primary btn-sm" (click)="buttons.tile.moveDown(tileset._isoTiles[i])">v</button>
+                  </div>
+                </span>
               </li>
             </ul>
           </div>
@@ -152,6 +187,34 @@
           </ul>
         </div>
       </div>
+
+        <!--Auto Split-->
+        <div class="card">
+          <div class="card-header btn" id="headingAS" data-toggle="collapse" data-target="#collapseAS" aria-expanded="false" aria-controls="collapseAS">
+              <span style="color: rgb(37, 137, 204);">Auto Split</span>
+          </div>      
+          <div id="collapseAS" class="collapse show" aria-labelledby="headingAS">
+            <ul class="list-group">
+              <li class="list-group-item">
+                cellWidth
+                <span class="float-right">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' [(ngModel)]="autoSplit.cellWidth" name="cellWidth">
+                </span>
+              </li>
+              <li class="list-group-item">
+                cellDepth
+                <span class="float-right">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' [(ngModel)]="autoSplit.cellDepth" name="cellDepth">
+                </span>
+              </li>
+              <li class="list-group-item text-center">
+                <div  class="float-none btn-group" role="group">
+                  <button type="button" class="btn btn-primary" (click)="buttons.autoSplit.split()">Split</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
 
       <!--Tile Set-->
       <div class="card">

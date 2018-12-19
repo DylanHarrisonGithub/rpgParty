@@ -15,6 +15,8 @@ export class MapeditorComponent implements OnInit {
   myCanvas: IsoCanvas;
   myMap: GameMap;
   myTileset: IsoTileSet;
+  tilePreviews: HTMLImageElement[] = [];
+  tilePreviewSize = {'width': 50, 'height': 50};
   selectedTile: IsoTile;
   selectedTool: MapEdTool;
   mapedTools: MapEdTool[];
@@ -110,8 +112,37 @@ export class MapeditorComponent implements OnInit {
       this.myCanvas.drawing.paint();
     });
 
+  }
 
+  renderTilePreviews() {
+    if (this.myTileset) {
+      this.tilePreviews = [];
+      for (let tile of this.myTileset._isoTiles) {
 
+        let pCanvas = document.createElement('canvas');
+        pCanvas.width = this.tilePreviewSize.width;
+        pCanvas.height = this.tilePreviewSize.height;
+        let ctx = pCanvas.getContext('2d');
+
+        if (tile.image) {
+          ctx.drawImage(
+            tile.image,
+            tile.properties.subImageX, tile.properties.subImageY,
+            tile.properties.subImageWidth, tile.properties.subImageHeight,
+            0,0,
+            pCanvas.width, pCanvas.height
+          );
+        } else {
+          ctx.font = '45px Arial';
+          ctx.fillStyle = 'red';
+          ctx.textAlign = 'center';
+          ctx.fillText('!', 25, 40);
+        }
+        let pimg = new Image();
+        pimg.src = pCanvas.toDataURL();
+        this.tilePreviews.push(pimg);
+      }
+    }
   }
 
   templating = {

@@ -20,7 +20,24 @@ export class TileseteditorComponent implements OnInit {
       'x': 0,
       'y': 0
     }
-  }
+  };
+  autoSplit = {
+    'cellWidth': 1,
+    'cellDepth': 1,
+    isoToCanvas: (x, y) => {
+      if (this.selectedTile && this.selectedTile.image) {
+        let w = this.selectedTile.properties.subImageWidth;
+        let h = this.selectedTile.properties.subImageHeight;
+        let cellHeight = (2*(h/w) - 1) * ((this.autoSplit.cellWidth + this.autoSplit.cellDepth) / 2);
+        return {
+          'x': ((x-y+this.autoSplit.cellDepth)/(this.autoSplit.cellWidth+this.autoSplit.cellDepth))*w,
+          'y': ((x+y+2* cellHeight)/(this.autoSplit.cellWidth+this.autoSplit.cellDepth+2*cellHeight))*h
+        }
+      } else {
+        return undefined;
+      }
+    }
+  };
   tileset: IsoTileSet = null;
   selectedTile: IsoTile;
   tilePreviews: HTMLImageElement[] = [];
@@ -229,6 +246,38 @@ export class TileseteditorComponent implements OnInit {
         this.tilePreviews.splice(index, 1);
         this.tileset._isoTiles.splice(index, 1);
       },
+      moveUp: (tile: IsoTile) => {
+        this.tileset.tiles.moveUp(tile);
+        this.render.tilePreviews();
+      },
+      moveDown: (tile: IsoTile) => {
+        this.tileset.tiles.moveDown(tile);
+        this.render.tilePreviews();
+      }
+    },
+    autoSplit: {
+      split: () => {
+        if (this.selectedTile && this.selectedTile.image) {
+          if (this.autoSplit.cellWidth > 0 && this.autoSplit.cellDepth > 0) {
+
+            let width = this.autoSplit.isoToCanvas(1,0).x - this.autoSplit.isoToCanvas(0,1).x;
+            let height = this.autoSplit.isoToCanvas(1,1).y;
+            for (let y = 0; y < this.autoSplit.cellDepth; y++) {
+              for (let x = 0; x < this.autoSplit.cellWidth; x++) {
+                this.tileset.tiles.insertOne(new IsoTile(this.selectedTile.image, {
+                  subImageX: this.selectedTile.properties.subImageX + this.autoSplit.isoToCanvas(x-1, y).x,
+                  subImageY: this.selectedTile.properties.subImageY + this.autoSplit.isoToCanvas(x+1,y+1).y - height,
+                  subImageWidth: width,
+                  subImageHeight: height
+                }));
+              }
+            }
+            this.render.tilePreviews();
+
+          }
+        }
+      },
+
     }
   };
 

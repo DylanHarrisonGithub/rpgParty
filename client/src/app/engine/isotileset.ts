@@ -39,6 +39,26 @@ export class IsoTileSet {
             for (let i = 0; i < this._isoTiles.length; i++) {
                 f(this._isoTiles[i], i);
             }
+        },
+        moveUp: (tile: IsoTile) => {
+            if (this.tiles.contains(tile)) {
+                let index = this.tiles.indexOf(tile);
+                if (index > 0) {
+                    let temp = this._isoTiles[index-1];
+                    this._isoTiles[index-1] = this._isoTiles[index];
+                    this._isoTiles[index] = temp;
+                }
+            }
+        },
+        moveDown: (tile: IsoTile) => {
+            if (this.tiles.contains(tile)) {
+                let index = this.tiles.indexOf(tile);
+                if (index < (this.tiles.getLength()-1)) {
+                    let temp = this._isoTiles[index+1];
+                    this._isoTiles[index+1] = this._isoTiles[index];
+                    this._isoTiles[index] = temp;
+                }
+            }
         }
     };
     images = {
