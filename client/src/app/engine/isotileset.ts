@@ -63,10 +63,32 @@ export class IsoTileSet {
     };
     images = {
         remove: (image: HTMLImageElement) => {
-            this._images.splice(this._images.indexOf(image), 1);
-            this._isoTiles.forEach(tile => {
-                if (tile.image == image) tile.image = null;
-            });
+            if (this.images.contains(image)) {
+                let removed = this._images.splice(this._images.indexOf(image), 1)[0];
+                this._isoTiles.forEach(tile => {
+                    if (tile.image == image) tile.image = null;
+                });
+                return removed;
+            } else {
+                return null;
+            }
+        },
+        contains: (image: HTMLImageElement) => {
+            return this._images.indexOf(image) > -1;
+        }
+    }
+
+    union(tileSet: IsoTileSet) {
+        for (let image of tileSet._images) {
+            if (!this.images.contains(image)) {
+                this._images.push(image);
+            }
+        }
+        for (let tile of tileSet._isoTiles) {
+            this._isoTiles.push(new IsoTile(
+                this._images[this._images.indexOf(tile.image)],
+                JSON.parse(JSON.stringify(tile.properties))         // clone json obj hack
+            ));
         }
     }
 

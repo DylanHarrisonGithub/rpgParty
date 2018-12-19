@@ -162,7 +162,14 @@ export class TileseteditorComponent implements OnInit {
           this.render.tilePreviews();
         });
       },
-      save: () => { this.tileset.dumbSave(); }
+      save: () => { this.tileset.dumbSave(); },
+      join: () => {
+        let jSet = new IsoTileSet();
+        jSet.dumbLoad(() => {
+          this.tileset.union(jSet);
+          this.render.tilePreviews();
+        });
+      }
     },
     image: {
       import: () => { this.tileset.loadImageFromClient(()=>{}); },

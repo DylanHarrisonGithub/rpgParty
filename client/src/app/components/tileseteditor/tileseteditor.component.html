@@ -66,7 +66,7 @@
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.new()">New</button>
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.load()">Load</button>
                   <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Save</button>
-                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.save()">Join</button>
+                  <button type="button" class="btn btn-primary" (click)="buttons.tileSet.join()">Join</button>
                 </div>
               </li>
               <li class="list-group-item" *ngFor="let item of tileset?.properties | keyvalue; trackBy:templating.trackByFn">
