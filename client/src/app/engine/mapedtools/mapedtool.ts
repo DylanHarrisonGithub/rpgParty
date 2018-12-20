@@ -93,11 +93,20 @@ export class BrushTool implements MapEdTool {
             let q = Math.floor(index / 4);
             tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
         }
-        this.delegateMapEditor.myMap.push(
+        for (let y = 0; y < tile.properties.cellDepth; y++) {
+            for (let x = 0; x < tile.properties.cellWidth; x++) {
+                this.delegateMapEditor.myMap.push(
+                    this.delegateMapEditor.myCanvas.mouse.getTileCell().x + x,
+                    this.delegateMapEditor.myCanvas.mouse.getTileCell().y + y,
+                    tile.subTiles[x + y*tile.properties.cellWidth]
+                );
+            }
+        }
+/*         this.delegateMapEditor.myMap.push(
             this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
             this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
             tile
-        );
+        ); */
         this.delegateMapEditor.myCanvas.drawing.paint();
     }
     mouseUpListener(ev) {

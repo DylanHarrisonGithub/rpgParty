@@ -50,9 +50,16 @@ export class MapeditorComponent implements OnInit {
     tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
       this.myTileset = tset;
       
+        
+      let subtileset = new IsoTileSet();
+      for (let tile of tset._isoTiles) {
+          for (let subTile of tile.subTiles) {
+              subtileset._isoTiles.push(subTile);
+          }
+      }
       this.selectedTile = this.myTileset._isoTiles[0];
       this.tileTemplateLength = Math.floor(tset._isoTiles.length / 4) - 1;
-      this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
+      this.myMap = new GameMap(64, 64, subtileset); //GameMap.generateRandomMap(64, 64, 1, tset);
       this.myCanvas = new IsoCanvas(<HTMLDivElement>document.getElementById('isocanvas'), this.myMap);
 
       window.addEventListener('resize', (ev) => {
@@ -108,7 +115,7 @@ export class MapeditorComponent implements OnInit {
         });
       });
 
-      this.myCanvas.gameAssets.tiles.insertArray(tset._isoTiles);
+      this.myCanvas.gameAssets.tiles.insertArray(subtileset._isoTiles);
       this.myCanvas.drawing.paint();
     });
 

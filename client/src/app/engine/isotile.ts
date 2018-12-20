@@ -1,11 +1,10 @@
-// compile with 
-// tsc isotile --module amd
 export class IsoTile {
 
     public image: HTMLImageElement;
     public properties = {
         'cellWidth': 1,
         'cellBreadth': 1,
+        'cellDepth': 1,
         'cellHeight': 1,
         'subImageX': 0,
         'subImageY': 0,
@@ -21,12 +20,15 @@ export class IsoTile {
         'isWestUpToEastRamp': false,
         'isHidden': false, 
     }
+    public subTiles: IsoTile[];
+    public parent: IsoTile;
 
     constructor(img: HTMLImageElement, params: Object) {
 
         this.image = img;
         this.properties.subImageX = 0;
         this.properties.subImageY = 0;
+        this.subTiles = new Array<IsoTile>();
         if (img) {
             this.properties.subImageWidth = this.image.width;
             this.properties.subImageHeight = this.image.height;
@@ -42,39 +44,39 @@ export class IsoTile {
 
         // enforce cell height law
         this.calculateCellHeight();
+
+        // generate subtiles
+        if (this.properties.cellWidth == 1 && this.properties.cellDepth == 1) {
+            // terminate recursion
+            this.subTiles.push(this);
+        } else {
+            let newProperties =  JSON.parse(JSON.stringify(this.properties));   // clone json data
+            newProperties.cellWidth = 1;
+            newProperties.cellDepth = 1;
+            let width = this.isoToCanvas(1,0).x - this.isoToCanvas(0,1).x;
+            let height = this.isoToCanvas(1,1).y;
+            for (let y = 0; y < this.properties.cellDepth; y++) {
+                for (let x = 0; x < this.properties.cellWidth; x++) {
+                    newProperties.subImageX = this.properties.subImageX + this.isoToCanvas(x-1, y).x;
+                    newProperties.subImageY = this.properties.subImageY + this.isoToCanvas(x+1,y+1).y - height;
+                    newProperties.subImageWidth = width;
+                    newProperties.subImageHeight = height;
+                    this.subTiles.push(new IsoTile(this.image, newProperties));
+                    this.subTiles[this.subTiles.length-1].parent = this;
+                }
+            }
+        }
     }
 
     calculateCellHeight() {
-        let hwRatio = this.properties.subImageHeight / this.properties.subImageWidth;
-        this.properties.cellHeight = ((2*hwRatio-1)*this.properties.cellWidth + (2*hwRatio-1)*this.properties.cellBreadth) / 2;        
+        let w = this.properties.subImageWidth;
+        let h = this.properties.subImageHeight;
+        this.properties.cellHeight = (2*(h/w) - 1) * ((this.properties.cellWidth + this.properties.cellDepth) / 2);        
     }
-
-    //deprecated
-    static loadTileset(filenames: string[], onload: (tileset: IsoTile[]) => void) {
-
-        var images: HTMLImageElement[] = [];
-        var numImages = filenames.length;
-        var loadedCounter = 0;
-
-        for (let i = 0; i < filenames.length; i++) {
-
-            images.push(new Image());
-            images[images.length-1].onload = function() {
-
-                loadedCounter++;
-                if (loadedCounter == numImages) {
-
-                    var tileset: IsoTile[] = [];
-                    for (var img of images) {
-                        tileset.push(new IsoTile(img, null));
-                    }
-                    onload(tileset);
-                }
-            }
-
-        }
-        for (let i = 0; i < filenames.length; i++) {            
-            images[i].src = filenames[i];
+    isoToCanvas(x: number, y: number) {
+        return {
+            'x': ((x-y+this.properties.cellDepth)/(this.properties.cellWidth+this.properties.cellDepth))*this.properties.subImageWidth,
+            'y': ((x+y+2*this.properties.cellHeight)/(this.properties.cellWidth+this.properties.cellDepth+2*this.properties.cellHeight))*this.properties.subImageHeight
         }
     }
 
