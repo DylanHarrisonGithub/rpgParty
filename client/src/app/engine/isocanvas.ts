@@ -806,7 +806,9 @@ export class IsoCanvas {
 
                                         this._gameAssets.tileSets = [new IsoTileSet()];
                                         (<IsoTileSet>this._gameAssets.tileSets[0]).loadFromServer(mapDataJSON.tileset, () => {
-                                            this._gameAssets.tiles =  (<IsoTileSet>this._gameAssets.tileSets[0])._isoTiles; 
+                                            (<IsoTileSet>this._gameAssets.tileSets[0]).tiles.forEach((e,i) => {
+                                                this._gameAssets.tiles.push(e);
+                                            });
                                             this._gameAssets.map = mapDataJSON.map;
                                             this.drawing.paint();
                                         });

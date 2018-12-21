@@ -7,11 +7,11 @@ export class IsoTileSet {
         animationLoops: false,
         fps: 0.0
     };
-    private _images: HTMLImageElement[] = [];    //should be private
-    public _isoTiles: IsoTile[] = [];           //should be private
+    private _images: HTMLImageElement[] = [];
+    private _isoTiles: IsoTile[] = [];
+    private _subTiles: IsoTile[] = [];
 
-    constructor() {        
-    }
+    constructor() {}
 
     tiles = {
         getLength: () => { return this._isoTiles.length; },
@@ -22,13 +22,24 @@ export class IsoTileSet {
                 return null;
             }
         },
-        insertOne: (tile: IsoTile) => { this._isoTiles.push(tile); },
+        insertOne: (tile: IsoTile) => { 
+            this._isoTiles.push(tile);
+            for (let subtile of tile.subTiles) {
+                this._subTiles.push(subtile);
+            }
+        },
         insertArray: (tileArray: IsoTile[]) => { 
-            for (let tile of tileArray) this._isoTiles.push(tile); 
+            for (let tile of tileArray) this.tiles.insertOne(tile);
         },
         removeOne: (tile: IsoTile) => { 
             let index = this._isoTiles.indexOf(tile);
-            if (index > -1) this._isoTiles.splice(index, 1);
+            if (index > -1) {
+                this._isoTiles.splice(index, 1);
+                for (let subtile of tile.subTiles) {
+                    let subIndex = this._subTiles.indexOf(subtile);
+                    if (subIndex > -1) this._subTiles.splice(subIndex, 1);
+                }
+            }
         },
         removeArray: (tileArray: IsoTile[]) => {
             for (let tile of tileArray) this.tiles.removeOne(tile);
@@ -61,6 +72,18 @@ export class IsoTileSet {
             }
         }
     };
+    subTiles = {
+        contains: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile) > -1; },
+        indexOf: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile); },
+        get: (index: number) => {
+            return this._subTiles[index];
+        },
+        forEach: (f: (value: IsoTile, index: number) => any) => { 
+            for (let i = 0; i < this._subTiles.length; i++) {
+                f(this._subTiles[i], i);
+            }
+        }
+    }
     images = {
         remove: (image: HTMLImageElement) => {
             if (this.images.contains(image)) {
@@ -85,7 +108,7 @@ export class IsoTileSet {
             }
         }
         for (let tile of tileSet._isoTiles) {
-            this._isoTiles.push(new IsoTile(
+            this.tiles.insertOne(new IsoTile(
                 this._images[this._images.indexOf(tile.image)],
                 JSON.parse(JSON.stringify(tile.properties))         // clone json obj hack
             ));
@@ -220,7 +243,7 @@ export class IsoTileSet {
                         if (loadedCounter == numImages) {
                             this._isoTiles = [];
                             for (let tile of file.tiles) {
-                                this._isoTiles.push(new IsoTile(
+                                this.tiles.insertOne(new IsoTile(
                                     this._images[tile.index],
                                     tile.properties
                                 ));

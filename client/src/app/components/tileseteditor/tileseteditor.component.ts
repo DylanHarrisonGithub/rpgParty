@@ -66,8 +66,7 @@ export class TileseteditorComponent implements OnInit {
     tilePreviews: () => {
       if (this.tileset) {
         this.tilePreviews = [];
-        for (let tile of this.tileset._isoTiles) {
-  
+        this.tileset.tiles.forEach((tile, i) => {
           let pCanvas = document.createElement('canvas');
           pCanvas.width = this.tilePreviewSize.width;
           pCanvas.height = this.tilePreviewSize.height;
@@ -90,7 +89,7 @@ export class TileseteditorComponent implements OnInit {
           let pimg = new Image();
           pimg.src = pCanvas.toDataURL();
           this.tilePreviews.push(pimg);
-        }
+        });
       }
     },
     selectedTile: () => {
@@ -194,7 +193,7 @@ export class TileseteditorComponent implements OnInit {
     },
     tile: {
       new: () => {
-        this.tileset._isoTiles.push(new IsoTile(null, {}));
+        this.tileset.tiles.insertOne(new IsoTile(null, {}));
         this.render.tilePreviews();
       },
       animate: () => { 
@@ -211,21 +210,21 @@ export class TileseteditorComponent implements OnInit {
             let tileNum = 0;
             let timeoutFunction = () => {
               setTimeout(() => {
-                if (tileNum == this.tileset._isoTiles.length) {
-                  if (!this.tileset.properties.animationLoops || (this.tileset._isoTiles.length == 0)) {                    
+                if (tileNum == this.tileset.tiles.getLength()) {
+                  if (!this.tileset.properties.animationLoops || (this.tileset.tiles.getLength() == 0)) {                    
                     let btns = document.getElementsByClassName('rp-animate-button');
                     for (let btn of <any>btns) { btn.innerHTML = "Animate" }
                     this.isAnimating = false;
                   } else {
                     tileNum = 0;
-                    this.buttons.tile.select(this.tileset._isoTiles[tileNum]);
+                    this.buttons.tile.select(this.tileset.tiles.get(tileNum));
                     tileNum++;
                     if (this.isAnimating && (this.tileset.properties.fps > 0)) {
                       timeoutFunction();
                     }
                   }
                 } else {
-                  this.buttons.tile.select(this.tileset._isoTiles[tileNum]);
+                  this.buttons.tile.select(this.tileset.tiles.get(tileNum));
                   tileNum++;
                   if (this.isAnimating && (this.tileset.properties.fps > 0)) {
                     timeoutFunction();
@@ -249,9 +248,9 @@ export class TileseteditorComponent implements OnInit {
         this.render.selectedTile();
       },
       remove: (tile: IsoTile) => {
-        let index = this.tileset._isoTiles.indexOf(tile);
+        let index = this.tileset.tiles.indexOf(tile);
         this.tilePreviews.splice(index, 1);
-        this.tileset._isoTiles.splice(index, 1);
+        this.tileset.tiles.removeOne(tile);
       },
       moveUp: (tile: IsoTile) => {
         this.tileset.tiles.moveUp(tile);

@@ -55,7 +55,7 @@ export class GameMap {
     }
 
     getTile(x: number, y: number, z: number) {
-        return this._tileset._isoTiles[this._map[y][x][z]];
+        return this._tileset.tiles.get(this._map[y][x][z]);
     }
     getTileIndex(x: number, y: number, z: number) {
         return this._map[y][x][z];
@@ -68,14 +68,44 @@ export class GameMap {
         }
     }
 
+    tileFits(x: number, y: number, tile: IsoTile) {
+        if (x > -1 && y > -1 
+        && x < this.getSize.x() - tile.properties.cellWidth
+        && y < this.getSize.y() - tile.properties.cellDepth) {
+            let canFit = true;
+            let cellHeight = this._heightmap[y][x].stackingHeight;
+            for (let i = 0; i < tile.properties.cellDepth; i++) {
+                for (let j = 0; j < tile.properties.cellWidth; j++) {
+                    if (cellHeight != this._heightmap[y+i][x+j].stackingHeight) {
+                        canFit = false;
+                    }
+                }
+            }
+            return canFit;
+        } else {
+            return false;
+        }
+    }
     push(x: number, y: number, tile: IsoTile) {
-        let index = this._tileset._isoTiles.indexOf(tile);
+        let index = this._tileset.tiles.indexOf(tile);
         if (index > -1) {
-            if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
-                this._map[y][x].push(index);
-                this._heightmap[y][x].stackingHeight += tile.properties.stackingHeight;
-                this._heightmap[y][x].tileHeight++;
-                this._heightmap[y][x].topTile = tile;
+            if (this.tileFits(x,y,tile)) {
+                for (let i = 0; i < tile.properties.cellDepth; i++) {
+                    for (let j = 0; j < tile.properties.cellWidth; j++) {
+                        let t = tile.subTiles[j + i*tile.properties.cellWidth];
+                        let subIndex = this._tileset.subTiles.indexOf(t);
+                        if (subIndex > -1) {
+                            this._map[y+i][x+j].push(subIndex);
+                            this._heightmap[y+i][x+j].stackingHeight += t.properties.stackingHeight;
+                            this._heightmap[y+i][x+j].tileHeight++;
+                            this._heightmap[y+i][x+j].topTile = t;
+                        } else {
+                            console.log('cantfind');
+                        }
+                    }
+                }
+            } else {
+                console.log('cant fit');
             }
         }
     }
@@ -83,12 +113,12 @@ export class GameMap {
         if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
             let index = this._map[y][x].pop();
             if (index) {
-                this._heightmap[y][x].stackingHeight -= this._tileset._isoTiles[index].properties.stackingHeight;
+                this._heightmap[y][x].stackingHeight -= this._tileset.subTiles.get(index).properties.stackingHeight;
                 this._heightmap[y][x].tileHeight--;
                 if (this._heightmap[y][x].tileHeight > 0) {
-                    this._heightmap[y][x].topTile = this._tileset._isoTiles[
+                    this._heightmap[y][x].topTile = this._tileset.subTiles.get(
                         this._map[y][x][this._heightmap[y][x]._tileHeight]
-                    ];
+                    );
                 } else {
                     this._heightmap[y][x].topTile = null;
                 }
@@ -104,11 +134,11 @@ export class GameMap {
                 let stack = this.getCell(x, y);
                 let stackingHeight = 0;
                 for (var tileIndex of stack) {
-                    stackingHeight += this._tileset._isoTiles[tileIndex].properties.stackingHeight;
+                    stackingHeight += this._tileset.tiles.get(tileIndex).properties.stackingHeight;
                 }
                 this._heightmap[y][x].stackingHeight = stackingHeight;
                 this._heightmap[y][x].tileHeight = stack.length;
-                this._heightmap[y][x].topTile = this._tileset._isoTiles[tileIndex];
+                this._heightmap[y][x].topTile = this._tileset.tiles.get(tileIndex);
             }
         }
     }
@@ -120,7 +150,7 @@ export class GameMap {
             for (let x = 0; x < xSize; x++) {
                 height = 1 + Math.floor(Math.random()*maxHeight);
                 for (let h = 0; h < height; h++) {
-                    let tile = tileset._isoTiles[Math.floor(Math.random()*tileset._isoTiles.length)];
+                    let tile = tileset.tiles.get(Math.floor(Math.random()*tileset.tiles.getLength()));
                     map.push(x, y, tile);
                     if (tile.properties.canStack == false) {
                         break;

@@ -4,6 +4,7 @@ import { GameMap } from '../../engine/gamemap';
 import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
 import { MapEdTool, HandTool, BrushTool, LineTool, BoxTool, BucketTool, EraserTool } from '../../engine/mapedtools/mapedtool';
+import { TileseteditorComponent } from '../tileseteditor/tileseteditor.component';
 
 @Component({
   selector: 'app-mapeditor',
@@ -50,17 +51,18 @@ export class MapeditorComponent implements OnInit {
     tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
       this.myTileset = tset;
       
-        
       let subtileset = new IsoTileSet();
-      for (let tile of tset._isoTiles) {
-          for (let subTile of tile.subTiles) {
-              subtileset._isoTiles.push(subTile);
-          }
-      }
-      this.selectedTile = this.myTileset._isoTiles[0];
-      this.tileTemplateLength = Math.floor(tset._isoTiles.length / 4) - 1;
-      this.myMap = new GameMap(64, 64, subtileset); //GameMap.generateRandomMap(64, 64, 1, tset);
+      tset.tiles.forEach((e,i) => {
+        for (let subTile of e.subTiles) {
+          subtileset.tiles.insertOne(subTile);
+        }
+      });
+      this.selectedTile = this.myTileset.tiles.get(0);
+      this.tileTemplateLength = Math.floor(tset.tiles.getLength() / 4) - 1;
+      this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
       this.myCanvas = new IsoCanvas(<HTMLDivElement>document.getElementById('isocanvas'), this.myMap);
+      
+      subtileset.tiles.forEach((e,i)=> {this.myCanvas.gameAssets.tiles.insertOne(e)});
 
       window.addEventListener('resize', (ev) => {
       
@@ -90,12 +92,12 @@ export class MapeditorComponent implements OnInit {
       let mapedtoolicons = new IsoTileSet();
       mapedtoolicons.loadFromServer('http://localhost:3000/assets/tilesets/mapedtools.json', () => {
         this.mapedTools = new Array<MapEdTool>();
-        this.mapedTools.push(new HandTool(this.myCanvas, mapedtoolicons._isoTiles[0]));
-        this.mapedTools.push(new BrushTool(this, mapedtoolicons._isoTiles[1]));
-        this.mapedTools.push(new LineTool(this, mapedtoolicons._isoTiles[2]));
-        this.mapedTools.push(new BoxTool(this, mapedtoolicons._isoTiles[3]));
-        this.mapedTools.push(new BucketTool(this, mapedtoolicons._isoTiles[4]));
-        this.mapedTools.push(new EraserTool(this, mapedtoolicons._isoTiles[5]));
+        this.mapedTools.push(new HandTool(this.myCanvas, mapedtoolicons.tiles.get(0)));
+        this.mapedTools.push(new BrushTool(this, mapedtoolicons.tiles.get(1)));
+        this.mapedTools.push(new LineTool(this, mapedtoolicons.tiles.get(2)));
+        this.mapedTools.push(new BoxTool(this, mapedtoolicons.tiles.get(3)));
+        this.mapedTools.push(new BucketTool(this, mapedtoolicons.tiles.get(4)));
+        this.mapedTools.push(new EraserTool(this, mapedtoolicons.tiles.get(5)));
         this.buttons.tools.select(this.mapedTools[0]);
         let ican = document.getElementById('isocanvas');
         ican.addEventListener('click', (ev) => {
@@ -115,7 +117,6 @@ export class MapeditorComponent implements OnInit {
         });
       });
 
-      this.myCanvas.gameAssets.tiles.insertArray(subtileset._isoTiles);
       this.myCanvas.drawing.paint();
     });
 
@@ -124,8 +125,7 @@ export class MapeditorComponent implements OnInit {
   renderTilePreviews() {
     if (this.myTileset) {
       this.tilePreviews = [];
-      for (let tile of this.myTileset._isoTiles) {
-
+      this.myTileset.tiles.forEach((tile,i) => {
         let pCanvas = document.createElement('canvas');
         pCanvas.width = this.tilePreviewSize.width;
         pCanvas.height = this.tilePreviewSize.height;
@@ -148,7 +148,7 @@ export class MapeditorComponent implements OnInit {
         let pimg = new Image();
         pimg.src = pCanvas.toDataURL();
         this.tilePreviews.push(pimg);
-      }
+      });
     }
   }
 

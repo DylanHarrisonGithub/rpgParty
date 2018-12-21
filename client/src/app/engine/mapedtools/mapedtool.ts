@@ -63,9 +63,9 @@ export class BrushTool implements MapEdTool {
                 
                 let tile = this.delegateMapEditor.selectedTile;
                 if (!this.properties.exactTile) {
-                    let index = this.delegateMapEditor.myTileset._isoTiles.indexOf(tile);
+                    let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
                     let q = Math.floor(index / 4);
-                    tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
+                    tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
                 }
                 this.delegateMapEditor.myMap.push(
                     this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
@@ -89,11 +89,11 @@ export class BrushTool implements MapEdTool {
 
         let tile = this.delegateMapEditor.selectedTile;
         if (!this.properties.exactTile) {
-            let index = this.delegateMapEditor.myTileset._isoTiles.indexOf(tile);
+            let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
             let q = Math.floor(index / 4);
-            tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
+            tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
         }
-        for (let y = 0; y < tile.properties.cellDepth; y++) {
+/*         for (let y = 0; y < tile.properties.cellDepth; y++) {
             for (let x = 0; x < tile.properties.cellWidth; x++) {
                 this.delegateMapEditor.myMap.push(
                     this.delegateMapEditor.myCanvas.mouse.getTileCell().x + x,
@@ -101,12 +101,12 @@ export class BrushTool implements MapEdTool {
                     tile.subTiles[x + y*tile.properties.cellWidth]
                 );
             }
-        }
-/*         this.delegateMapEditor.myMap.push(
+        } */
+        this.delegateMapEditor.myMap.push(
             this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
             this.delegateMapEditor.myCanvas.mouse.getTileCell().y,
             tile
-        ); */
+        ); 
         this.delegateMapEditor.myCanvas.drawing.paint();
     }
     mouseUpListener(ev) {
@@ -173,9 +173,9 @@ export class LineTool implements MapEdTool {
         this.delegateMapEditor.myCanvas.gameAssets.cells.forEach((cell: {'x': number, 'y': number}) => {
             let tile = this.delegateMapEditor.selectedTile;
             if (!this.properties.exactTile) {
-                let index = this.delegateMapEditor.myTileset._isoTiles.indexOf(tile);
+                let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
                 let q = Math.floor(index / 4);
-                tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
+                tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
             }
             this.delegateMapEditor.myMap.push(cell.x, cell.y, tile);
         });
@@ -234,9 +234,9 @@ export class BoxTool implements MapEdTool {
         this.delegateMapEditor.myCanvas.gameAssets.cells.forEach((cell: {'x': number, 'y': number}) => {
             let tile = this.delegateMapEditor.selectedTile;
             if (!this.properties.exactTile) {
-                let index = this.delegateMapEditor.myTileset._isoTiles.indexOf(tile);
+                let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
                 let q = Math.floor(index / 4);
-                tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
+                tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
             }
             this.delegateMapEditor.myMap.push(cell.x, cell.y, tile);
         });
@@ -284,9 +284,9 @@ export class BucketTool implements MapEdTool {
             
             let tile = this.delegateMapEditor.selectedTile;
             if (!this.properties.exactTile) {
-                let index = this.delegateMapEditor.myTileset._isoTiles.indexOf(tile);
+                let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
                 let q = Math.floor(index / 4);
-                tile = this.delegateMapEditor.myTileset._isoTiles[4*q + Math.floor(Math.random()*4)];
+                tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
             }
             this.delegateMapEditor.myMap.push(
                 x, y,
