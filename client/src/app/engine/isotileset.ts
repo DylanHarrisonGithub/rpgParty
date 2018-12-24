@@ -75,7 +75,7 @@ export class IsoTileSet {
     subTiles = {
         contains: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile) > -1; },
         indexOf: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile); },
-        get: (index: number) => {
+        get: (index: number): IsoTile => {
             return this._subTiles[index];
         },
         forEach: (f: (value: IsoTile, index: number) => any) => { 

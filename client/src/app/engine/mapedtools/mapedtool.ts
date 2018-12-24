@@ -27,9 +27,7 @@ export class HandTool implements MapEdTool {
         this.isoCanvas.eventListeners.defaultMouseClickListener(ev);
         this.isoCanvas.drawing.paint();
     }
-    mouseMoveListener(ev) {
-        //this.isoCanvas.eventListeners.defaultMouseMoveListener(ev);
-    }
+    mouseMoveListener(ev) {}
     mouseWheelListener(ev) {
         this.isoCanvas.eventListeners.defaultMouseWheelListener(ev);
         this.isoCanvas.drawing.paint();
@@ -88,20 +86,17 @@ export class BrushTool implements MapEdTool {
         this.prevCell.y = this.delegateMapEditor.myCanvas.mouse.getTileCell().y;
 
         let tile = this.delegateMapEditor.selectedTile;
+        let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
+        let q = Math.floor(index / 4);
+        let r = index % 4;
+        r = (r + (4 - this.delegateMapEditor.myCanvas.position.getRotation())) % 4;
+        
         if (!this.properties.exactTile) {
-            let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
-            let q = Math.floor(index / 4);
-            tile = this.delegateMapEditor.myTileset.tiles.get(4*q + Math.floor(Math.random()*4));
+            q = Math.floor(index / 4);
+            r = Math.floor(Math.random()*4);
         }
-/*         for (let y = 0; y < tile.properties.cellDepth; y++) {
-            for (let x = 0; x < tile.properties.cellWidth; x++) {
-                this.delegateMapEditor.myMap.push(
-                    this.delegateMapEditor.myCanvas.mouse.getTileCell().x + x,
-                    this.delegateMapEditor.myCanvas.mouse.getTileCell().y + y,
-                    tile.subTiles[x + y*tile.properties.cellWidth]
-                );
-            }
-        } */
+        index = 4*q + r;
+        tile = this.delegateMapEditor.myTileset.tiles.get(index);
         this.delegateMapEditor.myMap.push(
             this.delegateMapEditor.myCanvas.mouse.getTileCell().x,
             this.delegateMapEditor.myCanvas.mouse.getTileCell().y,

@@ -28,32 +28,16 @@ export class IsoCanvas {
     };
     private _gameAssets = { //should be private
         'map': null,          // should be its own object
-        'tiles': [],
+        'tileset': null,
         'tileSets': [],
         'hightlightedCells': []
     };
     public gameAssets = {
         getMap: () => { return this._gameAssets.map; },
-        tiles: {
-            insertOne: (tile: IsoTile) => { this._gameAssets.tiles.push(tile); },
-            insertArray: (tileArray: IsoTile[]) => { 
-                for (let tile of tileArray) { 
-                    this._gameAssets.tiles.push(tile); 
-                }
-            },
-            removeOne: (tile: IsoTile) => { 
-                let index = this._gameAssets.tiles.indexOf(tile);
-                if (index > -1) {
-                    this._gameAssets.tiles.splice(index, 1);
-                }
-            },
-            removeArray: (tileArray: IsoTile[]) => {
-                for (let tile of tileArray) {
-                    this.gameAssets.tiles.removeOne(tile);
-                }
-            },
-            contains: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile) > -1) },
-            indexOf: (tile: IsoTile) => { return (this._gameAssets.tiles.indexOf(tile)) }
+        tileset: {
+            set: (tset: IsoTileSet) => {
+                this._gameAssets.tileset = tset;
+            }
         },
         cells: {
             highlightCell: (x: number, y: number) => {
@@ -561,13 +545,23 @@ export class IsoCanvas {
                         let cell = this._gameAssets.map.getCell(u.x, u.y);
                         for (var level = 0; level < cell.length; level++) {
                             // todo: detect if tile is visible or obscured to speed up drawing
-                            let tileQ = Math.floor(cell[level] / 4);
-                            let tileR = (this._position.rotation + cell[level]) % 4;
+
+                            let subTile = (<IsoTileSet>this._gameAssets.tileset).subTiles.get(cell[level]);
+                            let parent = subTile.parent;
+                            let index = (<IsoTileSet>this._gameAssets.tileset).tiles.indexOf(parent);
+                            let q = Math.floor(index / 4);
+                            let r = ((index % 4) + this._position.rotation) % 4;
+                            let rotatedParent = (<IsoTileSet>this._gameAssets.tileset).tiles.get(4*q + r);
+                            let rotatedSubTile = rotatedParent.getSubtile(
+                                subTile.subCoord.x,
+                                subTile.subCoord.y,
+                                this._position.rotation
+                            );
                             this.drawing.drawIsoTile({
                                 'x': u.x + this._relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
                                 'y': u.y + this._relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
-                            }, this._gameAssets.tiles[4*tileQ + tileR], ctx);
-                            stackingHeight += this._gameAssets.tiles[cell[level]].properties.stackingHeight;
+                            }, rotatedSubTile, ctx);
+                            stackingHeight += rotatedSubTile.properties.stackingHeight;
                         }                   
                     } 
                     // move cursor left
@@ -755,9 +749,9 @@ export class IsoCanvas {
     // map methods
     saveMap(filename: string) {
         let tilesrc = [];
-        for (let tile of this._gameAssets.tiles) {
-            tilesrc.push(tile.image.src);
-        }
+        //for (let tile of this._gameAssets.tiles) {
+        //    tilesrc.push(tile.image.src);
+        //}
         let mapDimensions = {'x': 0, 'y': 0};
         if (this._gameAssets.map) {
             mapDimensions.y = this._gameAssets.map.length;
@@ -807,7 +801,7 @@ export class IsoCanvas {
                                         this._gameAssets.tileSets = [new IsoTileSet()];
                                         (<IsoTileSet>this._gameAssets.tileSets[0]).loadFromServer(mapDataJSON.tileset, () => {
                                             (<IsoTileSet>this._gameAssets.tileSets[0]).tiles.forEach((e,i) => {
-                                                this._gameAssets.tiles.push(e);
+                                                //this._gameAssets.tiles.push(e);
                                             });
                                             this._gameAssets.map = mapDataJSON.map;
                                             this.drawing.paint();

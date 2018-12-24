@@ -50,19 +50,19 @@ export class MapeditorComponent implements OnInit {
     let tset = new IsoTileSet();
     tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
       this.myTileset = tset;
-      
+      /* 
       let subtileset = new IsoTileSet();
       tset.tiles.forEach((e,i) => {
         for (let subTile of e.subTiles) {
           subtileset.tiles.insertOne(subTile);
         }
-      });
+      }); */
       this.selectedTile = this.myTileset.tiles.get(0);
       this.tileTemplateLength = Math.floor(tset.tiles.getLength() / 4) - 1;
       this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
       this.myCanvas = new IsoCanvas(<HTMLDivElement>document.getElementById('isocanvas'), this.myMap);
       
-      subtileset.tiles.forEach((e,i)=> {this.myCanvas.gameAssets.tiles.insertOne(e)});
+      this.myCanvas.gameAssets.tileset.set(tset);
 
       window.addEventListener('resize', (ev) => {
       

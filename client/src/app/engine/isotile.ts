@@ -22,6 +22,43 @@ export class IsoTile {
     }
     public subTiles: IsoTile[];
     public parent: IsoTile;
+    public subCoord;
+
+    public getSubtile(x: number, y: number, r: number) {
+        r = r % 4;
+        x = x % this.properties.cellWidth;
+        y = y % this.properties.cellDepth;
+        let n = Math.max(this.properties.cellWidth, this.properties.cellDepth) - 1;
+        let X, Y;
+        switch(r) {
+            case 3:
+                X = n - y;
+                Y = x;
+                break;
+            case 2:
+                X = n - x;
+                Y = n - y;
+                break;
+            case 1:
+                X = y;
+                Y = n - x;
+                break;
+            default:
+                X = x;
+                Y = y;
+                break;
+        }
+        return this.subTiles[X + Y*this.properties.cellWidth];
+    }
+
+    public getRotated(r: number) {
+        if (this.parent && this.subCoord) {
+            return this.parent.getSubtile(this.subCoord.x, this.subCoord.y, r);
+        } else {
+            console.log('notile '  + this.parent, this.subCoord );
+            return null;
+        }
+    }
 
     constructor(img: HTMLImageElement, params: Object) {
 
@@ -49,6 +86,8 @@ export class IsoTile {
         if (this.properties.cellWidth == 1 && this.properties.cellDepth == 1) {
             // terminate recursion
             this.subTiles.push(this);
+            this.subTiles[this.subTiles.length-1].parent = this;
+            this.subTiles[this.subTiles.length-1].subCoord = {'x': 0, 'y': 0};
         } else {
             let newProperties =  JSON.parse(JSON.stringify(this.properties));   // clone json data
             newProperties.cellWidth = 1;
@@ -63,6 +102,7 @@ export class IsoTile {
                     newProperties.subImageHeight = height;
                     this.subTiles.push(new IsoTile(this.image, newProperties));
                     this.subTiles[this.subTiles.length-1].parent = this;
+                    this.subTiles[this.subTiles.length-1].subCoord = {'x': x, 'y': y};
                 }
             }
         }
