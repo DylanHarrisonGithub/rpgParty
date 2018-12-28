@@ -35,6 +35,7 @@ export class HandTool implements MapEdTool {
     mouseDownListener(ev) {}
     mouseUpListener(ev) {}
 }
+
 export class BrushTool implements MapEdTool {
     icon: IsoTile;
     properties = {
@@ -274,10 +275,11 @@ export class BucketTool implements MapEdTool {
     }
 
     flood(x: number, y: number) {
+        
+        let tile = this.delegateMapEditor.selectedTile;
         let height = this.delegateMapEditor.myMap.getCellTileHeight(x, y);
-        if (height == this.floodHeight) {
+        if (height == this.floodHeight && this.delegateMapEditor.myMap.tileFits(x,y,tile)) {
             
-            let tile = this.delegateMapEditor.selectedTile;
             if (!this.properties.exactTile) {
                 let index = this.delegateMapEditor.myTileset.tiles.indexOf(tile);
                 let q = Math.floor(index / 4);
@@ -287,10 +289,10 @@ export class BucketTool implements MapEdTool {
                 x, y,
                 tile
             );
-            this.flood(x+1,y);
-            this.flood(x,y+1); 
-            this.flood(x-1,y); 
-            this.flood(x,y-1);
+            this.flood(x+tile.properties.cellWidth,y);
+            this.flood(x,y+tile.properties.cellDepth); 
+            this.flood(x-tile.properties.cellWidth,y); 
+            this.flood(x,y-tile.properties.cellDepth);
         }
     }
     
