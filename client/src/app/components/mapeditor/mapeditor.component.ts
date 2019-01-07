@@ -48,7 +48,7 @@ export class MapeditorComponent implements OnInit {
     }
 
     let tset = new IsoTileSet();
-    tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
+    tset.loadFromServer('http://localhost:3000/assets/tilesets/newterrain.json', () => {
       this.myTileset = tset;
       /* 
       let subtileset = new IsoTileSet();

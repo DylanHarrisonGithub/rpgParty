@@ -510,7 +510,7 @@ export class IsoCanvas {
                                 'x': u.x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
                                 'y': u.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
                             }, rotatedSubTile, ctx);
-                            stackingHeight += rotatedSubTile.properties.stackingHeight;
+                            stackingHeight += rotatedSubTile.properties.cellHeight;
                         }                   
                     } 
                     // move cursor left

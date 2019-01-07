@@ -11,7 +11,6 @@ export class IsoTile {
         'subImageWidth': 0,
         'subImageHeight': 0,
         'canStack': true,
-        'stackingHeight': 1.0,
         'isClipped': true,
         'isRamp': false,
         'isSouthUpToNorthRamp': false,
