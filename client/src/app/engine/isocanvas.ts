@@ -404,40 +404,27 @@ export class IsoCanvas {
 
             if (tile && tile.image && !tile.properties.isHidden) {
 
-                // todo: optimize with algebra
-                // x coord of leftmost lowest tile
-                let cX = this.transformations.isoToCanvas({
-                    'x': isoCoord.x + 0.5 
-                        + (tile.properties.cellWidth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x,
-                    'y': isoCoord.y + 0.5
-                        + (tile.properties.cellWidth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y                    
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
+                let topLeft = this.transformations.isoToCanvas({
+                    'x': isoCoord.x + 0.5 +
+                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x) +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x,
+                    'y': isoCoord.y + 0.5 +
+                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y) +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
                 });
-                // y coord of uppermost tile
-                let cY = this.transformations.isoToCanvas({
-                    'x': isoCoord.x + 0.5
-                        + (tile.properties.cellWidth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x
-                        + (tile.properties.cellBreadth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][1].x
-                        + (tile.properties.cellHeight - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x,
-                    'y': isoCoord.y + 0.5
-                        + (tile.properties.cellWidth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y 
-                        + (tile.properties.cellBreadth - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][1].y
-                        + (tile.properties.cellHeight - 1)*this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y                    
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y
-                        + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
+
+                 let bottomRight = this.transformations.isoToCanvas({
+                    'x': isoCoord.x + 0.5 +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][7].x,
+                    'y': isoCoord.y + 0.5 +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][7].y
                 });
         
                 ctx.drawImage(
                     tile.image,
                     tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
-                    cX.x, cY.y,
-                    (0.5*tile.properties.cellWidth + 0.5*tile.properties.cellBreadth)*this._metrics.canvasTileSize.x,
-                    (0.25*tile.properties.cellWidth + 0.25*tile.properties.cellBreadth + 0.5*tile.properties.cellHeight)*this._metrics.canvasTileSize.x
+                    topLeft.x, topLeft.y,
+                    bottomRight.x - topLeft.x, bottomRight.y - topLeft.y
                 );
             }
         },
