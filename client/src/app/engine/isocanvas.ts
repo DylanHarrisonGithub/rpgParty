@@ -435,29 +435,32 @@ export class IsoCanvas {
             // |    |
             // d----c
             var a = this.transformations.canvasToIso({"x": 0, "y": 0});
-            var b = this.transformations.canvasToIso({'x': this._canvas.width, 'y': 0});
             var c = this.transformations.canvasToIso({"x": this._canvas.width, "y": this._canvas.height});
-            var d = this.transformations.canvasToIso({'x': 0, 'y': this._canvas.height});
 
-            // adjust so that corners form a perfect rectangle
-            a.x = Math.floor(a.x);
-            a.y = Math.floor(a.y);
-            b.x = Math.floor(b.x);
-            b.y = a.y - b.x + a.x;     
-            c.y = Math.floor(c.y);
-            c.x = c.y - b.y + b.x;
-            d.x = ((c.x+c.y)+(a.x-a.y))/2;  // ?prove always divisible?
-            d.y = ((c.x+c.y)-(a.x-a.y))/2;
-            /* 
-            a.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x;
-            a.y += this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y;
-            b.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][1].x;
-            b.y += this._metrics.relativeIsoRotationDirections[this._position.rotation][1].y;
-            c.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][7].x;
-            c.y += this._metrics.relativeIsoRotationDirections[this._position.rotation][7].y;
-            d.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][5].x;
-            d.y += this._metrics.relativeIsoRotationDirections[this._position.rotation][5].y;
- */
+            a.x = Math.floor(a.x) + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x;
+            a.y = Math.floor(a.y) + this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y;
+            c.x = Math.floor(c.x) + this._metrics.relativeIsoRotationDirections[this._position.rotation][7].x;
+            c.y = Math.floor(c.y) + this._metrics.relativeIsoRotationDirections[this._position.rotation][7].y;            
+            c.x += 2*this._metrics.relativeIsoRotationDirections[this._position.rotation][6].x;
+            c.y += 2*this._metrics.relativeIsoRotationDirections[this._position.rotation][6].y;
+
+            //sum must be even to form perfect rectangle in Z^2
+            if (Math.abs(a.x + a.y + c.x + c.y) % 2 == 1) {
+                c.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][7].x;
+                c.y += this._metrics.relativeIsoRotationDirections[this._position.rotation][7].y;
+            }
+            
+            // determine corners b, d from a, c 
+            let b, d;
+            if ((this._position.rotation % 2) == 0) {
+                b = {'x': (a.x+a.y+c.x-c.y)/2, 'y': (a.x+a.y-c.x+c.y)/2 };
+                d = {'x': (a.x-a.y+c.x+c.y)/2, 'y': (-a.x+a.y+c.x+c.y)/2 };
+            } else {
+                b = {'x': (a.x-a.y+c.x+c.y)/2, 'y': (-a.x+a.y+c.x+c.y)/2 };
+                d = {'x': (a.x+a.y+c.x-c.y)/2, 'y': (a.x+a.y-c.x+c.y)/2 };
+            }
+            //console.log(a,b,c,d);
+
             let u = {'x': a.x, 'y': a.y};
             let rowStart = {'x': a.x, 'y': a.y};
             let rowEnd = {
