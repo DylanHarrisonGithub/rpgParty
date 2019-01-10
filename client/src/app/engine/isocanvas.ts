@@ -413,18 +413,11 @@ export class IsoCanvas {
                         this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
                 });
 
-                 let bottomRight = this.transformations.isoToCanvas({
-                    'x': isoCoord.x + 0.5 +
-                        this._metrics.relativeIsoRotationDirections[this._position.rotation][7].x,
-                    'y': isoCoord.y + 0.5 +
-                        this._metrics.relativeIsoRotationDirections[this._position.rotation][7].y
-                });
-        
                 ctx.drawImage(
                     tile.image,
                     tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
                     topLeft.x, topLeft.y,
-                    bottomRight.x - topLeft.x, bottomRight.y - topLeft.y
+                    this._metrics.canvasTileSize.x, (1 + tile.properties.cellHeight)*this._metrics.canvasTileSize.y
                 );
             }
         },

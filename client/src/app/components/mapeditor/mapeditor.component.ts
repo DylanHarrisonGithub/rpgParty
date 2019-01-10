@@ -17,7 +17,7 @@ export class MapeditorComponent implements OnInit {
   myMap: GameMap;
   myTileset: IsoTileSet;
   tilePreviews: HTMLImageElement[] = [];
-  tilePreviewSize = {'width': 50, 'height': 50};
+  tilePreviewSize = {'width': 70, 'height': 70};
   selectedTile: IsoTile;
   selectedTool: MapEdTool;
   mapedTools: MapEdTool[];
@@ -50,13 +50,7 @@ export class MapeditorComponent implements OnInit {
     let tset = new IsoTileSet();
     tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
       this.myTileset = tset;
-      /* 
-      let subtileset = new IsoTileSet();
-      tset.tiles.forEach((e,i) => {
-        for (let subTile of e.subTiles) {
-          subtileset.tiles.insertOne(subTile);
-        }
-      }); */
+      this.renderTilePreviews();
       this.selectedTile = this.myTileset.tiles.get(0);
       this.tileTemplateLength = Math.floor(tset.tiles.getLength() / 4) - 1;
       this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
@@ -147,8 +141,20 @@ export class MapeditorComponent implements OnInit {
         }
         let pimg = new Image();
         pimg.src = pCanvas.toDataURL();
+        pimg.addEventListener("click", (e) => {
+          this.buttons.tiles.select(tile);
+        });
         this.tilePreviews.push(pimg);
       });
+    }
+    let tilePreview = document.getElementById("tilesetlist");
+    for (let i = 0; i < this.tilePreviews.length; i += 4) {
+      let div = document.createElement('div');
+      div.appendChild(this.tilePreviews[i]);
+      div.appendChild(this.tilePreviews[i+1]);
+      div.appendChild(this.tilePreviews[i+2]);
+      div.appendChild(this.tilePreviews[i+3]);
+      tilePreview.appendChild(div);
     }
   }
 

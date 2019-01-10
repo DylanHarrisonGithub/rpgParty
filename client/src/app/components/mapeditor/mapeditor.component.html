@@ -32,7 +32,23 @@
             </ul>
         </div>
       </div>
-    
+
+      <!--Tiles-->
+      <div class="card">
+        <div class="card-header btn" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            <span style="color: rgb(37, 137, 204);">Tiles</span>
+        </div>      
+        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+            <ul id="tilesetlist" class="list-group">
+              <li class="list-group-item">
+                selected: 
+                <span class="float-right" *ngIf="selectedTile">
+                  <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
+                </span>
+              </li>
+            </ul>
+        </div>
+      </div>
       <!--Map-->
       <div class="card">
         <div class="card-header btn" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -50,28 +66,7 @@
         </div>
       </div>    
     
-      <!--Tiles-->
-      <div class="card">
-        <div class="card-header btn" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-            <span style="color: rgb(37, 137, 204);">Tiles</span>
-        </div>      
-        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-            <ul class="list-group" *ngIf="myTileset">
-              <li class="list-group-item">
-                selected: 
-                <span class="float-right" *ngIf="selectedTile">
-                  <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
-                </span>
-              </li>
-              <div class=" text-center" *ngFor="let dummy of ' '.repeat(tileTemplateLength).split(' '); let i = index; trackBy:templating.trackByFn">
-                <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i])">
-                <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+1].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+1])">
-                <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+2].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+2])">
-                <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+3].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+3])">
-              </div>
-            </ul>
-        </div>
-      </div>
+
         
       <!--Tools-->
       <div class="card">
@@ -175,28 +170,7 @@
           </div>
         </div>    
       
-        <!--Tiles-->
-        <div class="card">
-          <div class="card-header btn" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              <span style="color: rgb(37, 137, 204);">Tiles</span>
-          </div>      
-          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-              <ul class="list-group" *ngIf="myTileset">
-                <li class="list-group-item">
-                  selected: 
-                  <span class="float-right" *ngIf="selectedTile">
-                    <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
-                  </span>
-                </li>
-                <div class=" text-center" *ngFor="let dummy of ' '.repeat(tileTemplateLength).split(' '); let i = index; trackBy:templating.trackByFn">
-                  <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i])">
-                  <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+1].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+1])">
-                  <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+2].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+2])">
-                  <img style="width:60px; height:60px;" src="{{ myTileset._isoTiles[4*i+3].image.src }}" (click)="buttons.tiles.select(myTileset._isoTiles[4*i+3])">
-                </div>
-              </ul>
-          </div>
-        </div>
+
           
         <!--Tools-->
         <div class="card">
