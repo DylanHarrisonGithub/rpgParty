@@ -77,6 +77,12 @@
                   <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
                 </span>
               </li>
+              <li class="list-group-item">
+                autoTile
+                <span class="float-right">
+                  <input type="checkbox" [(ngModel)]="autoTile">
+                </span>
+              </li>
             </ul>
           </div>
         </div>
@@ -236,6 +242,12 @@
                 <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
                 <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
                 <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+              </span>
+            </li>
+            <li class="list-group-item">
+              autoTile
+              <span class="float-right">
+                <input type="checkbox" [(ngModel)]="autoTile">
               </span>
             </li>
           </ul>

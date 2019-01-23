@@ -44,6 +44,7 @@ export class TileseteditorComponent implements OnInit {
   tilePreviewSize = {'width': 50, 'height': 50};
   canvas: HTMLCanvasElement;
   isAnimating = false;
+  autoTile = true;
 
   constructor() {}
 
@@ -171,7 +172,14 @@ export class TileseteditorComponent implements OnInit {
       }
     },
     image: {
-      import: () => { this.tileset.loadImageFromClient(()=>{}); },
+      import: () => { 
+        this.tileset.loadImageFromClient((img: HTMLImageElement) => {
+          if (this.autoTile) {
+            this.tileset.tiles.insertOne(new IsoTile(img, {}));
+            this.render.tilePreviews();
+          }
+        });
+      },
       assign: (img: HTMLImageElement) => {
         if (this.selectedTile) {
           this.selectedTile.properties.subImageX = 0;

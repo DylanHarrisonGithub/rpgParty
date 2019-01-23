@@ -115,22 +115,25 @@ export class IsoTileSet {
         }
     }
 
-    loadImageFromClient(onload: Function) { 
+    loadImageFromClient(onload: (img: HTMLImageElement) => void) { 
         let inputElement = document.createElement('input');
         inputElement.setAttribute('type', 'file');
         inputElement.setAttribute('style', 'display:none');
+        inputElement.setAttribute('multiple', '');
         inputElement.addEventListener('change', (ev) => {
             if (inputElement.files.length > 0) {
-                let newImage = new Image();
-                var reader = new FileReader();
-                reader.onload = ((event) => {
-                    newImage.src = (<any>event.target).result;
-                    newImage.onload = ((event) => {
-                        this._images.push(newImage);
-                        onload();
+                for (let fNum = 0; fNum < inputElement.files.length; fNum++) {
+                    let newImage = new Image();
+                    let reader = new FileReader();
+                    reader.onload = ((event) => {
+                        newImage.src = (<any>event.target).result;
+                        newImage.onload = ((event) => {
+                            this._images.push(newImage);
+                            onload(newImage);
+                        });
                     });
-                });
-                reader.readAsDataURL(inputElement.files[0]);
+                    reader.readAsDataURL(inputElement.files[fNum]);
+                }
             }
         }, false);
         document.body.appendChild(inputElement);
