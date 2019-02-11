@@ -7,6 +7,7 @@ let config = require('./config/config');
 
 let router = express.Router();
 let assetrouter = require('./routes/assetrouter')(router);
+let userrouter = require('./routes/userrouter')(router);
 
 const env = process.env.NODE_ENV || 'development';
 let app = express();
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
 app.use('/assets', assetrouter);
+app.use('/user', userrouter);
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/client/index.html');
