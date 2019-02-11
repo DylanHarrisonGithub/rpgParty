@@ -1,24 +1,15 @@
 let express = require('express');
-let app = express();
 let bodyParser = require('body-parser');
-let mongoClient = require('mongodb').MongoClient;
-let url = "mongodb://localhost:27017/mydb";
+let cors = require('cors');
 let path = require('path');
+let mongoose = require('mongoose');
+let config = require('./config/config');
+
 let router = express.Router();
 let assetrouter = require('./routes/assetrouter')(router);
-let cors = require('cors');
 
-/* mongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  var myobj = { name: "Company Inc", address: "Highway 37" };
-  dbo.collection("customers").insertOne(myobj, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-    db.close();
-  });
-}); */
-//middleware
+const env = process.env.NODE_ENV || 'development';
+let app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -26,14 +17,20 @@ app.use(bodyParser.urlencoded({extended: false}));
 //set static path
 app.use(express.static(path.join(__dirname, 'public')));
 
-//routers
+//routes
 app.use('/assets', assetrouter);
 
 app.get('/', (req, res) => {
-    console.log(req);
-    res.sendFile(__dirname + '/public/client/index.html');
+  res.sendFile(__dirname + '/public/client/index.html');
 });
 
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
+mongoose.connect(config[env].MONGODB_URI, (err) => {
+  if (err) {
+    console.log('Could not connect to MongoDB.');
+  } else {
+    console.log('MongoDB connection established.');
+    app.listen(config[env].PORT, () => {
+      console.log('Server started on port ' + config[env].PORT.toString());
+    });
+  }
 });
