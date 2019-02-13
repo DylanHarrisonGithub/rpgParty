@@ -42,7 +42,7 @@ module.exports = (router) => {
         }
     });
 
-    router.get('/login', (req, res) => {
+    router.post('/login', (req, res) => {
         let errors = [];
         if (!req.body.username) { errors.push('Username not provided.'); }
         if (!req.body.password) { errors.push('password not provided.'); }

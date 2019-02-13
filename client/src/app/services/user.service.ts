@@ -19,5 +19,9 @@ export class UserService {
   }
   isUniqueEmail(user: any) {
     return this._http.post('http://localhost:3000/user/isUniqueEmail', user);
-  } 
+  }
+
+  login(user: any) {
+    return this._http.post('http://localhost:3000/user/login', user);
+  }
 }
