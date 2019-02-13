@@ -34,50 +34,57 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(registerForm: NgForm) {
-    this._userService.postUser({
+    let u = {
       username: registerForm.value.name,
       email: registerForm.value.email,
       password: registerForm.value.password
-    }).subscribe(res => {
+    }
+    registerForm.reset();
+    this._userService.postUser(u).subscribe(res => {
       this.msg = res;
-      registerForm.reset();
       this.reset();
-      setTimeout(() => { this.msg = null }, 5000);
+      setTimeout(() => { this.msg = null; this.reset(); }, 5000);
     }, (err) => {
-      console.log(err.error);
       this.msg = err.error;
+      this.reset();
+      setTimeout(() => { this.msg = null; this.reset(); }, 5000);
     });
   }
 
   validateUsername(registerForm: NgForm) {
-    this.usernameChanged = true;
     this.usernameErrors = [];
-    if (registerForm.value.name.length == 0) this.usernameErrors.push('Username is required.');
-    if (registerForm.value.name.length < 3) this.usernameErrors.push('Username must be at least 3 characters.');
-    if (registerForm.value.name.length > 15) this.usernameErrors.push('Username cannot exceed 15 character length.');
-    if (registerForm.value.name && !/^[a-zA-Z0-9]+$/.test(registerForm.value.name)) this.usernameErrors.push('Username may contain alpha-numeric characters only.');
-    if (!this.usernameErrors.length) {
-      this._userService.isUniqueUsername({ username: registerForm.value.name }).subscribe(res => {
-        if (res.hasOwnProperty('isUniqueUsername') && res['isUniqueUsername'] === false) {
-          this.usernameErrors.push('Username already exists.');
-        }
-      });
+    if (registerForm.value.name != null) {
+      this.usernameChanged = true;
+      if (registerForm.value.name.length == 0) this.usernameErrors.push('Username is required.');
+      if (registerForm.value.name.length < 3) this.usernameErrors.push('Username must be at least 3 characters.');
+      if (registerForm.value.name.length > 15) this.usernameErrors.push('Username cannot exceed 15 character length.');
+      if (registerForm.value.name && !/^[a-zA-Z0-9]+$/.test(registerForm.value.name)) this.usernameErrors.push('Username may contain alpha-numeric characters only.');
+      if (!this.usernameErrors.length && registerForm.value.name != null) {
+        this._userService.isUniqueUsername({ username: registerForm.value.name }).subscribe(res => {
+          if (res.hasOwnProperty('isUniqueUsername') && res['isUniqueUsername'] === false) {
+            this.usernameErrors.push('Username already exists.');
+            console.log('you did it again', registerForm.value.name);
+          }
+        });
+      }
     }
   }
 
   validateEmail(registerForm: NgForm) {
-    this.emailChanged = true;
     this.emailErrors = [];
-    if (registerForm.value.email.length == 0) this.emailErrors.push('Email is required.');
-    if (registerForm.value.email.length < 3) this.emailErrors.push('Email must be at least 3 characters.');
-    if (registerForm.value.email.length > 30) this.emailErrors.push('Email cannot exceed 30 character length.');
-    if (registerForm.value.email && !this.emailRegEx.test(registerForm.value.email)) this.emailErrors.push('Email is not valid.');
-    if (!this.emailErrors.length) {
-      this._userService.isUniqueEmail({ email: registerForm.value.email }).subscribe(res => {
-        if (res.hasOwnProperty('isUniqueEmail') && res['isUniqueEmail'] === false) {
-          this.emailErrors.push('Email already exists.');
-        }
-      });    
+    if (registerForm.value.email != null) {
+      this.emailChanged = true;
+      if (registerForm.value.email.length == 0) this.emailErrors.push('Email is required.');
+      if (registerForm.value.email.length < 3) this.emailErrors.push('Email must be at least 3 characters.');
+      if (registerForm.value.email.length > 30) this.emailErrors.push('Email cannot exceed 30 character length.');
+      if (registerForm.value.email && !this.emailRegEx.test(registerForm.value.email)) this.emailErrors.push('Email is not valid.');
+      if (!this.emailErrors.length) {
+        this._userService.isUniqueEmail({ email: registerForm.value.email }).subscribe(res => {
+          if (res.hasOwnProperty('isUniqueEmail') && res['isUniqueEmail'] === false) {
+            this.emailErrors.push('Email already exists.');
+          }
+        });    
+      }
     }
   }
 
