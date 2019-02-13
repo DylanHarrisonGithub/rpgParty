@@ -35,5 +35,26 @@ module.exports = (router) => {
         }
     });
 
+    router.post('/isUniqueUsername', (req, res) => {
+        if (req.body.username) {
+            User.find({username: req.body.username}, (err, doc) => {
+                if (doc.length) res.json({ isUniqueUsername: false });
+                else res.json({ isUniqueUsername: true });
+            });
+        } else {
+            res.json({ isUniqueUsername: true });
+        }
+    });
+
+    router.post('/isUniqueEmail', (req, res) => {
+        if (req.body.email) {
+            User.find({email: req.body.email}, (err, doc) => {
+                if (doc.length) res.json({ isUniqueEmail: false });
+                else res.json({ isUniqueEmail: true });
+            });
+        } else {
+            res.json({ isUniqueEmail: true });
+        }
+    });
     return router;
 }

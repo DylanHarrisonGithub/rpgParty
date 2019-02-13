@@ -13,4 +13,11 @@ export class UserService {
   postUser(user: any) {
     return this._http.post('http://localhost:3000/user/register', user);
   }
+
+  isUniqueUsername(user: any) {
+    return this._http.post('http://localhost:3000/user/isUniqueUsername', user);
+  }
+  isUniqueEmail(user: any) {
+    return this._http.post('http://localhost:3000/user/isUniqueEmail', user);
+  } 
 }
