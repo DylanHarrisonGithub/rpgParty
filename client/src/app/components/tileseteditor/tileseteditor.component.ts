@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
 
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TilesetLoadDialogComponent } from '../modals/tileset-load-dialog/tileset-load-dialog.component';
+
 @Component({
   selector: 'app-tileseteditor',
   templateUrl: './tileseteditor.component.html',
@@ -46,7 +49,7 @@ export class TileseteditorComponent implements OnInit {
   isAnimating = false;
   autoTile = true;
 
-  constructor() {}
+  constructor(private _modalService: NgbModal) {}
 
   ngOnInit() {
 
@@ -158,17 +161,20 @@ export class TileseteditorComponent implements OnInit {
         this.tileset = new IsoTileSet();
         this.selectedTile = null;
         this.tilePreviews = [];
-        this.tileset.dumbLoad(() => {
-          this.render.tilePreviews();
-        });
+        
+        let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
+        //this.tileset.dumbLoad(() => {
+        //  this.render.tilePreviews();
+        //});
       },
       save: () => { this.tileset.dumbSave(); },
       join: () => {
         let jSet = new IsoTileSet();
-        jSet.dumbLoad(() => {
-          this.tileset.union(jSet);
-          this.render.tilePreviews();
-        });
+        let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
+        //jSet.dumbLoad(() => {
+        //  this.tileset.union(jSet);
+        //  this.render.tilePreviews();
+        //});
       }
     },
     image: {
