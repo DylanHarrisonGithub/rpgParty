@@ -4,6 +4,7 @@ import { IsoTileSet } from '../../engine/isotileset';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TilesetLoadDialogComponent } from '../modals/tileset-load-dialog/tileset-load-dialog.component';
+import { AssetService } from '../../services/asset.service';
 
 @Component({
   selector: 'app-tileseteditor',
@@ -49,7 +50,10 @@ export class TileseteditorComponent implements OnInit {
   isAnimating = false;
   autoTile = true;
 
-  constructor(private _modalService: NgbModal) {}
+  constructor(
+    private _modalService: NgbModal,
+    private _assetService: AssetService
+  ) {}
 
   ngOnInit() {
 
@@ -147,34 +151,52 @@ export class TileseteditorComponent implements OnInit {
         this.tilePreviews = [];
       },
       load: () => {
-        this.cursor = {
-          public: {
-            'cursor': false,
-            'width': 128,
-            'height': 128,
-          },
-          private: {
-            'x': 0,
-            'y': 0
-          }
-        }
-        this.tileset = new IsoTileSet();
-        this.selectedTile = null;
-        this.tilePreviews = [];
-        
         let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
-        //this.tileset.dumbLoad(() => {
-        //  this.render.tilePreviews();
-        //});
+        tilesetModal.result.then(val => {
+          this.cursor = {
+            public: {
+              'cursor': false,
+              'width': 128,
+              'height': 128,
+            },
+            private: {
+              'x': 0,
+              'y': 0
+            }
+          }
+          this.tileset = new IsoTileSet();
+          this.selectedTile = null;
+          this.tilePreviews = [];
+          if (val != 'Upload a custom tile set') {           
+            this.tileset.loadFromServer('http://localhost:3000/assets/tilesets/' + val, () => {
+              this.render.tilePreviews();
+            });
+          } else {
+            // todo: should be handled by asset-service
+            this.tileset.dumbLoad(() => {
+              this.render.tilePreviews();
+            });
+          }
+        });
       },
       save: () => { this.tileset.dumbSave(); },
       join: () => {
         let jSet = new IsoTileSet();
         let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
-        //jSet.dumbLoad(() => {
-        //  this.tileset.union(jSet);
-        //  this.render.tilePreviews();
-        //});
+        tilesetModal.result.then(val => {
+          if (val != 'Upload a custom tile set') {           
+            jSet.loadFromServer('http://localhost:3000/assets/tilesets/' + val, () => {
+              this.tileset.union(jSet);
+              this.render.tilePreviews();
+            });
+          } else {
+            // todo: should be handled by asset-service
+            jSet.dumbLoad(() => {
+              this.tileset.union(jSet);
+              this.render.tilePreviews();
+            });
+          }       
+        });
       }
     },
     image: {

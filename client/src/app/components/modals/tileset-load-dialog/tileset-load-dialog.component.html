@@ -1,16 +1,17 @@
 <div role="document" class="modal-dialog">
   <div class="modal-content">
-    <div class="modal-header">
-      <h4 class="modal-title">{{title}}</h4>
-      <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+    <div class="modal-header text-center">
+      <h4 class="text-center w-100">Load Tileset</h4>
     </div>
     <div class="modal-body">
-      <ng-content></ng-content>
+      <select class="form-control" [(ngModel)]="selected">
+        <option value="Upload a custom tile set">Upload a custom tile set</option>
+        <option *ngFor="let t of tilesetList">{{ t }}</option>
+      </select>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn w-100" (click)="activeModal.close(selected)">Select</button>
+        <button type="button" class="btn w-100" (click)="activeModal.dismiss('Cancelled')">Cancel</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
-    </div>
-  </div>
 </div>
