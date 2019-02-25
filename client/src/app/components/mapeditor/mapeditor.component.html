@@ -1,10 +1,129 @@
-<div style="width:100%; bottom: 0px; top: 57px; position:absolute; background-color: aquamarine;">
-  <div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
+<div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
 
-    <div id='toolpanel1' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
-    
-      <!--Map-->
-      <div class="card">
+  <div id='toolpanel1' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
+  
+    <!--Map-->
+    <div class="card">
+      <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          <span style="color: rgb(37, 137, 204);">Map</span>
+      </div>      
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+          <ul class="list-group">              
+            <li class="list-group-item text-center">
+              <div  class="float-none btn-group" role="group">
+                <button type="button" class="btn btn-primary" (click)="buttons.map.new()">New</button>
+                <button type="button" class="btn btn-primary" (click)="buttons.map.load()">Load</button>
+                <button type="button" class="btn btn-primary" (click)="buttons.map.save()">Save</button>
+              </div>
+            </li>
+            <li class="list-group-item" *ngIf="myMap">
+              title:
+              <span class="float-right">
+                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' [(ngModel)]="myMap.title">
+              </span>
+            </li>
+            <li class="list-group-item" *ngFor="let item of myMap?._properties | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                {{ item.value }}
+              </span>
+            </li>
+          </ul>
+      </div>
+    </div>
+
+    <!--Tiles-->
+    <div class="card">
+      <div class="card-header btn" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <span style="color: rgb(37, 137, 204);">Tiles</span>
+      </div>      
+      <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+          <ul id="tilesetlist" class="list-group">
+            <li class="list-group-item">
+              selected: 
+              <span class="float-right" *ngIf="selectedTile">
+                <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
+              </span>
+            </li>
+          </ul>
+      </div>
+    </div>
+    <!--Map-->
+    <div class="card">
+      <div class="card-header btn" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <span style="color: rgb(37, 137, 204);">Cursor</span>
+      </div>      
+      <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of myCanvas?.mouse.get() | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                ({{ item.value.x }}, {{ item.value.y }}) 
+              </span>
+            </li>
+          </ul>
+      </div>
+    </div>    
+  
+
+      
+    <!--Tools-->
+    <div class="card">
+      <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          <span style="color: rgb(37, 137, 204);">Tools</span>
+      </div>      
+      <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
+          <ul class="list-group" *ngIf="mapedTools">
+            <li class="list-group-item">
+              selected: 
+              <span class="float-right" *ngIf="selectedTool">
+                <img style="width:60px; height:60px;" src="{{ selectedTool.icon.image.src }}">
+              </span>
+            </li>
+            <div class="text-center">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[0].icon.image.src }}" (click)="buttons.tools.select(mapedTools[0])">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[1].icon.image.src }}" (click)="buttons.tools.select(mapedTools[1])">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[2].icon.image.src }}" (click)="buttons.tools.select(mapedTools[2])">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[3].icon.image.src }}" (click)="buttons.tools.select(mapedTools[3])">
+            </div>
+            
+            <div class="text-center">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[4].icon.image.src }}" (click)="buttons.tools.select(mapedTools[4])">
+              <img style="width:60px; height:60px;" src="{{ mapedTools[5].icon.image.src }}" (click)="buttons.tools.select(mapedTools[5])">
+            </div>
+          </ul>
+      </div>
+    </div>
+
+    <!--Tool Properties-->
+    <div class="card">
+      <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+          <span style="color: rgb(37, 137, 204);">Tool Properties</span>
+      </div>      
+      <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of selectedTool?.properties | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+              </span>
+            </li>
+          </ul>
+      </div>
+    </div>
+
+  </div>
+  
+  <div id='isocanvas' style="height:100%; left: 0; right: 300px; position:absolute;"></div>
+</div>
+
+<div id="toolpanel2" style="background-color:red; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
+  
+  
+    <!--Map-->
+    <div class="card">
         <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             <span style="color: rgb(37, 137, 204);">Map</span>
         </div>      
@@ -32,23 +151,7 @@
             </ul>
         </div>
       </div>
-
-      <!--Tiles-->
-      <div class="card">
-        <div class="card-header btn" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-            <span style="color: rgb(37, 137, 204);">Tiles</span>
-        </div>      
-        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-            <ul id="tilesetlist" class="list-group">
-              <li class="list-group-item">
-                selected: 
-                <span class="float-right" *ngIf="selectedTile">
-                  <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
-                </span>
-              </li>
-            </ul>
-        </div>
-      </div>
+    
       <!--Map-->
       <div class="card">
         <div class="card-header btn" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
@@ -114,110 +217,5 @@
             </ul>
         </div>
       </div>
-
-    </div>
-    
-    <div id='isocanvas' style="height:100%; left: 0; right: 300px; position:absolute;"></div>
-  </div>
-
-  <div id="toolpanel2" style="background-color:red; height: 0px;bottom:0;width:100%;position: absolute; overflow-y:scroll; overflow-x:hidden;">
-    
-    
-      <!--Map-->
-      <div class="card">
-          <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-              <span style="color: rgb(37, 137, 204);">Map</span>
-          </div>      
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-              <ul class="list-group">              
-                <li class="list-group-item text-center">
-                  <div  class="float-none btn-group" role="group">
-                    <button type="button" class="btn btn-primary" (click)="buttons.map.new()">New</button>
-                    <button type="button" class="btn btn-primary" (click)="buttons.map.load()">Load</button>
-                    <button type="button" class="btn btn-primary" (click)="buttons.map.save()">Save</button>
-                  </div>
-                </li>
-                <li class="list-group-item" *ngIf="myMap">
-                  title:
-                  <span class="float-right">
-                      <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' [(ngModel)]="myMap.title">
-                  </span>
-                </li>
-                <li class="list-group-item" *ngFor="let item of myMap?._properties | keyvalue; trackBy:templating.trackByFn">
-                  {{ item.key }}
-                  <span class="float-right">
-                    {{ item.value }}
-                  </span>
-                </li>
-              </ul>
-          </div>
-        </div>
-      
-        <!--Map-->
-        <div class="card">
-          <div class="card-header btn" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              <span style="color: rgb(37, 137, 204);">Cursor</span>
-          </div>      
-          <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let item of myCanvas?.mouse.get() | keyvalue; trackBy:templating.trackByFn">
-                  {{ item.key }}
-                  <span class="float-right">
-                    ({{ item.value.x }}, {{ item.value.y }}) 
-                  </span>
-                </li>
-              </ul>
-          </div>
-        </div>    
-      
-
-          
-        <!--Tools-->
-        <div class="card">
-          <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-              <span style="color: rgb(37, 137, 204);">Tools</span>
-          </div>      
-          <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
-              <ul class="list-group" *ngIf="mapedTools">
-                <li class="list-group-item">
-                  selected: 
-                  <span class="float-right" *ngIf="selectedTool">
-                    <img style="width:60px; height:60px;" src="{{ selectedTool.icon.image.src }}">
-                  </span>
-                </li>
-                <div class="text-center">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[0].icon.image.src }}" (click)="buttons.tools.select(mapedTools[0])">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[1].icon.image.src }}" (click)="buttons.tools.select(mapedTools[1])">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[2].icon.image.src }}" (click)="buttons.tools.select(mapedTools[2])">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[3].icon.image.src }}" (click)="buttons.tools.select(mapedTools[3])">
-                </div>
-                
-                <div class="text-center">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[4].icon.image.src }}" (click)="buttons.tools.select(mapedTools[4])">
-                  <img style="width:60px; height:60px;" src="{{ mapedTools[5].icon.image.src }}" (click)="buttons.tools.select(mapedTools[5])">
-                </div>
-              </ul>
-          </div>
-        </div>
-  
-        <!--Tool Properties-->
-        <div class="card">
-          <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-              <span style="color: rgb(37, 137, 204);">Tool Properties</span>
-          </div>      
-          <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let item of selectedTool?.properties | keyvalue; trackBy:templating.trackByFn">
-                  {{ item.key }}
-                  <span class="float-right">
-                    <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
-                    <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
-                  </span>
-                </li>
-              </ul>
-          </div>
-        </div>
-  </div>
-
 </div>
+

@@ -13,6 +13,7 @@ import { MapeditorComponent } from './components/mapeditor/mapeditor.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { TilesetLoadDialogComponent } from './components/modals/tileset-load-dialog/tileset-load-dialog.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { TilesetLoadDialogComponent } from './components/modals/tileset-load-dia
     RegisterComponent,
     LoginComponent,
     TilesetLoadDialogComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,

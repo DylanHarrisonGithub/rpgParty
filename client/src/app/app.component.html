@@ -1,33 +1,7 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <a class="navbar-brand" [routerLink]="['/']" routerLinkActive="router-link-active" >rpgParty</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<app-navbar></app-navbar>
+<div style="width:100%; bottom: 0px; top: 57px; position:absolute; overflow-y: auto; z-index: -1;">
+  <router-outlet></router-outlet>
+</div>
 
-  <div class="collapse navbar-collapse" id="navbarsExample04">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Play</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="https://example.com" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create</a>
-        <div class="dropdown-menu" aria-labelledby="dropdown04">
-          <a class="dropdown-item"  [routerLink]="['/tileseteditor']" routerLinkActive="router-link-active">Tileset Editor</a>
-          <a class="dropdown-item"  [routerLink]="['/mapeditor']" routerLinkActive="router-link-active">Map Editor</a>
-          <a class="dropdown-item"  [routerLink]="['/']" routerLinkActive="router-link-active">Character Editor</a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-md-0">
-      <ul class="navbar-nav  mr-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/register" routerLinkActive="active">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
-        </li>
-      </ul>      
-    </form>
-  </div>
-</nav>
-<router-outlet></router-outlet>
+
+
