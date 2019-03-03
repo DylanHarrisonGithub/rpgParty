@@ -1,3 +1,22 @@
-<p>
-  home works!
-</p>
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="text-center">Begin A Quest</h1>
+    <hr/>
+    <img src="assets/rpgParty.png" class="img-fluid">
+    <div class="row">
+      <div class="col-md"></div>
+      <div class="col-md"><p>Welcome to rpgParty. Create a room on your home television to begin a quest. Have yourself and your friends join in on their mobile devices.</p></div>
+      <div class="col-md"></div>
+    </div>
+    <hr/>
+    <h5 class="text-center"><a routerLink="/login">Login</a> to play.</h5>
+    <div class="row">
+      <div class="col-md text-center">
+        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()">Create A Room</button>
+      </div>
+      <div class="col-md text-center">
+        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()">&nbsp;&nbsp;Join A Room&nbsp;&nbsp;</button>
+      </div>
+    </div>
+  </div>
+</div>

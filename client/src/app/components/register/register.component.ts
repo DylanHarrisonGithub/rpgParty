@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +21,11 @@ export class RegisterComponent implements OnInit {
   emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     
 
-  constructor(private _userService: UserService) { }
+  constructor(
+    private _userService: UserService,
+    private _authService: AuthService,
+    private _router: Router
+  ) { }
 
   ngOnInit() {
   }
@@ -43,7 +49,14 @@ export class RegisterComponent implements OnInit {
     this._userService.postUser(u).subscribe(res => {
       this.msg = res;
       this.reset();
-      setTimeout(() => { this.msg = null; this.reset(); }, 5000);
+      setTimeout(() => { 
+        this.reset(); 
+        if (this.msg.success) {
+          this._authService.saveToken(res['token']);
+          this._router.navigate(['/home']);
+        }
+        this.msg = null;
+      }, 5000);
     }, (err) => {
       this.msg = err.error;
       this.reset();
