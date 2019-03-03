@@ -36,7 +36,7 @@ module.exports = (router) => {
                     }
                 } else {
                     let token = jwt.sign({ id: doc._id }, config[env].JWT_SECRET, { expiresIn: 86400 });
-                    res.status(200).json({ success: true, message: ['User saved!'], token: token });
+                    res.status(200).json({ success: true, message: ['User saved!'], token: token, user: doc });
                 }
             });
         }

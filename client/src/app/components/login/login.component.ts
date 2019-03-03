@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +13,11 @@ export class LoginComponent implements OnInit {
 
   msg;
 
-  constructor(private _userService: UserService) { }
+  constructor(
+    private _userService: UserService,
+    private _authService: AuthService,
+    private _router: Router
+  ) { }
 
   ngOnInit() {
   }
@@ -21,13 +27,20 @@ export class LoginComponent implements OnInit {
       username: loginForm.value.name,
       password: loginForm.value.password
     }
-    console.log(u);
     this._userService.login(u).subscribe(res => {
       this.msg = res;
-      setTimeout(() => { this.msg = null; }, 5000);
+      if (res['success']) {
+        this._authService.saveToken(res['token']);
+      }
+      setTimeout(() => { 
+        if (this.msg.success) {
+          this._router.navigate(['/home']);
+        }
+        this.msg = null;
+      }, 4000);
     }, (err) => {
-      this.msg = err.error;
-      setTimeout(() => { this.msg = null; }, 5000);
+      this.msg = JSON.stringify(err.error);
+      setTimeout(() => { this.msg = null; }, 4000);
     });
   }
 }

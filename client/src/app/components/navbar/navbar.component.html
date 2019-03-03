@@ -25,13 +25,13 @@
     <!--Right-->
     <ul class="navbar-nav  ml-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/register" routerLinkActive="active" (click)="delayedCollapse()">Register</a>
+        <a class="nav-link" routerLink="/register" routerLinkActive="active" (click)="delayedCollapse()" *ngIf="!_authService.isLoggedIn()">Register</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="delayedCollapse()">Login</a>
+        <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="delayedCollapse()" *ngIf="!_authService.isLoggedIn()">Login</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/logout" routerLinkActive="active" (click)="delayedCollapse()">Logout</a>
+        <a class="nav-link" routerLink="/logout" routerLinkActive="active" (click)="delayedCollapse()" *ngIf="_authService.isLoggedIn()" (click)="onLogout()">Logout</a>
       </li>
     </ul>   
   </div>
