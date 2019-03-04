@@ -1,13 +1,22 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
 import { MapeditorComponent } from './components/mapeditor/mapeditor.component';
 import { TileseteditorComponent } from './components/tileseteditor/tileseteditor.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
+import { RoomCreateComponent } from './components/room-create/room-create.component';
+import { RoomJoinComponent } from './components/room-join/room-join.component';
+import { PlayComponent } from './components/play/play.component';
+
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  { path: 'create', component: RoomCreateComponent, canActivate: [AuthGuard]},
+  { path: 'join', component: RoomJoinComponent, canActivate: [AuthGuard]},
+  { path: 'play', component: PlayComponent, canActivate: [AuthGuard]},
   { path: 'mapeditor', component: MapeditorComponent },
   { path: 'tileseteditor', component: TileseteditorComponent },
   { path: 'register', component: RegisterComponent },

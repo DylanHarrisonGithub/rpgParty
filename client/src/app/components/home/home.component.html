@@ -12,10 +12,10 @@
     <h5 class="text-center"><a routerLink="/login">Login</a> to play.</h5>
     <div class="row">
       <div class="col-md text-center">
-        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()">Create A Room</button>
+        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/create">Create A Room</button>
       </div>
       <div class="col-md text-center">
-        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()">&nbsp;&nbsp;Join A Room&nbsp;&nbsp;</button>
+        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/join">&nbsp;&nbsp;Join A Room&nbsp;&nbsp;</button>
       </div>
     </div>
   </div>

@@ -1,0 +1,50 @@
+<div class="container">
+  <ul class="list-group">   
+    <li class="list-group-item">
+      <div class="row">
+        <button class="btn btn-primary col" (click)="join()" [disabled]="canJoin()">Join</button>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">            
+        <h5 class="col-8 align-self-center">Enter Room Code</h5>
+        <input type="text" class="col-4 form-control text-right text-uppercase" [(ngModel)]="roomCode">
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="container">
+        <li class="list-group-item">
+          <div class="row">            
+            <h5 class="col-8 align-self-center">Select Character</h5>
+            <button class="btn btn-primary col-4" (click)="createChar()">New</button>
+          </div>
+        </li>
+        <li *ngIf="!characters.length" class="list-group-item align-self-center bg-secondary">
+          <div class="row">
+            <div class="col">
+              <h5 class="text-center col">Create a Character to Play</h5>
+            </div>
+          </div>
+        </li>
+        <li *ngFor="let char of characters" 
+            class="list-group-item list-group-item-action m-0 p-0 flush-left"
+            [ngClass]="{ 'active': isSelected(char)}"
+            (click)="selectChar(char)">
+          <div class="row">
+            <div class="col-4">
+              <img [src]="imgPaths[char.class]" width="100px" height="100px" class="m-0 p-0 flush-left">
+            </div>
+            <div class="col-6 align-self-center ml-0">
+              <label>Name: {{char.name}}</label><br/>
+              <label>Class: {{char.class}}</label><br/>
+              <label>Lvl. {{char.level}}</label><br/>
+            </div>
+            <div class="col-2">
+              <span class="fa fa-trash text-danger delete-char-button" aria-hidden="true" (click)="deleteChar(char)"></span>
+            </div>
+          </div>
+        </li>
+      </div>
+    </li>
+  </ul>
+</div>

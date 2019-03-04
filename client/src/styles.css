@@ -6,3 +6,11 @@
 .rp-li-key { left: 10px; position: absolute; }
 .rp-li-label { right: 10px; position: absolute; }
 .rp-li-input { width:60px; height: 26px; text-align: right; }
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.delete-char-button {
+  cursor: pointer;
+}

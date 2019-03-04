@@ -15,6 +15,11 @@ import { LoginComponent } from './components/login/login.component';
 import { TilesetLoadDialogComponent } from './components/modals/tileset-load-dialog/tileset-load-dialog.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomeComponent } from './components/home/home.component';
+import { RoomCreateComponent } from './components/room-create/room-create.component';
+import { RoomJoinComponent } from './components/room-join/room-join.component';
+import { PlayComponent } from './components/play/play.component';
+import { CreateCharacterComponent } from './components/modals/create-character/create-character.component';
+import { DeleteCharacterComponent } from './components/modals/delete-character/delete-character.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +31,11 @@ import { HomeComponent } from './components/home/home.component';
     TilesetLoadDialogComponent,
     NavbarComponent,
     HomeComponent,
+    RoomCreateComponent,
+    RoomJoinComponent,
+    PlayComponent,
+    CreateCharacterComponent,
+    DeleteCharacterComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +46,10 @@ import { HomeComponent } from './components/home/home.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [TilesetLoadDialogComponent]
+  entryComponents: [
+    TilesetLoadDialogComponent,
+    CreateCharacterComponent,
+    DeleteCharacterComponent
+  ]
 })
 export class AppModule { }
