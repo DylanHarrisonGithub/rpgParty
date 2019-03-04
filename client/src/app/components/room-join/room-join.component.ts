@@ -52,9 +52,10 @@ export class RoomJoinComponent implements OnInit {
 
   deleteChar(char) {
     let deleteCharModal = this._modalService.open(DeleteCharacterComponent);
+    deleteCharModal.componentInstance.char = char;
     deleteCharModal.result.then(val => {
-      
-    });
+      console.log(val);
+    }).catch(err => {console.log(err)});
   }
 
   canJoin() {

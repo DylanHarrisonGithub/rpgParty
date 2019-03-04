@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-delete-character',
@@ -7,7 +10,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DeleteCharacterComponent implements OnInit {
 
-  constructor() { }
+  @Input() char: any;
+  imgPaths = {
+    "Paladin": "../../../../assets/paladin.png",
+    "Mage": "../../../../assets/mage.png",
+    "Healer": "../../../../assets/healer.png",
+    "Orc": "../../../../assets/orc.png"
+  };
+  constructor(private activeModal: NgbActiveModal) { }
 
   ngOnInit() {
   }
