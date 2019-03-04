@@ -54,7 +54,7 @@ module.exports = (router) => {
                 } else {
                     if (doc) {
                         if (bcrypt.compareSync(req.body.password, doc.password)) {
-                            let token = jwt.sign({ id: doc._id, username: doc.username }, config[env].JWT_SECRET, { expiresIn: config[env].JWT_TTL });
+                            let token = jwt.sign({ _id: doc._id, username: doc.username }, config[env].JWT_SECRET, { expiresIn: config[env].JWT_TTL });
                             res.status(200).json({ success: true, message: ['Login success!'], token: token, user: doc });
                         } else {
                             res.status(400).json({ success: false, message: ['Incorrect password.']});
