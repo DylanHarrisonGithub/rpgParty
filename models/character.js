@@ -1,12 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./user');
 
-const classNames = [
-  "Paladin",
-  "Mage",
-  "Healer",
-  "Orc"
-];
 const baseStats = {
   "Paladin": {
     hit_points: 30,
@@ -16,6 +10,10 @@ const baseStats = {
       agility: 5,
       vitality: 5,
       inteligence: 5
+    },
+    assets: {
+      portrait: "paladin.png",
+      gamePiece: ""
     }
   },
   "Mage": {
@@ -26,6 +24,10 @@ const baseStats = {
       agility: 4,
       vitality: 4,
       inteligence: 16
+    },
+    assets: {
+      portrait: "mage.png",
+      gamePiece: ""
     }
   },
   "Healer": {
@@ -36,6 +38,10 @@ const baseStats = {
       agility: 4,
       vitality: 10,
       inteligence: 10,
+    },
+    assets: {
+      portrait: "healer.png",
+      gamePiece: ""
     }
   },
   "Orc": {
@@ -46,6 +52,10 @@ const baseStats = {
       agility: 2,
       vitality: 6,
       inteligence: 1,
+    },
+    assets: {
+      portrait: "orc.png",
+      gamePiece: ""
     }
   }
 };
@@ -73,24 +83,24 @@ let validCharName = (charName) => {
 const charNameValidators = [
   {
       validator: charNameLengthChecker,
-      message: 'Username must be at least 3 characters but no more than 15'
+      message: 'Character name must be at least 3 characters but no more than 15'
   },
   {
       validator: validCharName,
-      message: 'Username contained invalid characters'
+      message: 'Character name can only contain alpha-numeric characters.'
   }
 ];
 
 classValidators = [
   {
-    isAsync: true,
-    validator: (className) => { return classNames.indexOf(className) != -1; },
+    validator: (className) => { return baseStats.hasOwnProperty(className); },
     message: "Undefined character class."
   }
 ];
 
 ownerIdValidators = [
   {
+    isAsync: true,
     validator: (owner_id) => { User.findById(owner_id, (err, doc) => {
       if (err) {
         return false;
@@ -122,11 +132,23 @@ const characterScheema = mongoose.Schema({
     inteligence: { type: Number, default: 1 },
     luck: { type: Number, default: 1 },
   },
-  items: { type: Array, default: [] }
+  items: { type: Array, default: [] },
+  equipped: {
+    head: { type: String },
+    neck: { type: String },
+    body: { type: String },
+    leftHand: { type: String },
+    rightHand: { type: String },
+    legs: { type: String },
+    feet: { type: String }
+  },
+  assets: {
+    portrait: { type: String },
+    gamePiece: { type: String }
+  }
 });
 
 module.exports = {
   Character: mongoose.model('Character', characterScheema),
-  Classes: classNames,
   BaseStats: baseStats
 }

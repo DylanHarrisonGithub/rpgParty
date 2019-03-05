@@ -3,6 +3,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CreateCharacterComponent } from '../modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from '../modals/delete-character/delete-character.component';
+import { CharacterService } from '../../services/character.service';
 
 @Component({
   selector: 'app-room-join',
@@ -29,10 +30,16 @@ export class RoomJoinComponent implements OnInit {
   roomCode = '';
 
   constructor(
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    private _characterService: CharacterService
   ) { }
 
   ngOnInit() {
+    this._characterService.getCharacters().subscribe(res => {
+      this.characters = res['characters'];
+    }, err => {
+      console.log(err);
+    });
   }
 
   isSelected(char) {

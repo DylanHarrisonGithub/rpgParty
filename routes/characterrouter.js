@@ -1,4 +1,4 @@
-const { Character, Classes, BaseStats } = require('../models/character');
+const { Character, BaseStats } = require('../models/character');
 const jsonwebtoken = require('jsonwebtoken');
 const config = require('../config/config');
 const env = process.env.NODE_ENV || 'development';
@@ -34,14 +34,15 @@ module.exports = (router => {
           if (req.body.owner_id) {
             if (req.body.name) {
               if (req.body.class) {
-                if (Classes.indexOf(req.body.class) > -1) {                  
+                if (BaseStats.hasOwnProperty(req.body.class)) {                  
                   let char = new Character({
                     owner_id: req.body.owner_id,
                     name: req.body.name,
                     class: req.body.class,
                     hit_points: BaseStats[req.body.class].hit_points,
                     magic_points: BaseStats[req.body.class].magic_points,
-                    stats: BaseStats[req.body.class].stats
+                    stats: BaseStats[req.body.class].stats,
+                    assets: BaseStats[req.body.class].assets
                   });
                   char.save((err, doc) => {
                     if (err) {
@@ -69,14 +70,14 @@ module.exports = (router => {
     }
   });
 
-  router.delete('/', (req, res) => {
+  router.delete('/:_id', (req, res) => {
     if (req.headers.authorization) {
       jsonwebtoken.verify(req.headers.authorization, config[env].JWT_SECRET, (err, decoded) => {
         if (err) {
           res.json({ success: false, message: "Authentication was not valid.", err: err });
         } else {
-          if (req.body._id) {
-            Character.deleteOne({ _id: req.body._id, owner_id: decoded._id }, (err) => {
+          if (req.params._id) {
+            Character.deleteOne({ _id: req.params._id, owner_id: decoded._id }, (err) => {
               if (err) {
                 res.json({ success: false, message: "Error deleting character.", error: err});
               } else {
