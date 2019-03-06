@@ -28,4 +28,17 @@ export class CharacterService {
       }
     );
   }
+
+  createCharacter(char) {
+    return this._http.post(config.URI[config.ENVIRONMENT] + 'character/create',
+      {
+        owner_id: this._authService.getUserDetails()['_id'],
+        name: char.name,
+        class: char.class
+      },
+      {
+        headers: new HttpHeaders().set('Authorization', this._authService.getToken())
+      }
+    );
+  }
 }

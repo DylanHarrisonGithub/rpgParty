@@ -9,7 +9,7 @@ const baseStats = {
       strength: 10,
       agility: 5,
       vitality: 5,
-      inteligence: 5
+      intelligence: 5
     },
     assets: {
       portrait: "paladin.png",
@@ -23,7 +23,7 @@ const baseStats = {
       strength: 1,
       agility: 4,
       vitality: 4,
-      inteligence: 16
+      intelligence: 16
     },
     assets: {
       portrait: "mage.png",
@@ -37,7 +37,7 @@ const baseStats = {
       strength: 1,
       agility: 4,
       vitality: 10,
-      inteligence: 10,
+      intelligence: 10,
     },
     assets: {
       portrait: "healer.png",
@@ -51,7 +51,7 @@ const baseStats = {
       strength: 16,
       agility: 2,
       vitality: 6,
-      inteligence: 1,
+      intelligence: 1,
     },
     assets: {
       portrait: "orc.png",
@@ -100,7 +100,6 @@ classValidators = [
 
 ownerIdValidators = [
   {
-    isAsync: true,
     validator: (owner_id) => { User.findById(owner_id, (err, doc) => {
       if (err) {
         return false;

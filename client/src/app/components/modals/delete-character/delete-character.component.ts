@@ -1,8 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { AuthService } from '../../../services/auth.service';
-
 @Component({
   selector: 'app-delete-character',
   templateUrl: './delete-character.component.html',

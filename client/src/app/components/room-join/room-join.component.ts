@@ -35,6 +35,10 @@ export class RoomJoinComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.getCharacters();
+  }
+
+  private getCharacters(): void {
     this._characterService.getCharacters().subscribe(res => {
       this.characters = res['characters'];
     }, err => {
@@ -53,16 +57,27 @@ export class RoomJoinComponent implements OnInit {
   createChar() {
     let createCharModal = this._modalService.open(CreateCharacterComponent);
     createCharModal.result.then(val => {
-
-    });
+      this._characterService.createCharacter({ name: val.name, class: val.class }).subscribe(res => {
+        console.log(res);
+        this.getCharacters();
+      }, err => {
+        console.log(err);
+      });
+    }, err => {});
   }
 
   deleteChar(char) {
     let deleteCharModal = this._modalService.open(DeleteCharacterComponent);
     deleteCharModal.componentInstance.char = char;
     deleteCharModal.result.then(val => {
-      console.log(val);
-    }).catch(err => {console.log(err)});
+      if (val == 'Delete') {
+        this._characterService.deleteCharacter(char._id).subscribe(res => {
+          this.getCharacters();
+        }, err => {
+
+        });
+      }
+    }).catch(err => {/*console.log(err)*/});
   }
 
   canJoin() {

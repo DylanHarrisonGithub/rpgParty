@@ -1,3 +1,52 @@
-<p>
-  create-character works!
-</p>
+<div role="document" class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="text-center w-100">Create Character</h4>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <div class="row">
+          <div class="col text-center"><h3>{{classNames[selectedClass]}}</h3></div>
+        </div>
+        <div class="row">
+          <div class="col align-self-center text-right">
+            <a class="delete-char-button text-primary" (click)="prevClass()"><i class="fas fa-chevron-left"></i></a>
+          </div>
+          <div class="col align-self-center text-center">
+            <img height="100px" width="100px" [src]="imgPath + baseStats[classNames[selectedClass]].assets.portrait"/>
+          </div>
+          <div class="col align-self-center text-left">
+            <a class="delete-char-button text-primary" (click)="nextClass()"><i class="fas fa-chevron-right"></i></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center"><h4>HP: {{baseStats[classNames[selectedClass]].hit_points}} MP: {{baseStats[classNames[selectedClass]].magic_points}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col text-center text-secondary">
+            <div class="text-left">
+              <h5>Strength: {{baseStats[classNames[selectedClass]].stats.strength}}</h5>
+              <h5>Agility: {{baseStats[classNames[selectedClass]].stats.agility}}</h5>
+              <h5>Vitality: {{baseStats[classNames[selectedClass]].stats.vitality}}</h5>    
+            </div>
+          </div>
+          <div class="col text-center text-secondary">
+            <div class="text-left">              
+              <h5>Intelligence: {{baseStats[classNames[selectedClass]].stats.intelligence}}</h5>
+              <h5>Luck: {{baseStats[classNames[selectedClass]].stats.luck}}</h5>         
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <input class="form-control" type="text" placeholder="Name your character" [(ngModel)]="charName"/>
+          </div>
+        </div>
+      </div>
+    </div>    
+    <div class="modal-footer text-center">
+      <button type="button" class="btn w-100 btn-success" (click)="onClose()">Create</button>
+      <button type="button" class="btn w-100 btn-primary" (click)="_activeModal.dismiss('Cancel')">Cancel</button>
+    </div>    
+  </div>
+</div>
