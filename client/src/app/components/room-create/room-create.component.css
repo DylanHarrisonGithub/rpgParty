@@ -1,0 +1,102 @@
+.room-create-main {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 200px;
+  position: absolute;
+  background-color: blue;
+  z-index: -3;
+  text-shadow: 
+    -1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+.room-create-queue {
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  overflow-y: auto; 
+  background-color: black;
+  position: absolute;
+}
+
+.room-create-bkg {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.room-create-card {
+  background-color: rgba(255,255,255,.1);
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+  height: 100%;
+}
+
+.room-create-room-code-card {
+  background-color: rgba(0,0,0,.9);
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.room-create-card-body-parent {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.room-create-card-body-child {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  transform: translate(0, -50%);
+}
+
+.room-create-list-item {
+  background-color: rgb(124, 138, 135);
+  border: 3px solid black;
+}
+.room-create-login-list-item {
+  height: 36px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 3px dashed white;
+}
+
+@media screen and (orientation: landscape) {
+  .room-create-main {
+    top: 0;
+    left: 0;
+    right: 300px;
+    bottom: 0;
+  }
+  .room-create-queue {
+    left: auto;
+    height: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px; 
+  }
+  .room-create-player-list {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translate(0, -50%);
+  }
+}
+

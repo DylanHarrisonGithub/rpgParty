@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoomCreateComponent implements OnInit {
 
+  imgPath = '../../../assets/wallpapers/';
+  portraitPath = "../../../../assets/";
+  imgNum = 0;
+  players = [];
+
   constructor() { }
 
   ngOnInit() {
+    this.imgNum = Math.floor(Math.random()*4) + 1;
   }
 
 }

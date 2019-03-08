@@ -2,5 +2,6 @@ client-side join-room component room code validation
 client-side create character component name validation
 client-side flash-message component
 client-side create-room component
+overhaul login and register with formbuilder and validators
 
 readme instructions
