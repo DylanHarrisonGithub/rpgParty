@@ -1,12 +1,12 @@
 <div role="document" class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header text-center">
-      <h4 class="text-center w-100">Load Tileset</h4>
+      <h4 class="text-center w-100">Load Quest</h4>
     </div>
     <div class="modal-body">
       <select class="form-control" [(ngModel)]="selected">
-        <option value="Upload a custom tile set">Upload a custom tile set</option>
-        <option *ngFor="let t of tilesetList">{{ t }}</option>
+        <option value="Upload a custom tile set">Upload a custom quest</option>
+        <option *ngFor="let t of questList">{{ t }}</option>
       </select>
     </div>
     <div class="modal-footer text-center">

@@ -38,5 +38,24 @@ module.exports = (router) => {
             }
         });
     });
+
+    router.get('/quests', (req, res) => {
+        fs.readdir('./public/assets/quests/', (err, questlist) => {
+            if (err) {
+                res.json({ message: 'error getting quests list', 'error': err});
+            } else {
+                res.json({ quests: questlist });
+            }
+        });
+    });
+    
+    router.get('/quests/:quest', (req, res) => {
+        res.sendFile('/public/assets/quests/' + req.params.file, {'root': './'}, (error) => {
+            if (error) {
+                res.json({'message': 'could not find quest' + req.params.file, 'error': error });
+            }
+        });
+    });
+
     return router;
 }

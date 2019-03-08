@@ -22,4 +22,11 @@ export class AssetService {
   getMap(mapName: string) {
     return this._http.get(config.URI[config.ENVIRONMENT] + 'assets/maps/' + mapName);
   }
+
+  getQuestList() {
+    return this._http.get(config.URI[config.ENVIRONMENT] + 'assets/quests');
+  }
+  getQuest(questName: string) {
+    return this._http.get(config.URI[config.ENVIRONMENT] + 'assets/quests/' + questName);
+  }
 }

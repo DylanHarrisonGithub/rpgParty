@@ -20,6 +20,7 @@ import { RoomJoinComponent } from './components/room-join/room-join.component';
 import { PlayComponent } from './components/play/play.component';
 import { CreateCharacterComponent } from './components/modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from './components/modals/delete-character/delete-character.component';
+import { QuestLoadDialogComponent } from './components/modals/quest-load-dialog/quest-load-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { DeleteCharacterComponent } from './components/modals/delete-character/d
     PlayComponent,
     CreateCharacterComponent,
     DeleteCharacterComponent,
+    QuestLoadDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,6 +50,7 @@ import { DeleteCharacterComponent } from './components/modals/delete-character/d
   bootstrap: [AppComponent],
   entryComponents: [
     TilesetLoadDialogComponent,
+    QuestLoadDialogComponent,
     CreateCharacterComponent,
     DeleteCharacterComponent
   ]

@@ -9,59 +9,32 @@
       <div class="room-create-card-body-child">
         <h6 class="text-white font-weight-bold">CHOOSE YOUR QUEST</h6>
         <div class="card text-center room-create-room-code-card">
-          <h5 class="text-danger">No Quest Loaded</h5>
-          <button class="btn btn-primary">LOAD QUEST</button>
+          <h5 *ngIf="!quest" class="text-danger">No Quest Loaded</h5>
+          <h5 *ngIf="quest" class="text-success">{{quest}}</h5>
+          <button class="btn btn-primary" (click)="loadQuest()">LOAD QUEST</button>
         </div>
       </div>      
     </div>
     <div class="card-footer">
       <h6 class="text-white font-weight-bold">YOUR ROOM CODE IS</h6>
       <div class="card text-center room-create-room-code-card">
-        <h1 class="text-warning font-weight-bold">DCWJ</h1>
+        <h1 class="text-warning font-weight-bold">{{roomCode}}</h1>
       </div>
     </div>    
   </div>
 </div>
 <div class="room-create-queue">
   <ul class="list-group room-create-player-list">
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
+    <li *ngFor="let p of players" class="list-group-item text-center room-create-list-item">
+      <div *ngIf="!p.player" class="room-create-login-list-item">
         <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
       </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
-      </div>
-    </li>
-    <li class="list-group-item text-center room-create-list-item">
-      <div class="room-create-login-list-item">
-        <h6 class="text-white font-weight-bold align-self-center">login to play!</h6>
+      <div *ngIf="p.player" class="room-create-player-list-item row">
+        <div class="col-1 room-create-player-list-portrait"><img class="" height="36px" width="36px" [src]="portraitPath + p.player.class + '.png'"/></div>
+        <div class="col room-create-player-list-name">
+          <h4 class="text-white font-weight-bold">{{ p.player.name }}</h4>
+        </div>
+        <div class="col-1 room-create-player-list-level"><h6 class="text-white font-weight-bold align-self-center">lvl. {{ p.player.level }}</h6></div>
       </div>
     </li>
   </ul>   
