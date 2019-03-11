@@ -3,7 +3,6 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load-dialog.component';
 
-  import { from } from 'rxjs';
 @Component({
   selector: 'app-room-create',
   templateUrl: './room-create.component.html',
@@ -12,9 +11,7 @@ import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load
 export class RoomCreateComponent implements OnInit {
 
   roomCode = "ABCD"
-  imgPath = '../../../assets/wallpapers/';
   portraitPath = "../../../assets/";
-  imgNum = 0;
   quest;
   players = [
     { player: { name: "LISA", level: 19, class: "paladin" } },
@@ -32,7 +29,6 @@ export class RoomCreateComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.imgNum = Math.floor(Math.random()*4) + 1;
   }
 
   loadQuest() {

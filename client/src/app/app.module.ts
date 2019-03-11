@@ -21,6 +21,7 @@ import { PlayComponent } from './components/play/play.component';
 import { CreateCharacterComponent } from './components/modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from './components/modals/delete-character/delete-character.component';
 import { QuestLoadDialogComponent } from './components/modals/quest-load-dialog/quest-load-dialog.component';
+import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { QuestLoadDialogComponent } from './components/modals/quest-load-dialog/
     CreateCharacterComponent,
     DeleteCharacterComponent,
     QuestLoadDialogComponent,
+    BkgCrossfaderComponent,
   ],
   imports: [
     BrowserModule,

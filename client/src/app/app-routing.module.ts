@@ -11,6 +11,7 @@ import { RoomJoinComponent } from './components/room-join/room-join.component';
 import { PlayComponent } from './components/play/play.component';
 
 import { AuthGuard } from './guards/auth.guard';
+import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
