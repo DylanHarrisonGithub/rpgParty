@@ -1,22 +1,29 @@
 <app-bkg-crossfader></app-bkg-crossfader>
-<div class="container">
-  <div class="jumbotron">
-    <h1 class="text-center">Begin A Quest</h1>
-    <hr/>
-    <img src="assets/rpgParty.png" class="img-fluid">
-    <div class="row">
-      <div class="col-md"></div>
-      <div class="col-md"><p>Welcome to rpgParty. Create a room on your home television to begin a quest. Have yourself and your friends join in on their mobile devices.</p></div>
-      <div class="col-md"></div>
+<div class="home-component-main">
+  <div class="card text-center home-component-card">
+    <div class="card-header">
+      <h1 class="text-white font-weight-bold">rpgParty</h1>
     </div>
-    <hr/>
-    <h5 class="text-center"><a routerLink="/login">Login</a> to play.</h5>
-    <div class="row">
-      <div class="col-md text-center">
-        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/create">Create A Room</button>
-      </div>
-      <div class="col-md text-center">
-        <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/join">&nbsp;&nbsp;Join A Room&nbsp;&nbsp;</button>
+    <h5>start your quest</h5>
+    <div class="card-body home-component-card-body-parent">
+      <div class="home-component-card-body-child">
+        <img src="assets/rpgParty.png" width="200px">
+        <div class="row">
+          <div class="col-md"></div>
+          <div class="col-md"><p>Welcome to rpgParty. Create a room on your home television to begin a quest. Have yourself and your friends join in on their mobile devices.</p></div>
+          <div class="col-md"></div>
+        </div>
+      </div>      
+    </div>
+    <div class="card-footer">
+      <h5 class="text-center"><a routerLink="/login">Login</a> to play.</h5>
+      <div class="row">
+        <div class="col-md text-center">
+          <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/create">Create A Room</button>
+        </div>
+        <div class="col-md text-center">
+          <button class="btn btn-primary m-3" [disabled]="!_authService.isLoggedIn()" routerLink="/join">&nbsp;&nbsp;Join A Room&nbsp;&nbsp;</button>
+        </div>
       </div>
     </div>
   </div>

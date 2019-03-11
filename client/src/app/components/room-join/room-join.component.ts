@@ -12,13 +12,13 @@ import { CharacterService } from '../../services/character.service';
 })
 export class RoomJoinComponent implements OnInit {
 
-  //characters = [];
-  characters = [
+  characters = [];
+  /*characters = [
     { name: "Frojo", class: "Paladin", level: 5, _id: "abc12345" },
     { name: "Zartan", class: "Mage", level: 13, _id: "oioioio" },
     { name: "Aezraele", class: "Healer", level: 1, _id: "asdfklasjdfk" },
     { name: "Thunk", class: "Orc", level: 4, _id: "qweruio" },
-  ];
+  ];*/
 
   imgPaths = {
     "Paladin": "../../../assets/paladin.png",
@@ -40,7 +40,9 @@ export class RoomJoinComponent implements OnInit {
 
   private getCharacters(): void {
     this._characterService.getCharacters().subscribe(res => {
-      this.characters = res['characters'];
+      if (res.hasOwnProperty('characters')) {
+        this.characters = res['characters'];
+      }
     }, err => {
       console.log(err);
     });
