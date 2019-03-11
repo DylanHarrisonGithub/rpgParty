@@ -1,61 +1,64 @@
-<div style="left: 50px; right: 50px; top: 50px; border-radius: 10px; border-style: solid; padding:40px; border-color:lightgray; position: absolute;">
+<app-bkg-crossfader></app-bkg-crossfader>
+<div class="register-main">
 
-  <h1 class="text-center">Register</h1>
-  <hr/>
-
-  <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
-
-    <!--id-->
-    <div class="form-group" hidden="true">
-      <input type="text" class="form-control" name="id" ngModel>
+  <div class="card register-card">
+    <div class="card-header">      
+      <h1 class="text-center">Register</h1>
     </div>
-
-    <!--username-->
-    <div class="form-group">
-      <h5 class="text-center">Username</h5>
-      <ul class="list-unstyled">
-        <li><input type="text" class="form-control" name="name" placeholder="Enter a username" (ngModelChange)="validateUsername(registerForm)" [disabled]="msg" ngModel></li>
-        <li class="list-group-item list-group-item-danger" *ngFor="let e of usernameErrors">{{ e }}</li> 
-        <li *ngIf="!usernameErrors.length && usernameChanged" class="list-group-item list-group-item-success">Username OK!</li>
-      </ul>
+    <div class="card-body register-card-body-parent">
+      <div class="register-card-body-child">
+        <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+          <!--id-->
+          <div class="form-group" hidden="true">
+            <input type="text" class="form-control" name="id" ngModel>
+          </div>
+          <!--username-->
+          <div class="form-group">
+            <h5 class="text-center">Username</h5>
+            <ul class="list-unstyled">
+              <li><input type="text" class="form-control" name="name" placeholder="Enter a username" (ngModelChange)="validateUsername(registerForm)" [disabled]="msg" ngModel
+                [ngClass]="{'is-valid': !usernameErrors.length && usernameChanged, 'is-invalid': usernameErrors.length }"></li>
+              <li class="list-group-item list-group-item-danger" *ngFor="let e of usernameErrors">{{ e }}</li>
+            </ul>
+          </div>
+          <!--email-->
+          <div class="form-group">
+            <h5 class="text-center">Email</h5>
+            <ul class="list-unstyled">
+              <li><input type="text" class="form-control" name="email" placeholder="Enter an email" (ngModelChange)="validateEmail(registerForm)" [disabled]="msg" ngModel
+                [ngClass]="{'is-valid': !emailErrors.length && emailChanged, 'is-invalid': emailErrors.length }"></li>
+              <li class="list-group-item list-group-item-danger" *ngFor="let e of emailErrors">{{ e }}</li>
+            </ul>
+          </div>
+          <!--password-->
+          <div class="form-group">
+            <h5 class="text-center">Password</h5>
+            <ul class="list-unstyled">
+              <li><input type="text" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel
+                [ngClass]="{'is-valid': !passwordErrors.length && passwordChanged, 'is-invalid': passwordErrors.length }"></li>     
+              <li class="list-group-item list-group-item-danger" *ngFor="let e of passwordErrors">{{ e }}</li>
+            </ul>
+          </div>
+          <!--Submit button-->
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary" 
+            [disabled]="usernameErrors.length || !usernameChanged ||
+                        emailErrors.length || !emailChanged ||
+                        passwordErrors.length || !passwordChanged">
+                        Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <!--email-->
-    <div class="form-group">
-      <h5 class="text-center">Email</h5>
-      <ul class="list-unstyled">
-        <li><input type="text" class="form-control" name="email" placeholder="Enter an email" (ngModelChange)="validateEmail(registerForm)" [disabled]="msg" ngModel></li>
-        <li class="list-group-item list-group-item-danger" *ngFor="let e of emailErrors">{{ e }}</li>      
-        <li *ngIf="!emailErrors.length && emailChanged" class="list-group-item list-group-item-success">Email OK!</li>
-      </ul>
+    <div class="card-footer">     
+      <div *ngIf="msg?.success" class="p-3 mb-2 bg-success text-white text-center">
+        {{ msg.message }}
+      </div>
+      <div *ngIf="msg && !msg.success" class="p-3 mb-2 bg-danger text-white text-center">
+        {{ msg.message }}
+      </div>
     </div>
-
-    <!--password-->
-    <div class="form-group">
-      <h5 class="text-center">Password</h5>
-      <ul class="list-unstyled">
-        <li><input type="text" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel></li>     
-        <li class="list-group-item list-group-item-danger" *ngFor="let e of passwordErrors">{{ e }}</li>
-        <li *ngIf="!passwordErrors.length && passwordChanged" class="list-group-item list-group-item-success">Password OK!</li>
-      </ul>
-    </div>
-
-    <div class="text-center">
-      <button type="submit" class="btn btn-primary" 
-      [disabled]="usernameErrors.length || !usernameChanged ||
-                  emailErrors.length || !emailChanged ||
-                  passwordErrors.length || !passwordChanged">
-                  Submit
-      </button>
-    </div>
-  </form>
-
-  <hr/>
-  <div *ngIf="msg?.success" class="p-3 mb-2 bg-success text-white text-center">
-    {{ msg.message }}
-  </div>
-  <div *ngIf="msg && !msg.success" class="p-3 mb-2 bg-danger text-white text-center">
-    {{ msg.message }}
   </div>
 </div>
 

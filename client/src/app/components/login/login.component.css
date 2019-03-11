@@ -1,0 +1,49 @@
+.login-main {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  text-shadow: 
+    -1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+    1px 1px 0 #000;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.login-card {
+  background-color: rgba(255,255,255,.1);
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+  height: 100%;
+}
+
+.form-control {
+  background-color: rgba(0,0,0.5);
+  text-shadow: 
+    -1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+    1px 1px 0 #000;
+  color: orange;
+  text-transform: none;
+  font-weight: bold;
+}
+
+.login-component-card-body-parent {
+  position: relative;
+}
+
+.login-component-card-body-child {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 300px;
+  transform: translate(-50%, -50%);
+}

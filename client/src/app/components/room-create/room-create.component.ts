@@ -14,10 +14,14 @@ export class RoomCreateComponent implements OnInit {
   portraitPath = "../../../assets/";
   quest;
   players = [
-    { player: { name: "LISA", level: 19, class: "paladin" } },
-    { player: { name: "Homer", level: 19, class: "mage" } },
-    { player: { name: "bart", level: 19, class: "healer" } },
-    { player: { name: "marge", level: 19, class: "orc" } },
+    //{ player: { name: "LISA", level: 19, class: "paladin" } },
+    //{ player: { name: "Homer", level: 19, class: "mage" } },
+    //{ player: { name: "bart", level: 19, class: "healer" } },
+    //{ player: { name: "marge", level: 19, class: "orc" } },
+    { player: null },
+    { player: null },
+    { player: null },
+    { player: null },
     { player: null },
     { player: null },
     { player: null },

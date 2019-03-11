@@ -1,43 +1,50 @@
-<div style="left: 50px; right: 50px; top: 50px; border-radius: 10px; border-style: solid; padding:40px; border-color:lightgray; position: absolute;">
-
-  <h1 class="text-center">Login</h1>
-  <hr/>
-
-  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
-
-    <!--id-->
-    <div class="form-group" hidden="true">
-      <input type="text" class="form-control" name="id" ngModel>
-    </div>
-
-    <!--username-->
-    <div class="form-group">
-      <h5 class="text-center">Username</h5>
-      <ul class="list-unstyled">
-        <li><input type="text" class="form-control" name="name" placeholder="Enter your username" [disabled]="msg" ngModel></li>
-      </ul>
-    </div>
-
-    <!--password-->
-    <div class="form-group">
-      <h5 class="text-center">Password</h5>
-      <ul class="list-unstyled">
-        <li><input type="text" class="form-control" name="password" placeholder="Enter your password" [disabled]="msg" ngModel></li>
-      </ul>
-    </div>
-
-    <div class="text-center">
-      <button type="submit" class="btn btn-primary" [disabled]="!loginForm.value.name || !loginForm.value.password">
-        Submit
-      </button>
-    </div>
-  </form>
-
-  <hr/>
-  <div *ngIf="msg?.success" class="p-3 mb-2 bg-success text-white text-center">
-    {{ msg.message }}
-  </div>
-  <div *ngIf="msg && !msg.success" class="p-3 mb-2 bg-danger text-white text-center">
-    {{ msg.message }}
+<app-bkg-crossfader></app-bkg-crossfader>
+<div class="login-main">
+  <div class="card login-card">
+    
+      <div class="card-header">
+        <h1 class="text-center">Login</h1>
+      </div>
+      <div class="card-body login-component-card-body-parent">
+        <div class="login-component-card-body-child">
+          <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+            <!--id-->
+            <div class="form-group" hidden="true">
+              <input type="text" class="form-control" name="id" ngModel>
+            </div>
+            <!--username-->
+            <div class="form-group">
+              <h5 class="text-center">Username</h5>
+              <ul class="list-unstyled">
+                <li><input type="text" class="form-control" name="name" placeholder="Enter your username" [disabled]="msg" ngModel></li>
+              </ul>
+            </div>
+            <!--password-->
+            <div class="form-group">
+              <h5 class="text-center">Password</h5>
+              <ul class="list-unstyled">
+                <li><input type="text" class="form-control" name="password" placeholder="Enter your password" [disabled]="msg" ngModel></li>
+              </ul>
+            </div>
+            <!--submit button-->
+            <div class="text-center align-self-center">
+              <button type="submit" class="btn btn-primary" [disabled]="!loginForm.value.name || !loginForm.value.password">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="card-footer">
+        <!--messages-->
+        <div *ngIf="msg?.success" class="p-3 mb-2 bg-success text-white text-center">
+          {{ msg.message }}
+        </div>
+        <div *ngIf="msg && !msg.success" class="p-3 mb-2 bg-danger text-white text-center">
+          {{ msg.message }}
+        </div>
+        <h5 class="text-center">Don't have an account?</h5>
+        <h5 class="text-center"><a routerLink="/register">Register here</a></h5>
+      </div>
   </div>
 </div>
