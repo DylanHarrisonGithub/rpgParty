@@ -3,7 +3,7 @@
   <div class="card room-join-component-card">
 
     <div class="card-header">
-      <button class="btn btn-primary col" routerLink="play" [disabled]="canJoin()">Join</button>
+      <button class="btn btn-primary col" (click)="join()" [disabled]="!canJoin()">Join</button>
       <hr/>
       <div class="row">            
         <h5 class="col-8 align-self-center">Room Code</h5>

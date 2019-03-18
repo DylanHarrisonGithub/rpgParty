@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 import { CreateCharacterComponent } from '../modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from '../modals/delete-character/delete-character.component';
@@ -31,7 +32,8 @@ export class RoomJoinComponent implements OnInit {
 
   constructor(
     private _modalService: NgbModal,
-    private _characterService: CharacterService
+    private _characterService: CharacterService,
+    private _router: Router
   ) { }
 
   ngOnInit() {
@@ -83,12 +85,12 @@ export class RoomJoinComponent implements OnInit {
   }
 
   canJoin() {
-    return this.selectedCharId == '' || this.roomCode.length != 5;
+    return this.selectedCharId != '' && this.roomCode.length == 5;
   }
 
   join() {
     if (this.canJoin()) {
-      
+      this._router.navigate(['/waiting']);
     }
   }
 

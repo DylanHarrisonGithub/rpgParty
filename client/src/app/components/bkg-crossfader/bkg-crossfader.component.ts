@@ -11,8 +11,8 @@ export class BkgCrossfaderComponent implements OnInit {
   numWallpapers = 5;
   transparent = false;
   delay = 10000;
-  top = 1;
-  bottom = 2;
+  top = 0;
+  bottom = 1;
 
   constructor() { }
 
@@ -21,20 +21,20 @@ export class BkgCrossfaderComponent implements OnInit {
       this.transparent = !this.transparent;
       setTimeout(() => {
         if (this.transparent) {
-          this.top = ((this.top + 1) % this.numWallpapers) + 1;
+          this.top = ((this.top + 2) % this.numWallpapers);
         } else {
-          this.bottom = ((this.bottom + 1) % this.numWallpapers) + 1;
+          this.bottom = ((this.bottom + 2) % this.numWallpapers);
         }
       }, this.delay / 2);
     }, this.delay)
   }
 
   private getSrcTop(): string {
-    return this.imgPath + this.top + '.jpg';
+    return this.imgPath + (this.top + 1) + '.jpg';
   }
 
   private getSrcBottom(): string {
-    return this.imgPath + this.bottom + '.jpg';
+    return this.imgPath + (this.bottom + 1) + '.jpg';
   }
 
 }

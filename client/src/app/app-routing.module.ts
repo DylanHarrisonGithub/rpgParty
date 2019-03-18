@@ -12,12 +12,14 @@ import { PlayComponent } from './components/play/play.component';
 
 import { AuthGuard } from './guards/auth.guard';
 import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
+import { WaitingComponent } from './components/waiting/waiting.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'create', component: RoomCreateComponent, canActivate: [AuthGuard]},
-  { path: 'join', component: RoomJoinComponent, canActivate: [AuthGuard]},
-  { path: 'play', component: PlayComponent, canActivate: [AuthGuard]},
+  { path: 'create', component: RoomCreateComponent, canActivate: [AuthGuard] },
+  { path: 'join', component: RoomJoinComponent, canActivate: [AuthGuard] },
+  { path: 'waiting', component: WaitingComponent, canActivate: [AuthGuard] },
+  { path: 'play', component: PlayComponent, canActivate: [AuthGuard] },
   { path: 'mapeditor', component: MapeditorComponent },
   { path: 'tileseteditor', component: TileseteditorComponent },
   { path: 'register', component: RegisterComponent },
