@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { SocketService } from '../../services/socket.service';
 import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load-dialog.component';
 
 @Component({
@@ -10,7 +10,7 @@ import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load
 })
 export class RoomCreateComponent implements OnInit {
 
-  roomCode = "ABCD"
+  roomCode = ""
   portraitPath = "../../../assets/";
   quest;
   players = [
@@ -29,10 +29,17 @@ export class RoomCreateComponent implements OnInit {
   ];
 
   constructor(
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    private _socketService: SocketService
   ) { }
 
   ngOnInit() {
+    this._socketService.connect({initialize: true});
+    this._socketService.onMessage().subscribe(msg => {
+      if (msg.hasOwnProperty('room')) {
+        this.roomCode = msg['room'];
+      }
+    });
   }
 
   loadQuest() {

@@ -6,6 +6,8 @@ import { CreateCharacterComponent } from '../modals/create-character/create-char
 import { DeleteCharacterComponent } from '../modals/delete-character/delete-character.component';
 import { CharacterService } from '../../services/character.service';
 
+import { WaitingComponent } from '../waiting/waiting.component';
+
 @Component({
   selector: 'app-room-join',
   templateUrl: './room-join.component.html',

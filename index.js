@@ -33,8 +33,51 @@ mongoose.connect(config[env].MONGODB_URI, (err) => {
     console.log('Could not connect to MongoDB.');
   } else {
     console.log('MongoDB connection established.');
-    app.listen(config[env].PORT, () => {
+    let server = app.listen(config[env].PORT, () => {
+
       console.log('Server started on port ' + config[env].PORT.toString());
+    
+      // websock.io server
+      let io = require('socket.io')(server);
+      io.on('connection', (soc) => {
+        if (soc.handshake.query.hasOwnProperty('user')) {
+          let user = JSON.parse(soc.handshake.query['user']);
+          if (user.hasOwnProperty('initialize')) {
+
+            // generate a unique room code
+            let tempCode = generateRoomCode(4);
+            let exists = Object.keys(io.sockets.adapter.rooms).filter(r => r == tempCode);
+            while (exists.length) {
+              tempCode = generateRoomCode(4);
+              exists = Object.keys(io.sockets.adapter.rooms).filter(r => r == tempCode);
+            }
+            // join new room
+            soc.join(tempCode, () => {
+              soc.emit('message', { success: true, message: "New room created", room: tempCode });
+            });
+
+          } else {}
+        } else {
+          soc.emit('message', { success: false, message: "Could not create socket connection because no user was provided." });
+        }
+
+        console.log(soc.id);         
+        soc.on('message', (data) => {
+          console.log(data);
+        });
+      });
+
     });
   }
 });
+
+generateRoomCode = (length) => {
+  let c = '';
+  let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  for (let i = 0; i < length; i++) {
+    c += chars[Math.floor(Math.random()*26)];
+  }
+  return c;
+}  
+

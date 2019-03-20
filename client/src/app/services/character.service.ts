@@ -33,7 +33,7 @@ export class CharacterService {
     return this._http.post(config.URI[config.ENVIRONMENT] + 'character/create',
       {
         owner_id: this._authService.getUserDetails()['_id'],
-        name: char.name,
+        name: char.name, 
         class: char.class
       },
       {
