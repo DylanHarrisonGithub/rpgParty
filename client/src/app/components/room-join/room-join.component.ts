@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CreateCharacterComponent } from '../modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from '../modals/delete-character/delete-character.component';
 import { CharacterService } from '../../services/character.service';
+import { SocketService } from '../../services/socket.service';
 
 import { WaitingComponent } from '../waiting/waiting.component';
 
@@ -35,7 +36,8 @@ export class RoomJoinComponent implements OnInit {
   constructor(
     private _modalService: NgbModal,
     private _characterService: CharacterService,
-    private _router: Router
+    private _router: Router,
+    private _socketService: SocketService
   ) { }
 
   ngOnInit() {
@@ -87,12 +89,25 @@ export class RoomJoinComponent implements OnInit {
   }
 
   canJoin() {
-    return this.selectedCharId != '' && this.roomCode.length == 5;
+    return this.selectedCharId != '' && this.roomCode.length == 4;
   }
 
   join() {
     if (this.canJoin()) {
-      this._router.navigate(['/waiting']);
+      let char = this.characters.find(c => c._id == this.selectedCharId);
+      if (char) {
+        this._socketService.connect({
+          name: char.name,
+          class: char.class,
+          level: char.level,
+          room: this.roomCode.toUpperCase()
+        });
+        this._socketService.onMessage().subscribe(msg => {
+          console.log(msg);
+        });
+        
+        //this._router.navigate(['/waiting']);
+      }
     }
   }
 

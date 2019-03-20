@@ -36,8 +36,22 @@ export class RoomCreateComponent implements OnInit {
   ngOnInit() {
     this._socketService.connect({initialize: true});
     this._socketService.onMessage().subscribe(msg => {
+      //console.log(msg);
       if (msg.hasOwnProperty('room')) {
         this.roomCode = msg['room'];
+      }
+      if (msg.hasOwnProperty('user')) {
+        let i = 0;
+        while (this.players[i].player != null && i < this.players.length) {
+          i++;
+        }
+        if (i < this.players.length) {
+          this.players[i].player = {
+            name: msg.user.name,
+            class: msg.user.class.toLowerCase(),
+            level: msg.user.level
+          }
+        }
       }
     });
   }
@@ -45,6 +59,7 @@ export class RoomCreateComponent implements OnInit {
   loadQuest() {
     let questModal = this._modalService.open(QuestLoadDialogComponent);
     questModal.result.then(val => {
+      this.quest = val;
     }, err => {});
   }
 }

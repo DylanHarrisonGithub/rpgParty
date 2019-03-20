@@ -54,9 +54,25 @@ mongoose.connect(config[env].MONGODB_URI, (err) => {
             // join new room
             soc.join(tempCode, () => {
               soc.emit('message', { success: true, message: "New room created", room: tempCode });
+              soc.user = false;
             });
 
-          } else {}
+          } else {
+            console.log('joining room', user);
+            // check room name class level
+
+            // verify room exists
+            if (Object.keys(io.sockets.adapter.rooms).filter(r => r.toUpperCase() == user.room.toUpperCase()).length) {
+              soc.join(user.room, () => {
+                soc.emit('message', { success: true, message: "Successfully joined room." });
+                // temporary
+                io.sockets.in(user.room).emit('message', { success: true, user: user });
+              });
+            } else {
+              soc.emit('message', { success: false, message: "Room does not exist." });
+            }
+
+          }
         } else {
           soc.emit('message', { success: false, message: "Could not create socket connection because no user was provided." });
         }
