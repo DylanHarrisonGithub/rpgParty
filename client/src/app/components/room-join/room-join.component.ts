@@ -7,6 +7,7 @@ import { DeleteCharacterComponent } from '../modals/delete-character/delete-char
 import { CharacterService } from '../../services/character.service';
 import { SocketService } from '../../services/socket.service';
 
+import { ToastrService } from 'ngx-toastr';
 import { WaitingComponent } from '../waiting/waiting.component';
 
 @Component({
@@ -17,12 +18,6 @@ import { WaitingComponent } from '../waiting/waiting.component';
 export class RoomJoinComponent implements OnInit {
 
   characters = [];
-  /*characters = [
-    { name: "Frojo", class: "Paladin", level: 5, _id: "abc12345" },
-    { name: "Zartan", class: "Mage", level: 13, _id: "oioioio" },
-    { name: "Aezraele", class: "Healer", level: 1, _id: "asdfklasjdfk" },
-    { name: "Thunk", class: "Orc", level: 4, _id: "qweruio" },
-  ];*/
 
   imgPaths = {
     "Paladin": "../../../assets/paladin.png",
@@ -37,7 +32,8 @@ export class RoomJoinComponent implements OnInit {
     private _modalService: NgbModal,
     private _characterService: CharacterService,
     private _router: Router,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _toastrService: ToastrService
   ) { }
 
   ngOnInit() {
@@ -66,12 +62,24 @@ export class RoomJoinComponent implements OnInit {
     let createCharModal = this._modalService.open(CreateCharacterComponent);
     createCharModal.result.then(val => {
       this._characterService.createCharacter({ name: val.name, class: val.class }).subscribe(res => {
-        console.log(res);
-        this.getCharacters();
+        if (res.hasOwnProperty('success') && res.hasOwnProperty('message')) {
+          if (res['success']) {
+            this._toastrService.success(res['message'], 'Success!');
+            this.getCharacters();
+          } else {
+            this._toastrService.error(res['message'], 'Character Create Error');
+          }
+        } else {
+          this._toastrService.error('Unhandled error', 'Character Create Error');
+          console.log(res);
+        }
       }, err => {
+        this._toastrService.error('Unknown error', 'Character Create Error');
         console.log(err);
       });
-    }, err => {});
+    }, err => {
+      //console.log(err);
+    });
   }
 
   deleteChar(char) {
@@ -80,9 +88,18 @@ export class RoomJoinComponent implements OnInit {
     deleteCharModal.result.then(val => {
       if (val == 'Delete') {
         this._characterService.deleteCharacter(char._id).subscribe(res => {
-          this.getCharacters();
+          if (res.hasOwnProperty('success') && res.hasOwnProperty('message')) {
+            if (res['success']) {
+              this._toastrService.success(res['message'], 'Success!');              
+              this.getCharacters();
+            } else {
+              this._toastrService.error(res['message'], 'Error!'); 
+            }
+          } else {
+            this._toastrService.error('Unhandled character deletion error.', 'Error!');
+          }
         }, err => {
-
+          this._toastrService.error('Unknown character deletion error.', 'Error!');
         });
       }
     }).catch(err => {/*console.log(err)*/});
@@ -103,10 +120,17 @@ export class RoomJoinComponent implements OnInit {
           room: this.roomCode.toUpperCase()
         });
         this._socketService.onMessage().subscribe(msg => {
-          console.log(msg);
+          if (msg.hasOwnProperty('success') && msg.hasOwnProperty('message')) {
+            if (msg['success']) {
+              this._toastrService.success(msg['message'], 'Success!');
+              this._router.navigate(['/waiting']);
+            } else {
+              this._toastrService.error(msg['message'], 'Error!');
+            }
+          } else {
+            this._toastrService.error(JSON.stringify(msg), 'Error!');
+          }
         });
-        
-        //this._router.navigate(['/waiting']);
       }
     }
   }
