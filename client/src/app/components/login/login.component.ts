@@ -4,6 +4,8 @@ import { NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -11,12 +13,11 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  msg;
-
   constructor(
     private _userService: UserService,
     private _authService: AuthService,
-    private _router: Router
+    private _router: Router,
+    private _toastrService: ToastrService
   ) { }
 
   ngOnInit() {
@@ -28,19 +29,19 @@ export class LoginComponent implements OnInit {
       password: loginForm.value.password
     }
     this._userService.login(u).subscribe(res => {
-      this.msg = res;
-      if (res['success']) {
-        this._authService.saveToken(res['token']);
-      }
-      setTimeout(() => { 
-        if (this.msg.success) {
+      if (res.hasOwnProperty('success') && res.hasOwnProperty('message')) {
+        if (res['success']) {
+          this._toastrService.success(res['message'], 'Success!');          
+          this._authService.saveToken(res['token']);
           this._router.navigate(['/home']);
+        } else {
+          this._toastrService.error(res['message'], 'Login Error!');
         }
-        this.msg = null;
-      }, 4000);
+      } else {
+        this._toastrService.error('Unhandled login error', 'Login Error!');
+      }
     }, (err) => {
-      this.msg = JSON.stringify(err.error);
-      setTimeout(() => { this.msg = null; }, 4000);
+      this._toastrService.error('Unknown login error', 'Login Error!');
     });
   }
 }

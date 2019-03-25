@@ -26,12 +26,12 @@ module.exports = (router) => {
                                 errors.push(err.errors[key].message);
                             }
                         }
-                        res.status(400).json({ success: false, message: errors });
+                        res.json({ success: false, message: errors });
                     } else {
                         if (err.code && err.code == 11000) {
-                            res.status(500).json({ success: false, message: ['Username or Email already exists.'] });
+                            res.json({ success: false, message: ['Username or Email already exists.'] });
                         } else {
-                            res.status(500).json({ success: false, message: [JSON.stringify(err)] });
+                            res.json({ success: false, message: [JSON.stringify(err)] });
                         }
                     }
                 } else {
@@ -50,17 +50,17 @@ module.exports = (router) => {
         else {
             User.findOne({ username: req.body.username }, (err, doc) => {
                 if (err) {
-                    res.status(400).json({ success: false, message: ['Username does not exist.']});
+                    res.json({ success: false, message: ['Username does not exist.']});
                 } else {
                     if (doc) {
                         if (bcrypt.compareSync(req.body.password, doc.password)) {
                             let token = jwt.sign({ _id: doc._id, username: doc.username }, config[env].JWT_SECRET, { expiresIn: config[env].JWT_TTL });
                             res.status(200).json({ success: true, message: ['Login success!'], token: token, user: doc });
                         } else {
-                            res.status(400).json({ success: false, message: ['Incorrect password.']});
+                            res.json({ success: false, message: ['Incorrect password.']});
                         }
                     } else {
-                        res.status(400).json({ success: false, message: ['Username does not exist.']});
+                        res.json({ success: false, message: ['Username does not exist.']});
                     }
                 }
             });

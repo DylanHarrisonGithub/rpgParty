@@ -4,6 +4,8 @@ import { NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -11,7 +13,6 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
 
-  msg;
   usernameErrors = [];
   usernameChanged = false;
   emailErrors = [];
@@ -19,12 +20,12 @@ export class RegisterComponent implements OnInit {
   passwordErrors = [];
   passwordChanged = false;
   emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    
 
   constructor(
     private _userService: UserService,
     private _authService: AuthService,
-    private _router: Router
+    private _router: Router,
+    private _toastrService: ToastrService
   ) { }
 
   ngOnInit() {
@@ -45,22 +46,20 @@ export class RegisterComponent implements OnInit {
       email: registerForm.value.email,
       password: registerForm.value.password
     }
-    registerForm.reset();
     this._userService.postUser(u).subscribe(res => {
-      this.msg = res;
-      this.reset();
-      setTimeout(() => { 
-        this.reset(); 
-        if (this.msg.success) {
+      if (res.hasOwnProperty('success') && res.hasOwnProperty('message')) {
+        if (res['success']) {
+          this._toastrService.success(res['message'], 'Success!');
           this._authService.saveToken(res['token']);
           this._router.navigate(['/home']);
+        } else {
+          this._toastrService.error(res['message'], 'Registration Error');
         }
-        this.msg = null;
-      }, 5000);
-    }, (err) => {
-      this.msg = err.error;
-      this.reset();
-      setTimeout(() => { this.msg = null; this.reset(); }, 5000);
+      } else {
+        this._toastrService.error('Unknown Error', 'Registration Error');
+      }
+    }, (err) => {      
+      this._toastrService.error(JSON.stringify(err), 'Registration Error');
     });
   }
 
@@ -76,7 +75,6 @@ export class RegisterComponent implements OnInit {
         this._userService.isUniqueUsername({ username: registerForm.value.name }).subscribe(res => {
           if (res.hasOwnProperty('isUniqueUsername') && res['isUniqueUsername'] === false) {
             this.usernameErrors.push('Username already exists.');
-            console.log('you did it again', registerForm.value.name);
           }
         });
       }
@@ -102,8 +100,14 @@ export class RegisterComponent implements OnInit {
   }
 
   validatePassword(registerForm: NgForm) {
-    this.passwordChanged = true;
     this.passwordErrors = [];
+    if (registerForm.value.password != null) {
+      this.passwordChanged = true;
+      if (registerForm.value.password.length == 0) this.passwordErrors.push('Password is required.');
+      if (registerForm.value.password.length < 7) this.passwordErrors.push('Password must be at least 7 characters.');
+      if (!/.*[0-9].*/.test(registerForm.value.password)) this.passwordErrors.push('Password must contain at least one number.');
+      if (!/[^a-zA-Z0-9]/.test(registerForm.value.password)) this.passwordErrors.push('Password must contain at least one non-alphanumeric character.');
+    }
   }
 
 }

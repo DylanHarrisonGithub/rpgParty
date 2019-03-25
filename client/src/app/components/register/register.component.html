@@ -8,10 +8,7 @@
     <div class="card-body register-card-body-parent">
       <div class="register-card-body-child">
         <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
-          <!--id-->
-          <div class="form-group" hidden="true">
-            <input type="text" class="form-control" name="id" ngModel>
-          </div>
+
           <!--username-->
           <div class="form-group">
             <h5 class="text-center">Username</h5>
@@ -34,7 +31,7 @@
           <div class="form-group">
             <h5 class="text-center">Password</h5>
             <ul class="list-unstyled">
-              <li><input type="text" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel
+              <li><input type="password" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel
                 [ngClass]="{'is-valid': !passwordErrors.length && passwordChanged, 'is-invalid': passwordErrors.length }"></li>     
               <li class="list-group-item list-group-item-danger" *ngFor="let e of passwordErrors">{{ e }}</li>
             </ul>
@@ -49,14 +46,6 @@
             </button>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="card-footer">     
-      <div *ngIf="msg?.success" class="p-3 mb-2 bg-success text-white text-center">
-        {{ msg.message }}
-      </div>
-      <div *ngIf="msg && !msg.success" class="p-3 mb-2 bg-danger text-white text-center">
-        {{ msg.message }}
       </div>
     </div>
   </div>

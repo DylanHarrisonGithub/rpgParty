@@ -65,10 +65,16 @@ const usernameValidators = [
     }
 ];
 
+const passwordValidaotors = [
+    { validator: (password) => password.length > 6, message: 'Password must be at least 7 characters long.' },
+    { validator: (password) => /.*[0-9].*/.test(password), message: 'Password must contain at least one number' },
+    { validator: (password) => /[^a-zA-Z0-9]/.test(password), message: 'Password must contain at least one non-alphanumeric character.'}
+];
+
 const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true, lowercase: true, validate: usernameValidators },
     email: { type: String, required: true, unique: true, lowercase: true, validate: emailValidators },
-    password: { type: String, required: true }
+    password: { type: String, required: true, validate: passwordValidaotors }
 });
 
 userSchema.pre('save', function(next) {
