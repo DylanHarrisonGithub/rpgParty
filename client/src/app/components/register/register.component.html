@@ -8,34 +8,42 @@
     <div class="card-body register-card-body-parent">
       <div class="register-card-body-child">
         <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+          <div class="register-component-input-group">            
+            <!--username-->
+            <div class="form-group">
+              <h5 class="text-center">Username</h5>
+              <!--<ul class="list-unstyled">
+                <li><input type="text" class="form-control" name="name" placeholder="Enter a username" (ngModelChange)="validateUsername(registerForm)" [disabled]="msg" ngModel
+                  [ngClass]="{'is-valid': !usernameErrors.length && usernameChanged, 'is-invalid': usernameErrors.length }"></li>
+                <li class="list-group-item list-group-item-danger" *ngFor="let e of usernameErrors">{{ e }}</li>
+              </ul>-->
+              <input type="text" class="form-control" name="name" placeholder="Enter a username" (ngModelChange)="validateUsername(registerForm)" [disabled]="msg" ngModel
+                [ngClass]="{'is-valid': !usernameErrors.length && usernameChanged, 'is-invalid': usernameErrors.length }">
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-danger py-0" *ngFor="let e of usernameErrors">{{ e }}</li>
+              </ul>
+            </div>
+            <!--email-->
+            <div class="form-group">
+              <h5 class="text-center">Email</h5>
+              <ul class="list-unstyled">
+                <li><input type="text" class="form-control" name="email" placeholder="Enter an email" (ngModelChange)="validateEmail(registerForm)" [disabled]="msg" ngModel
+                  [ngClass]="{'is-valid': !emailErrors.length && emailChanged, 'is-invalid': emailErrors.length }"></li>
+                <li class="list-group-item list-group-item-danger py-0" *ngFor="let e of emailErrors">{{ e }}</li>
+              </ul>
+            </div>
+            <!--password-->
+            <div class="form-group">
+              <h5 class="text-center">Password</h5>
+              <ul class="list-unstyled">
+                <li><input type="password" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel
+                  [ngClass]="{'is-valid': !passwordErrors.length && passwordChanged, 'is-invalid': passwordErrors.length }"></li>     
+                <li class="list-group-item list-group-item-danger py-0" *ngFor="let e of passwordErrors">{{ e }}</li>
+              </ul>
+            </div>
+          
+          </div>
 
-          <!--username-->
-          <div class="form-group">
-            <h5 class="text-center">Username</h5>
-            <ul class="list-unstyled">
-              <li><input type="text" class="form-control" name="name" placeholder="Enter a username" (ngModelChange)="validateUsername(registerForm)" [disabled]="msg" ngModel
-                [ngClass]="{'is-valid': !usernameErrors.length && usernameChanged, 'is-invalid': usernameErrors.length }"></li>
-              <li class="list-group-item list-group-item-danger" *ngFor="let e of usernameErrors">{{ e }}</li>
-            </ul>
-          </div>
-          <!--email-->
-          <div class="form-group">
-            <h5 class="text-center">Email</h5>
-            <ul class="list-unstyled">
-              <li><input type="text" class="form-control" name="email" placeholder="Enter an email" (ngModelChange)="validateEmail(registerForm)" [disabled]="msg" ngModel
-                [ngClass]="{'is-valid': !emailErrors.length && emailChanged, 'is-invalid': emailErrors.length }"></li>
-              <li class="list-group-item list-group-item-danger" *ngFor="let e of emailErrors">{{ e }}</li>
-            </ul>
-          </div>
-          <!--password-->
-          <div class="form-group">
-            <h5 class="text-center">Password</h5>
-            <ul class="list-unstyled">
-              <li><input type="password" class="form-control" name="password" placeholder="Enter a password" (ngModelChange)="validatePassword(registerForm)" [disabled]="msg" ngModel
-                [ngClass]="{'is-valid': !passwordErrors.length && passwordChanged, 'is-invalid': passwordErrors.length }"></li>     
-              <li class="list-group-item list-group-item-danger" *ngFor="let e of passwordErrors">{{ e }}</li>
-            </ul>
-          </div>
           <!--Submit button-->
           <div class="text-center">
             <button type="submit" class="btn btn-primary" 

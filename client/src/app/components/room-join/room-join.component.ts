@@ -106,7 +106,7 @@ export class RoomJoinComponent implements OnInit {
   }
 
   canJoin() {
-    return this.selectedCharId != '' && this.roomCode.length == 4;
+    return this.selectedCharId != '' && /[a-zA-Z]{4}/.test(this.roomCode);
   }
 
   join() {
