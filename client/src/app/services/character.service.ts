@@ -2,11 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import config from '../config/config.json';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
+
+  public myActiveCharacter;
+  public roommates = [];
 
   constructor(
     private _http: HttpClient,
@@ -41,4 +45,5 @@ export class CharacterService {
       }
     );
   }
+
 }

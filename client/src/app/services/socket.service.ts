@@ -14,8 +14,8 @@ export class SocketService {
 
   constructor() { }
 
-  connect(user) {
-    this.socket = io.connect(config.URI[config.ENVIRONMENT], { query: "user=" + JSON.stringify(user) });
+  connect(msg) {
+    this.socket = io.connect(config.URI[config.ENVIRONMENT], { query: "msg=" + JSON.stringify(msg) });
   }
 
   onMessage() {

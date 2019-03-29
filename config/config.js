@@ -4,7 +4,7 @@ module.exports = {
     "development": {
         "PORT": 3000,
         "MONGODB_URI": "mongodb://localhost:27017/rpgParty",
-        "JWT_SECRET": secret,
+        "JWT_SECRET": "12345", //secret, //keep jwt auth on server reset
         "JWT_TTL": "24h"
     },
     "production": {

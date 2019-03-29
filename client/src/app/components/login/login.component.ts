@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         if (res['success']) {
           this._toastrService.success(res['message'], 'Success!');          
           this._authService.saveToken(res['token']);
-          this._toastrService.info(null, JSON.stringify(this._authService.getUserDetails()),{timeOut: 0, extendedTimeOut: 0});
+          //this._toastrService.info(null, JSON.stringify(this._authService.getUserDetails()),{timeOut: 0, extendedTimeOut: 0});
           this._router.navigate(['/home']);
         } else {
           this._toastrService.error(res['message'], 'Login Error!');

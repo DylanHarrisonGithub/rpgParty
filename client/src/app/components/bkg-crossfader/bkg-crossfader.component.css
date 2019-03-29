@@ -6,7 +6,7 @@
   height: 100%;
   background-color: rgb(20, 21, 22);
   position: absolute;
-  z-index: -2;
+  z-index: -3;
 }
 
 .bkg-crossfader-img {

@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 
 import { CreateCharacterComponent } from '../modals/create-character/create-character.component';
 import { DeleteCharacterComponent } from '../modals/delete-character/delete-character.component';
+
+import { AuthService } from 'src/app/services/auth.service';
 import { CharacterService } from '../../services/character.service';
 import { SocketService } from '../../services/socket.service';
-
-import { ToastrService } from 'ngx-toastr';
-import { WaitingComponent } from '../waiting/waiting.component';
 
 @Component({
   selector: 'app-room-join',
@@ -30,6 +31,7 @@ export class RoomJoinComponent implements OnInit {
 
   constructor(
     private _modalService: NgbModal,
+    private _authService: AuthService,
     private _characterService: CharacterService,
     private _router: Router,
     private _socketService: SocketService,
@@ -106,7 +108,7 @@ export class RoomJoinComponent implements OnInit {
   }
 
   canJoin() {
-    return this.selectedCharId != '' && /[a-zA-Z]{4}/.test(this.roomCode);
+    return this.selectedCharId != '' && /[a-zA-Z]{4}/.test(this.roomCode) && this._authService.isLoggedIn();
   }
 
   join() {
@@ -114,10 +116,10 @@ export class RoomJoinComponent implements OnInit {
       let char = this.characters.find(c => c._id == this.selectedCharId);
       if (char) {
         this._socketService.connect({
-          name: char.name,
-          class: char.class,
-          level: char.level,
-          room: this.roomCode.toUpperCase()
+          user: this._authService.getUserDetails(),
+          character: char,
+          room: this.roomCode.toUpperCase(),
+          token: this._authService.getToken()
         });
         this._socketService.onMessage().subscribe(msg => {
           if (msg.hasOwnProperty('success') && msg.hasOwnProperty('message')) {
@@ -128,7 +130,7 @@ export class RoomJoinComponent implements OnInit {
               this._toastrService.error(msg['message'], 'Error!');
             }
           } else {
-            this._toastrService.error(JSON.stringify(msg), 'Error!');
+            this._toastrService.error(JSON.stringify(msg), 'Error!',{timeOut: 0, extendedTimeOut: 0});
           }
         });
       }

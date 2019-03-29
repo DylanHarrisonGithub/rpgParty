@@ -3,6 +3,9 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SocketService } from '../../services/socket.service';
 import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load-dialog.component';
 
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth.service';
+
 @Component({
   selector: 'app-room-create',
   templateUrl: './room-create.component.html',
@@ -30,29 +33,34 @@ export class RoomCreateComponent implements OnInit {
 
   constructor(
     private _modalService: NgbModal,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _toastrService: ToastrService,
+    private _authService: AuthService
   ) { }
 
   ngOnInit() {
-    this._socketService.connect({initialize: true});
+    this._socketService.connect({
+      initialize: true,
+      token: this._authService.getToken()
+    });
     this._socketService.onMessage().subscribe(msg => {
-      //console.log(msg);
+      this._toastrService.info(JSON.stringify(msg));
       if (msg.hasOwnProperty('room')) {
         this.roomCode = msg['room'];
-      }
-      if (msg.hasOwnProperty('user')) {
+      } else if (msg.hasOwnProperty('user') && msg.hasOwnProperty('character') && msg.hasOwnProperty('soc_id')) {
         let i = 0;
         while (this.players[i].player != null && i < this.players.length) {
           i++;
         }
         if (i < this.players.length) {
           this.players[i].player = {
-            name: msg.user.name,
-            class: msg.user.class.toLowerCase(),
-            level: msg.user.level
+            name: msg.character.name,
+            class: msg.character.class.toLowerCase(),
+            level: msg.character.level
           }
         }
       }
+      
     });
   }
 
