@@ -16,8 +16,6 @@ module.exports = (server) => {
             soc.disconnect(true);            
           } else {
 
-
-
             if (msg.hasOwnProperty('initialize')) {
         
               // generate a unique room code
@@ -29,7 +27,7 @@ module.exports = (server) => {
               }
               // join new room and respond
               soc.join(tempCode, () => {
-                soc.emit('message', { success: true, message: "New room created", room: tempCode });
+                soc.emit('message', { success: true, message: "New room created", room: tempCode, soc_id: soc.id });
               });
       
             } else if (msg.hasOwnProperty('user') && msg.hasOwnProperty('character') && msg.hasOwnProperty('room')) {
@@ -51,12 +49,11 @@ module.exports = (server) => {
             }
 
             soc.on('message', (data) => {
-              console.log(data);
               if (data.hasOwnProperty('room') && data.hasOwnProperty('msg')) {
-                if (data.hasOwnProperty('to')) {
-                  io.to(data.to).emit(data.msg);
+                if (data.hasOwnProperty('soc_id')) {
+                  io.sockets.connected[data.soc_id].emit('message', { from: soc.id, msg: data.msg});
                 } else {
-                  soc.to(data.room).emit(data.msg);
+                  soc.to(data.room).emit('message', { from: soc.id, msg: data.msg });
                 }
               }
             });

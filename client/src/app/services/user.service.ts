@@ -1,18 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import config from '../config/config.json';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
+  user;
+  activeCharacter;
+  room;
+  soc_id;
+  tv_soc;
+  roommates = [];
+  isTV = false;
+  
   constructor(
     private _http: HttpClient
   ) { }
 
   postUser(user: any) {
-    return this._http.post(config.URI[config.ENVIRONMENT] + 'user/register', user);
+    return this._http.post(config.URI[config.ENVIRONMENT] + 'user/register', user).pipe(map(user => {
+      if (user.hasOwnProperty('user')) {
+        this.user = user['user'];
+      }
+      return user;
+    }));;
   }
 
   isUniqueUsername(user: any) {
@@ -23,6 +37,11 @@ export class UserService {
   }
 
   login(user: any) {
-    return this._http.post(config.URI[config.ENVIRONMENT] + 'user/login', user);
+    return this._http.post(config.URI[config.ENVIRONMENT] + 'user/login', user).pipe(map(user => {
+      if (user.hasOwnProperty('user')) {
+        this.user = user['user'];
+      }
+      return user;
+    }));
   }
 }

@@ -10,6 +10,7 @@ import { DeleteCharacterComponent } from '../modals/delete-character/delete-char
 import { AuthService } from 'src/app/services/auth.service';
 import { CharacterService } from '../../services/character.service';
 import { SocketService } from '../../services/socket.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-room-join',
@@ -28,11 +29,13 @@ export class RoomJoinComponent implements OnInit {
   };
   selectedCharId = '';
   roomCode = '';
+  private mySockSubscription;
 
   constructor(
     private _modalService: NgbModal,
     private _authService: AuthService,
     private _characterService: CharacterService,
+    private _userService: UserService,
     private _router: Router,
     private _socketService: SocketService,
     private _toastrService: ToastrService
@@ -121,10 +124,11 @@ export class RoomJoinComponent implements OnInit {
           room: this.roomCode.toUpperCase(),
           token: this._authService.getToken()
         });
-        this._socketService.onMessage().subscribe(msg => {
+        this.mySockSubscription = this._socketService.onMessage().subscribe(msg => {
           if (msg.hasOwnProperty('success') && msg.hasOwnProperty('message')) {
             if (msg['success']) {
-              this._toastrService.success(msg['message'], 'Success!');
+              //this._toastrService.success(msg['message'], 'Success!');
+              this.mySockSubscription.unsubscribe();
               this._router.navigate(['/waiting']);
             } else {
               this._toastrService.error(msg['message'], 'Error!');

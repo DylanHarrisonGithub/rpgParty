@@ -6,3 +6,8 @@ Welcome to rpgParty. Create a room on your home television to begin a quest. Hav
 ![alt text](screenshots/createroom.png "Create Room Screenshot")
 ![alt text](screenshots/tileseteditor.png "Tileset Editor Screenshot")
 ![alt text](screenshots/mapeditor.png "Map Editor Screenshot")
+# Instructions
+1. Install MongoDB, Node, and Angular cli
+2. Start MongoDB on port 27017
+3. In rpgParty root directory, run node index.js
+4. In rpgParty root/client directory, run ng serve

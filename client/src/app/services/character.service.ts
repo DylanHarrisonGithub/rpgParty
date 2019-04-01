@@ -9,9 +9,6 @@ import { Observable } from 'rxjs';
 })
 export class CharacterService {
 
-  public myActiveCharacter;
-  public roommates = [];
-
   constructor(
     private _http: HttpClient,
     private _authService: AuthService
