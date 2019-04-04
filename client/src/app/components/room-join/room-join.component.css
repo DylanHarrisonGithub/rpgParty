@@ -44,6 +44,11 @@
   overflow-x: hidden;
   max-height: 300px;
 }
+@media screen and (max-height: 600px) {
+  .room-join-component-char-list {
+    max-height: 200px;
+  }
+}
 .room-join-component-char-list .list-group-item {
   background-color: rgba(255,255,255,.75);
   color: black;

@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxImgCrossfaderModule } from 'ngx-img-crossfader';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -51,7 +52,8 @@ import { WaitingComponent } from './components/waiting/waiting.component';
     HttpClientModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({positionClass: 'toast-bottom-full-width'}),
-    NgbModule
+    NgbModule,
+    NgxImgCrossfaderModule
   ],
   providers: [],
   bootstrap: [AppComponent],

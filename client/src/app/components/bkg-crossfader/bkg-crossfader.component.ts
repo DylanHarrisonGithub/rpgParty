@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgxImgCrossfaderComponent } from 'ngx-img-crossfader';
 
 @Component({
   selector: 'app-bkg-crossfader',
@@ -7,34 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BkgCrossfaderComponent implements OnInit {
 
-  imgPath = '../../../assets/wallpapers/';
-  numWallpapers = 5;
-  transparent = false;
-  delay = 10000;
-  top = 0;
-  bottom = 1;
+  private imgPath = '../../../assets/wallpapers/';
+  myImageSources = [
+    this.imgPath + '1.jpg',
+    this.imgPath + '2.jpg',
+    this.imgPath + '3.jpg',
+    this.imgPath + '4.jpg',
+    this.imgPath + '5.jpg',
+  ]
+
+  @ViewChild('myCrossfader') myCrossfader: NgxImgCrossfaderComponent;
 
   constructor() { }
 
-  ngOnInit() {
-    setInterval(() => {
-      this.transparent = !this.transparent;
-      setTimeout(() => {
-        if (this.transparent) {
-          this.top = ((this.top + 2) % this.numWallpapers);
-        } else {
-          this.bottom = ((this.bottom + 2) % this.numWallpapers);
-        }
-      }, this.delay / 2);
-    }, this.delay)
-  }
+  ngOnInit() {}
 
-  private getSrcTop(): string {
-    return this.imgPath + (this.top + 1) + '.jpg';
-  }
-
-  private getSrcBottom(): string {
-    return this.imgPath + (this.bottom + 1) + '.jpg';
-  }
+  next() { this.myCrossfader.stepForward(); }
+  back() { this.myCrossfader.stepBackward(); }
 
 }
