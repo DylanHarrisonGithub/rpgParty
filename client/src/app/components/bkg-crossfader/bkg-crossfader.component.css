@@ -6,7 +6,7 @@
   height: 100%;
   background-color: rgb(20, 21, 22);
   position: absolute;
-  z-index: -3;
+  z-index: 0;
 }
 
 .bkg-crossfader-img {
@@ -24,7 +24,6 @@
   -moz-transition: opacity 1s ease-in-out;
   -o-transition: opacity 1s ease-in-out;
   transition: opacity 1s ease-in-out;
-  z-index: -2;
 }
 
 .bkg-crossfader-img.transparent {
