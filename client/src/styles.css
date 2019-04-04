@@ -9,3 +9,7 @@ button:disabled {
 .delete-char-button {
   cursor: pointer;
 }
+
+.dropdown, .dropdown-menu, .navbar {
+  z-index:2;
+}
