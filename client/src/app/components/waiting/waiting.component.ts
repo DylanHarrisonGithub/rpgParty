@@ -38,9 +38,18 @@ export class WaitingComponent implements OnInit {
             //this._socketService.disconnect();
             this._router.navigate(['/join']);
           }
+        } else if (msg.msg.hasOwnProperty('ready')) {
+          this._toastrService.success('ready');
+          this.mySocketService.unsubscribe();
+          this._router.navigate(['/controller']);
         }
       }
     });
   }
 
+  ready() {
+    this._socketService.toRoom(this._userService.room, {
+      ready: true
+    });
+  }
 }

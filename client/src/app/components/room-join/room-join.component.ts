@@ -117,11 +117,12 @@ export class RoomJoinComponent implements OnInit {
   join() {
     if (this.canJoin()) {
       let char = this.characters.find(c => c._id == this.selectedCharId);
+      let _roomCode = this.roomCode.toUpperCase(); 
       if (char) {
         this._socketService.connect({
           user: this._authService.getUserDetails(),
           character: char,
-          room: this.roomCode.toUpperCase(),
+          room: _roomCode,
           token: this._authService.getToken()
         });
         this.mySockSubscription = this._socketService.onMessage().subscribe(msg => {
@@ -129,6 +130,7 @@ export class RoomJoinComponent implements OnInit {
             if (msg['success']) {
               //this._toastrService.success(msg['message'], 'Success!');
               this.mySockSubscription.unsubscribe();
+              this._userService.room = _roomCode;
               this._router.navigate(['/waiting']);
             } else {
               this._toastrService.error(msg['message'], 'Error!');

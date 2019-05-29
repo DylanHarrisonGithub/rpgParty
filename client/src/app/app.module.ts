@@ -25,6 +25,7 @@ import { DeleteCharacterComponent } from './components/modals/delete-character/d
 import { QuestLoadDialogComponent } from './components/modals/quest-load-dialog/quest-load-dialog.component';
 import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
 import { WaitingComponent } from './components/waiting/waiting.component';
+import { ControllerComponent } from './components/controller/controller.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { WaitingComponent } from './components/waiting/waiting.component';
     QuestLoadDialogComponent,
     BkgCrossfaderComponent,
     WaitingComponent,
+    ControllerComponent,
   ],
   imports: [
     BrowserModule,

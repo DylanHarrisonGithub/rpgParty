@@ -2,7 +2,7 @@
 <div class="container waiting-component-centered rpgparty-component-main">
   <div *ngIf="leader">
     <h1 class="text-center">press when ready</h1>
-    <div class="text-center"><button class="btn btn-primary">READY</button></div>
+    <div class="text-center"><button class="btn btn-primary" (click)="ready()">READY</button></div>
   </div>
   <div *ngIf="!leader">
     <h1 class="text-center">Waiting for other players..</h1>

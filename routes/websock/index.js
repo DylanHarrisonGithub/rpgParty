@@ -12,7 +12,11 @@ module.exports = (server) => {
       if (msg.hasOwnProperty('token')) {
         jsonwebtoken.verify(msg.token, config[env].JWT_SECRET, (err, decoded) => {
           if (err) {
-            soc.emit('message', { success: false, message: "Could not connect to socket server because JWT token not valid." });
+            soc.emit('message', {
+              route: 'connect',
+              success: false, 
+              message: "Could not connect to socket server because JWT token not valid."
+            });
             soc.disconnect(true);            
           } else {
 
@@ -27,7 +31,17 @@ module.exports = (server) => {
               }
               // join new room and respond
               soc.join(tempCode, () => {
-                soc.emit('message', { success: true, message: "New room created", room: tempCode, soc_id: soc.id });
+                soc.emit('message', {
+                  route: 'createRoom',
+                  success: true,
+                  message: 'New room created',
+                  params: {
+                    room: tempCode,
+                    soc_id: soc.id
+                  },
+                  room: tempCode,
+                  soc_id: soc.id
+                });
               });
       
             } else if (msg.hasOwnProperty('user') && msg.hasOwnProperty('character') && msg.hasOwnProperty('room')) {
@@ -39,10 +53,26 @@ module.exports = (server) => {
                   // send success message to socket
                   soc.emit('message', { success: true, message: "Successfully joined room.", soc_id: soc.id });
                   // send new user and character to whole room
-                  io.sockets.in(msg.room).emit('message', { success: true, message: "A new user joined the room.", user: msg.user, character: msg.character, soc_id: soc.id });
+                  io.sockets.in(msg.room).emit('message', {
+                    route: 'join',
+                    success: true,
+                    message: "A new user joined the room.",
+                    params: {
+                      user: msg.user,
+                      character: msg.character,
+                      soc_id: soc.id
+                    },
+                    user: msg.user,
+                    character: msg.character,
+                    soc_id: soc.id 
+                  });
                 });
               } else {
-                soc.emit('message', { success: false, message: "Room does not exist with provided roomcode." });
+                soc.emit('message', {
+                  route: 'join',
+                  success: false, 
+                  message: "Room does not exist with provided roomcode." 
+                });
               }
             } else {
               soc.emit('message', { success: false, message: "Could not create socket connection because msg was invalid." });
@@ -53,7 +83,7 @@ module.exports = (server) => {
                 if (data.hasOwnProperty('soc_id')) {
                   io.sockets.connected[data.soc_id].emit('message', { from: soc.id, msg: data.msg});
                 } else {
-                  soc.to(data.room).emit('message', { from: soc.id, msg: data.msg });
+                  io.in(data.room).emit('message', { from: soc.id, msg: data.msg });
                 }
               }
             });

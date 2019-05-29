@@ -1,0 +1,78 @@
+.play-component-canvas-div {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  bottom: 300px;
+  left: 0;
+  top: 0;
+  right: 0;
+  background-color: blue;
+  overflow: hidden;
+}
+
+.play-component-status-div {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  height: 300px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  overflow: hidden;
+}
+
+.active-player {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  height: 200px;
+  left: 0;
+  top: 0;
+  right: 0;
+  background-color: white;
+}
+
+.player-queue {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  top: 200px;
+  right: 0;
+  bottom: 0;
+}
+.player-queue-overlay {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  top: 200px;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  background-image: linear-gradient(to bottom, transparent, black);
+}
+.player-queue-card {
+  background-color: white;
+  height: 100px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  border: 2px solid gold;
+}
+
+@media screen and (min-width: 800px) {
+  .play-component-canvas-div {
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 300px;
+  }
+  .play-component-status-div {
+    height: 100%;
+    width: 300px;
+    right: 0;
+    left: auto;
+  }
+}

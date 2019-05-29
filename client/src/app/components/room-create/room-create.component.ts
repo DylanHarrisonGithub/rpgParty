@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SocketService } from '../../services/socket.service';
 import { QuestLoadDialogComponent } from '../modals/quest-load-dialog/quest-load-dialog.component';
+import { Router } from '@angular/router';
 
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
@@ -28,12 +29,15 @@ export class RoomCreateComponent implements OnInit {
     { player: null },
   ];
 
+  private mySockSubstription;
+
   constructor(
-    private _modalService: NgbModal,
-    private _socketService: SocketService,
-    private _toastrService: ToastrService,
-    private _authService: AuthService,
-    private _userService: UserService
+    public _modalService: NgbModal,
+    public _socketService: SocketService,
+    public _toastrService: ToastrService,
+    public _authService: AuthService,
+    public _userService: UserService,
+    private _router: Router
   ) { }
 
   ngOnInit() {
@@ -42,7 +46,7 @@ export class RoomCreateComponent implements OnInit {
       initialize: true,
       token: this._authService.getToken()
     });
-    this._socketService.onMessage().subscribe(msg => {
+    this.mySockSubstription = this._socketService.onMessage().subscribe(msg => {
       if (msg.hasOwnProperty('room') && msg.hasOwnProperty('soc_id')) {
         this.roomCode = msg['room'];
         this._userService.soc_id = msg['soc_id'];
@@ -107,6 +111,9 @@ export class RoomCreateComponent implements OnInit {
             );
           }, 2000);
         }        
+      } else if (msg.hasOwnProperty('msg') && msg.msg.hasOwnProperty('ready')) {
+        this.mySockSubstription.unsubscribe();
+        this._router.navigate(['/play']);
       }
     });
   }
