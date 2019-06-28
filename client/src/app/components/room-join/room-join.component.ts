@@ -131,6 +131,7 @@ export class RoomJoinComponent implements OnInit {
               //this._toastrService.success(msg['message'], 'Success!');
               this.mySockSubscription.unsubscribe();
               this._userService.room = _roomCode;
+              this._userService.tv_soc = msg['tv_soc'];
               this._router.navigate(['/waiting']);
             } else {
               this._toastrService.error(msg['message'], 'Error!');

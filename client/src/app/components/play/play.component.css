@@ -2,14 +2,14 @@
   position: absolute;
   margin: 0;
   padding: 0;
-  bottom: 300px;
+  bottom: 0;/*300px;*/
   left: 0;
   top: 0;
   right: 0;
-  background-color: blue;
+  /*background-color: blue;*/
   overflow: hidden;
 }
-
+/*
 .play-component-status-div {
   position: absolute;
   margin: 0;
@@ -76,3 +76,4 @@
     left: auto;
   }
 }
+*/

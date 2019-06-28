@@ -674,7 +674,8 @@ export class IsoCanvas {
             for (let cell of this._gameAssets.hightlightedCells) {
                 this.drawing.highlightCell(cell, ctx);
             }
-        }
+        },
+        'getContext': () => { return this._canvas.getContext('2d'); }
     };
 
 
@@ -773,7 +774,7 @@ export class IsoCanvas {
                 this._mouse.cell.y = Math.floor(this._mouse.iso.y);
 
                 this._mouse.tileCell = this.mouse.calcTileCell(this.mouse.getCanvas());
-                this.drawing.paint();
+                //this.drawing.paint();
             }
         },
         'defaultMouseWheelListener': (event) => {
@@ -818,6 +819,9 @@ export class IsoCanvas {
             this._metrics.halfResolution.x = this._canvas.width / 2;
             this._metrics.halfResolution.y = this._canvas.height / 2;
         }
+    };
+    public metrics = {
+        'getCanvasTileSize': () => {return this._metrics.canvasTileSize}
     };
     
     // helper methods
