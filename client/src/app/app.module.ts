@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxImgCrossfaderModule } from 'ngx-img-crossfader';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,8 @@ import { QuestLoadDialogComponent } from './components/modals/quest-load-dialog/
 import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
 import { WaitingComponent } from './components/waiting/waiting.component';
 import { ControllerComponent } from './components/controller/controller.component';
+import { SandboxComponent } from './components/sandbox/sandbox.component';
+import { TouchpadComponent } from './components/controller/touchpad/touchpad.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,8 @@ import { ControllerComponent } from './components/controller/controller.componen
     BkgCrossfaderComponent,
     WaitingComponent,
     ControllerComponent,
+    SandboxComponent,
+    TouchpadComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,7 +60,8 @@ import { ControllerComponent } from './components/controller/controller.componen
     BrowserAnimationsModule,
     ToastrModule.forRoot({positionClass: 'toast-bottom-full-width'}),
     NgbModule,
-    NgxImgCrossfaderModule
+    NgxImgCrossfaderModule,
+    AngularResizedEventModule
   ],
   providers: [],
   bootstrap: [AppComponent],
