@@ -21,7 +21,8 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
   @Input() config = {
     inactiveColor: '#d3d3d3',
     activeColor: '#ff1090',
-    analog: false
+    analog: false,
+    digitalSectors: 8
   };
   @Input() width;
   
@@ -98,6 +99,17 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
       let m = 1 / (Math.sqrt(mag));
       mx = mx*m;
       my = my*m;
+    }
+    if (!this.config.analog && mag != 0) {
+      if (mag > .25) {
+        let theta = Math.atan2(my, mx);
+        theta = Math.round((this.config.digitalSectors*theta)/(2*Math.PI))*(2*Math.PI)/this.config.digitalSectors;
+        mx = Math.cos(theta);
+        my = Math.sin(theta);
+      } else {
+        mx = 0;
+        my = 0;
+      }
     }
     if (mx != this.mousedata.mx || my != this.mousedata.my) {
       this.mousedata.mx = mx;
