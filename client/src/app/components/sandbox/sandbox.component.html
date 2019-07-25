@@ -2,3 +2,4 @@
   <app-touchpad [(config)]="touchpadConfig" #myTouchpad></app-touchpad>
 </div>
 {{ touchpadData | json }}
+{{ touchpadData.mx*touchpadData.mx + touchpadData.my*touchpadData.my }}

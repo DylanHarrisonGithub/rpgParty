@@ -13,8 +13,7 @@ export class SandboxComponent implements OnInit, AfterViewInit, OnDestroy {
   public touchpadConfig = {
     inactiveColor: '#d3d3d3',
     activeColor: '#ff1090',
-    analogMagnitude: false,
-    analogDirection: false
+    analog: false
   }
   touchpadData = { x: 0, y: 0 };
   touchpadDataSubscription;
