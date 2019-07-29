@@ -27,6 +27,7 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
   @Input() width;
   
   private mouseDown: boolean = false;
+  private mousedataBehaviorSubject: BehaviorSubject<any>;
   private mousedata = { mx: 0, my: 0 };
   private canvasData = {
     canvasWidth: 0,
@@ -39,7 +40,9 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.mousedataBehaviorSubject = new BehaviorSubject<any>(this.mousedata);
+  }
 
   ngAfterViewInit() {
     
@@ -114,6 +117,7 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
     if (mx != this.mousedata.mx || my != this.mousedata.my) {
       this.mousedata.mx = mx;
       this.mousedata.my = my;
+      this.mousedataBehaviorSubject.next(this.mousedata);
     }
   }
   mousedown(event): void {
@@ -133,6 +137,27 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
     this.mouseDown = false;
     this.mousedata.mx = 0;
     this.mousedata.my = 0;
+    this.mousedataBehaviorSubject.next(this.mousedata);
+    this.paint(); 
+  }
+  touchstart(event): void {
+    this.mx = event.touches[0].clientX;
+    this.my = event.touches[0].clientY;
+    this.mouseDown = true;
+    this.calcMouseData();
+    this.paint();
+  }
+  touchmove(event): void {
+    if (this.mouseDown) {
+      this.mx = event.touches[0].clientX;
+      this.my = event.touches[0].clientY;
+    }
+  }
+  touchend(event): void { 
+    this.mouseDown = false;
+    this.mousedata.mx = 0;
+    this.mousedata.my = 0;
+    this.mousedataBehaviorSubject.next(this.mousedata);
     this.paint(); 
   }
 
@@ -159,6 +184,7 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
   }
 
   public touchpadData(): Observable<any> {
-    return new BehaviorSubject<any>(this.mousedata).asObservable();
+    //return new BehaviorSubject<any>(this.mousedata).asObservable();
+    return this.mousedataBehaviorSubject.asObservable();
   } 
 }

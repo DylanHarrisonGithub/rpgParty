@@ -1,4 +1,5 @@
-<button (click)="up()">up</button>
-<button (click)="down()">down</button>
-<button (click)="left()">left</button>
-<button (click)="right()">right</button>
+<div style="width: 100%; height: 50%;">
+  <app-touchpad [(config)]="touchpadConfig" #myTouchpad2></app-touchpad>
+</div>
+{{ touchpadData | json }}
+{{ error }}

@@ -3,6 +3,10 @@
   (mousemove)="mousemove($event)"
   (mouseup)="mouseup($event)"
   (mouseleave)="mouseup($event)"
+  (touchstart)="touchstart($event)"
+  (touchmove)="touchmove($event)"
+  (touchend)="touchend($event)"
+  (touchcancel)="touchend($event)"
   (resized)="onResized($event)">
   <canvas #touchpadCanvas id="touchpadCanvas"></canvas>
 </div>

@@ -9,6 +9,8 @@ import { IsoTileSet } from '../../engine/isotileset';
 import { SocketService } from 'src/app/services/socket.service';
 import { ValidationService } from 'src/app/services/validation.service';
 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-play',
   templateUrl: './play.component.html',
@@ -39,7 +41,8 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private _userService: UserService,
     private _socketService: SocketService,
-    private _validationService: ValidationService
+    private _validationService: ValidationService,
+    private _toastrService: ToastrService
   ) { }
 
   ngOnInit() {
@@ -121,6 +124,11 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
               player[0].x++;
               player[0].y--;
               break;
+            case 'touchPad':
+              player[0].vx = msg.msg.data.x*Math.cos(-Math.PI/4) - msg.msg.data.y*Math.sin(-Math.PI/4);
+              player[0].vy = msg.msg.data.x*Math.sin(-Math.PI/4) + msg.msg.data.y*Math.cos(-Math.PI/4);
+              //this._toastrService.show(JSON.stringify(player[0]), 'Touch');
+              break;
             default:
               break;
           }
@@ -130,8 +138,12 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //timer
     setInterval(() => {
+      this.players.forEach(player => {
+        player.x += player.vx*(1/26);
+        player.y += player.vy*(1/26);
+      });
       this.paint();
-    }, 500);
+    }, 1000/26);
   }
 
   ngOnDestroy() {
