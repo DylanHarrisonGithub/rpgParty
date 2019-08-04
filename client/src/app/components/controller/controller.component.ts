@@ -50,33 +50,9 @@ export class ControllerComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
   }
-
-  broadcast(tpdata) {
-    console.log('hello ', tpdata);
-  }
+  
   ngOnDestroy() {
     this.touchpadDataSubscription.unsubscribe();
-  }
-
-  up() {
-    this._socketService.toSock(this._userService.room, this._userService.tv_soc, {
-      'route': 'up'
-    });
-  }
-  down() {
-    this._socketService.toSock(this._userService.room, this._userService.tv_soc, {
-      'route': 'down'
-    });
-  }
-  left() {
-    this._socketService.toSock(this._userService.room, this._userService.tv_soc, {
-      'route': 'left'
-    });
-  }
-  right() {
-    this._socketService.toSock(this._userService.room, this._userService.tv_soc, {
-      'route': 'right'
-    });
   }
 
 }

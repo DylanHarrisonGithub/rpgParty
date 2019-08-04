@@ -184,7 +184,6 @@ export class TouchpadComponent implements OnInit, AfterViewInit {
   }
 
   public touchpadData(): Observable<any> {
-    //return new BehaviorSubject<any>(this.mousedata).asObservable();
     return this.mousedataBehaviorSubject.asObservable();
   } 
 }
