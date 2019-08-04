@@ -5,6 +5,7 @@ import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
 import { MapEdTool, HandTool, BrushTool, LineTool, BoxTool, BucketTool, EraserTool } from '../../engine/mapedtools/mapedtool';
 import { TileseteditorComponent } from '../tileseteditor/tileseteditor.component';
+import { ActorMap } from 'src/app/engine/actormap';
 
 @Component({
   selector: 'app-mapeditor',
@@ -54,7 +55,11 @@ export class MapeditorComponent implements OnInit {
       this.selectedTile = this.myTileset.tiles.get(0);
       this.tileTemplateLength = Math.floor(tset.tiles.getLength() / 4) - 1;
       this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
-      this.myCanvas = new IsoCanvas(<HTMLDivElement>document.getElementById('isocanvas'), this.myMap);
+      this.myCanvas = new IsoCanvas(
+        <HTMLDivElement>document.getElementById('isocanvas'), 
+        this.myMap,
+        new ActorMap(64, 64, [])
+      );
       
       this.myCanvas.gameAssets.tileset.set(tset);
 

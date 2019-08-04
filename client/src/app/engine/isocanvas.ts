@@ -1,6 +1,7 @@
 import { IsoTile } from './isotile';
 import { IsoTileSet } from './isotileset';
 import { GameMap } from './gamemap';
+import { ActorMap } from './actormap';
 export class IsoCanvas {
 
     public axesColor = '#000000';
@@ -27,6 +28,7 @@ export class IsoCanvas {
     };
     private _gameAssets = { //should be private
         'map': null,          // should be its own object
+        'actormap': null,
         'tileset': null,
         'tileSets': [],
         'hightlightedCells': []
@@ -44,7 +46,7 @@ export class IsoCanvas {
         ]
     };
 
-    constructor(delagateDiv: HTMLDivElement, gameMap: GameMap) {
+    constructor(delagateDiv: HTMLDivElement, gameMap: GameMap, actorMap: ActorMap) {
 
         this._div = delagateDiv;
         this._canvas = document.createElement('canvas');
@@ -84,7 +86,8 @@ export class IsoCanvas {
         });
 
         this._gameAssets.map = gameMap;
-
+        this._gameAssets.actormap = actorMap;
+        
     }
 
     public gameAssets = {

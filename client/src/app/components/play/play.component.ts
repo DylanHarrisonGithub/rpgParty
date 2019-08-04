@@ -10,6 +10,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { ValidationService } from 'src/app/services/validation.service';
 
 import { ToastrService } from 'ngx-toastr';
+import { ActorMap } from 'src/app/engine/actormap';
 
 @Component({
   selector: 'app-play',
@@ -67,7 +68,11 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
     tset.loadFromServer('http://localhost:3000/assets/tilesets/flatland.json', () => {
       this.myTileset = tset;
       this.myMap = GameMap.generateRandomMap(64, 64, 1, tset); //new GameMap(64, 64, tset); //
-      this.myCanvas = new IsoCanvas(this.myCanvasElement.nativeElement, this.myMap);
+      this.myCanvas = new IsoCanvas(
+        this.myCanvasElement.nativeElement, 
+        this.myMap,
+        new ActorMap(64, 64, [])
+      );
       
       this.myCanvas.gameAssets.tileset.set(tset);
       this.paint();
