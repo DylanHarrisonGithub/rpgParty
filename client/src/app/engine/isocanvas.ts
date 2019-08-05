@@ -2,6 +2,7 @@ import { IsoTile } from './isotile';
 import { IsoTileSet } from './isotileset';
 import { GameMap } from './gamemap';
 import { ActorMap } from './actormap';
+import { Actor } from './actor';
 export class IsoCanvas {
 
     public axesColor = '#000000';
@@ -455,7 +456,6 @@ export class IsoCanvas {
                 b = {'x': (a.x-a.y+c.x+c.y)/2, 'y': (-a.x+a.y+c.x+c.y)/2 };
                 d = {'x': (a.x+a.y+c.x-c.y)/2, 'y': (a.x+a.y-c.x+c.y)/2 };
             }
-            //console.log(a,b,c,d);
 
             let u = {'x': a.x, 'y': a.y};
             let rowStart = {'x': a.x, 'y': a.y};
@@ -497,7 +497,14 @@ export class IsoCanvas {
                                 'y': u.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
                             }, rotatedSubTile, ctx);
                             stackingHeight += rotatedSubTile.properties.cellHeight;
-                        }                   
+                        }
+                        // draw actors
+                        (<Array<Actor>>this._gameAssets.actormap.getCell(u.x, u.y)).forEach(actor => {
+                            this.drawing.drawIsoTile({
+                                'x': actor.x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
+                                'y': actor.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight
+                            }, actor.getCurrentFrame(), ctx);
+                        });
                     } 
                     // move cursor left
                     u.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][0].x;

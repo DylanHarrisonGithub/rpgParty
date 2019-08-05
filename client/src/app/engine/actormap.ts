@@ -1,4 +1,5 @@
 import { Actor } from './actor';
+import { GameMap } from './gamemap';
 
 export class ActorMap {
 
@@ -25,10 +26,27 @@ export class ActorMap {
     this.pushActors();
   }
 
+  public getCell(x: number, y: number): Array<Actor> | null {
+    if ((x >= 0 && y >= 0) && (x < this._xSize && y < this._ySize)) {
+      return this._map[y][x];
+    } else {
+      return null;
+    }
+  }
+
+  public stage(dt: number, gameMap: GameMap): void {
+    this.popActors();
+    this._actorList.forEach(actor => {
+      actor.animate(dt);
+      actor.move(dt, gameMap, this);
+    });
+    this.pushActors();
+  }
+
   private pushActors() {
     this._actorList.forEach(actor => {
       let cell = actor.getCell();
-      if ((cell.x > 0 && cell.x < this._xSize) && (cell.y > 0 && cell.y < this._ySize)) {
+      if ((cell.x >= 0 && cell.x < this._xSize) && (cell.y >= 0 && cell.y < this._ySize)) {
         this._map[cell.y][cell.x].push(actor);
       }
     });
@@ -37,7 +55,7 @@ export class ActorMap {
   private popActors() {
     this._actorList.forEach(actor => {
       let cell = actor.getCell();
-      if ((cell.x > 0 && cell.x < this._xSize) && (cell.y > 0 && cell.y < this._ySize)) {
+      if ((cell.x >= 0 && cell.x < this._xSize) && (cell.y >= 0 && cell.y < this._ySize)) {
         this._map[cell.y][cell.x].pop();
       }
     });
