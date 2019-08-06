@@ -54,13 +54,13 @@ export class GameMap {
         }        
     }
 
-    getTile(x: number, y: number, z: number) {
+    getTile(x: number, y: number, z: number): IsoTile {
         return this._tileset.tiles.get(this._map[y][x][z]);
     }
-    getTileIndex(x: number, y: number, z: number) {
+    getTileIndex(x: number, y: number, z: number): number {
         return this._map[y][x][z];
     }
-    getCell(x: number, y: number) {
+    getCell(x: number, y: number): Array<number> {
         if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
             return this._map[y][x];
         } else {
@@ -68,7 +68,7 @@ export class GameMap {
         }
     }
 
-    tileFits(x: number, y: number, tile: IsoTile) {
+    tileFits(x: number, y: number, tile: IsoTile): boolean {
         if (x > -1 && y > -1 
         && x < this.getSize.x() - tile.properties.cellWidth
         && y < this.getSize.y() - tile.properties.cellDepth) {
@@ -100,12 +100,12 @@ export class GameMap {
                             this._heightmap[y+i][x+j].tileHeight++;
                             this._heightmap[y+i][x+j].topTile = t;
                         } else {
-                            console.log('cantfind');
+                            //console.log('cantfind');
                         }
                     }
                 }
             } else {
-                console.log('cant fit');
+                //console.log('cant fit');
             }
         }
     }

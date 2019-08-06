@@ -58,7 +58,7 @@ export class MapeditorComponent implements OnInit {
       this.myCanvas = new IsoCanvas(
         <HTMLDivElement>document.getElementById('isocanvas'), 
         this.myMap,
-        new ActorMap(64, 64, [])
+        new ActorMap(64, 64, [], this.myMap)
       );
       
       this.myCanvas.gameAssets.tileset.set(tset);

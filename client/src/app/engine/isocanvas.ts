@@ -425,6 +425,32 @@ export class IsoCanvas {
                 );
             }
         },
+        'drawCellStack': (x: number, y: number, minHeigt: number, ctx: CanvasRenderingContext2D) => {
+            var stackingHeight = 0;
+            let cell = this._gameAssets.map.getCell(x, y);
+            for (var level = 0; level < cell.length; level++) {
+                // todo: detect if tile is visible or obscured to speed up drawing
+
+                let subTile = (<IsoTileSet>this._gameAssets.tileset).subTiles.get(cell[level]);
+                let parent = subTile.parent;
+                let index = (<IsoTileSet>this._gameAssets.tileset).tiles.indexOf(parent);
+                let q = Math.floor(index / 4);
+                let r = ((index % 4) + this._position.rotation) % 4;
+                let rotatedParent = (<IsoTileSet>this._gameAssets.tileset).tiles.get(4*q + r);
+                let rotatedSubTile = rotatedParent.getSubtile(
+                    subTile.subCoord.x,
+                    subTile.subCoord.y,
+                    this._position.rotation
+                );
+                if (stackingHeight + rotatedSubTile.properties.cellHeight > minHeigt) {
+                    this.drawing.drawIsoTile({
+                        'x': x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
+                        'y': y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
+                    }, rotatedSubTile, ctx);
+                }
+                stackingHeight += rotatedSubTile.properties.cellHeight;
+            }
+        },
         'drawIsoTilesWithinCanvasFrame': (ctx: CanvasRenderingContext2D) => {
 
             // get isometric coordinates of canvas boundary corners
@@ -476,35 +502,35 @@ export class IsoCanvas {
                     if ((u.x > -1) && (u.x < this._gameAssets.map.getSize.x()) && (u.y > -1) && (u.y < this._gameAssets.map.getSize.y())) {
                         
                         // draw tiles from ground up
-                        var stackingHeight = 0;
-                        let cell = this._gameAssets.map.getCell(u.x, u.y);
-                        for (var level = 0; level < cell.length; level++) {
-                            // todo: detect if tile is visible or obscured to speed up drawing
-
-                            let subTile = (<IsoTileSet>this._gameAssets.tileset).subTiles.get(cell[level]);
-                            let parent = subTile.parent;
-                            let index = (<IsoTileSet>this._gameAssets.tileset).tiles.indexOf(parent);
-                            let q = Math.floor(index / 4);
-                            let r = ((index % 4) + this._position.rotation) % 4;
-                            let rotatedParent = (<IsoTileSet>this._gameAssets.tileset).tiles.get(4*q + r);
-                            let rotatedSubTile = rotatedParent.getSubtile(
-                                subTile.subCoord.x,
-                                subTile.subCoord.y,
-                                this._position.rotation
-                            );
-                            this.drawing.drawIsoTile({
-                                'x': u.x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
-                                'y': u.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
-                            }, rotatedSubTile, ctx);
-                            stackingHeight += rotatedSubTile.properties.cellHeight;
-                        }
+                        this.drawing.drawCellStack(u.x, u.y, -1, ctx);
                         // draw actors
-                        (<Array<Actor>>this._gameAssets.actormap.getCell(u.x, u.y)).forEach(actor => {
-                            this.drawing.drawIsoTile({
-                                'x': actor.x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
-                                'y': actor.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight
-                            }, actor.getCurrentFrame(), ctx);
-                        });
+                        if ((<Array<Actor>>this._gameAssets.actormap.getCell(u.x, u.y)).length) {
+                            (<Array<Actor>>this._gameAssets.actormap.getCell(u.x, u.y)).forEach(actor => {
+                                this.drawing.drawIsoTile({
+                                    'x': actor.x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*actor.height,
+                                    'y': actor.y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*actor.height
+                                }, actor.getCurrentFrame(), ctx);
+                            });
+                            // redraw adjacent cells from actor height up if they are taller at
+                            // (x-1,y),(x,y-1),(x-1,y+1),(x,y), in order, with respect to cursor.
+                            //           /a\
+                            //         /2\ /3\
+                            //       /4\ /c\ /
+                            //       \ / \ /
+                            let actorHeight = this._gameAssets.map.getCellStackingHeight(u.x-1, u.y-1);
+                            if (this._gameAssets.map.getCellStackingHeight(u.x-1, u.y) > actorHeight) {
+                                this.drawing.drawCellStack(u.x-1,u.y,actorHeight,ctx);
+                            }
+                            if (this._gameAssets.map.getCellStackingHeight(u.x, u.y-1) > actorHeight) {
+                                this.drawing.drawCellStack(u.x,u.y-1,actorHeight,ctx);
+                            }
+                            if (this._gameAssets.map.getCellStackingHeight(u.x-1, u.y+1) > actorHeight) {
+                                this.drawing.drawCellStack(u.x-1,u.y+1,actorHeight,ctx);
+                            }
+                            if (this._gameAssets.map.getCellStackingHeight(u.x, u.y) > actorHeight) {
+                                this.drawing.drawCellStack(u.x,u.y,actorHeight,ctx);
+                            }
+                        }
                     } 
                     // move cursor left
                     u.x += this._metrics.relativeIsoRotationDirections[this._position.rotation][0].x;

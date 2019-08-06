@@ -68,13 +68,13 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     let tset = new IsoTileSet();
-    tset.loadFromServer('http://localhost:3000/assets/tilesets/dirt.json', () => {
+    tset.loadFromServer('http://localhost:3000/assets/tilesets/terrain.json', () => {
       let anim = new IsoTileSet();
       anim.loadFromServer('http://localhost:3000/assets/tilesets/animationtest.json', () => {
         this.myTileset = tset;
-        this.myMap = GameMap.generateRandomMap(64, 64, 1, tset); //new GameMap(64, 64, tset); //
+        this.myMap = GameMap.generateRandomMap(64, 64, 4, tset); //new GameMap(64, 64, tset); //
         this.myActors = [new Actor(0,0,0,0,100,[anim],anim)];
-        this.myActorMap = new ActorMap(64, 64, this.myActors);
+        this.myActorMap = new ActorMap(64, 64, this.myActors, this.myMap);
         this.myCanvas = new IsoCanvas(
           this.myCanvasElement.nativeElement, 
           this.myMap,

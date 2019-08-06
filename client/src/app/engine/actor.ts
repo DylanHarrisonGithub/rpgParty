@@ -9,6 +9,7 @@ export class Actor {
   public y: number = 0;
   public vx: number = 0;
   public vy: number = 0;
+  public height: number = 0;
   
   public jumpHeight = .5;
 
@@ -33,8 +34,8 @@ export class Actor {
 
   public getCell() {
     return {
-      "x": Math.floor(this.x),
-      "y": Math.floor(this.y)
+      "x": Math.floor(this.x + .5),
+      "y": Math.floor(this.y + .5)
     }
   }
 
