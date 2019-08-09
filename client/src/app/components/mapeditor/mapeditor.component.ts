@@ -186,6 +186,28 @@ export class MapeditorComponent implements OnInit {
       select: (tool: MapEdTool) => { 
         this.selectedTool = tool;
       }
+    },
+    map: {
+      new: () => {
+        this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
+        this.myCanvas.gameAssets.setMap(this.myMap);
+        this.renderTilePreviews();
+        this.myCanvas.drawing.paint();
+      },
+      load: () => {
+        FileIO.gameMap.loadFromClient().then((map: GameMap) => {
+          this.myTileset = map.getTileSet();
+          this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
+          this.myMap.setMap(map.getMap());
+          this.myCanvas.gameAssets.tileset.set(this.myTileset);
+          this.myCanvas.gameAssets.setMap(this.myMap);
+          this.renderTilePreviews();
+          this.myCanvas.drawing.paint();
+        }).catch(err => console.log(err));
+      },
+      save: () => {
+        FileIO.gameMap.save(this.myMap);
+      }
     }
   }
 }

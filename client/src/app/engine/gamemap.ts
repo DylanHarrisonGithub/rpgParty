@@ -7,14 +7,12 @@ export class GameMap {
     private _tileset: IsoTileSet;
     public title = "untitledmap";
     private _properties = {
-        tileset: "unset",
         xSize: 0,
         ySize: 0
     }
 
     constructor(xSize: number, ySize: number, tileset: IsoTileSet) {
         this._tileset = tileset;
-        this._properties.tileset = tileset.properties.tileSetName;
         this._properties.xSize = xSize;
         this._properties.ySize = ySize;
 
@@ -37,7 +35,16 @@ export class GameMap {
         x: () => { return this._properties.xSize; },
         y: () => { return this._properties.ySize; }
     }
-
+    getMap() {
+        return this._map;
+    }
+    setMap(map) {
+        this._map = map;
+        this.calculateHeightMap();
+    }
+    getTileSet() {
+        return this._tileset;
+    }
     getCellStackingHeight(x: number, y: number) {
         if (x > -1 && y > -1 && x < this.getSize.x() && y < this.getSize.y()) {
             return this._heightmap[y][x].stackingHeight;

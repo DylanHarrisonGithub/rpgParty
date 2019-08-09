@@ -1,10 +1,11 @@
 import { ValidationService } from '../services/validation.service';
 import { IsoTile } from './isotile';
 import { IsoTileSet } from './isotileset';
+import { GameMap } from './gamemap';
 
 export class FileIO {
 
-  static image = {
+  public static image = {
     'loadFromClient': (): Promise<Array<HTMLImageElement>> => {
       return new Promise(resolve => {
         let images: Array<HTMLImageElement> = [];
@@ -98,20 +99,10 @@ export class FileIO {
       });
     },
     'save': (tileSet: IsoTileSet): void => {
-
-      let file = FileIO._isoTileSet.toBlob(tileSet);
-      let anchor = document.createElement('a');
-      anchor.setAttribute('style', 'display:none');
-      let url = URL.createObjectURL(file);
-      anchor.href = url;
-      anchor.download = tileSet.properties.tileSetName + '.json';
-      document.body.appendChild(anchor);
-      anchor.click();
-      setTimeout(function() {
-          document.body.removeChild(anchor);
-          window.URL.revokeObjectURL(url);  
-      }, 0);
-
+      FileIO._saveBlob(new Blob(
+        [JSON.stringify(FileIO._isoTileSet.toJSON(tileSet))], 
+        {type: 'application/json'}
+      ), tileSet.properties.tileSetName + '.json');
     }
   }; private static _isoTileSet = {
     'fromJSON': (isoTileSetJSON: any): Promise<IsoTileSet> => {
@@ -146,7 +137,7 @@ export class FileIO {
           }
       });
     },
-    'toBlob': (tileSet: IsoTileSet): Blob => {
+    'toJSON': (tileSet: IsoTileSet): any => {
       let images = [];
       tileSet.images.forEach((value, index) => images.push(value.src));
       let tiles = [];
@@ -154,16 +145,80 @@ export class FileIO {
         'index': tileSet.images.indexOf(value.image),
         'properties': value.properties
       }));
-
-      let blob = new Blob([JSON.stringify({
-          'properties': tileSet.properties,
-          'images': images,
-          'tiles': tiles            
-      })], {type: 'application/json'});
-
-      return blob;
+      return {
+        'properties': tileSet.properties,
+        'images': images,
+        'tiles': tiles            
+      };
     }
   };
+
+  public static gameMap = {
+    'loadFromClient': (): Promise<GameMap> => {
+      return new Promise<GameMap>((resolve, reject) => {
+        FileIO._openFileDialog(false, 'application/json', (dialogEvent: Event) => {
+          let fileList: FileList = (<HTMLInputElement>dialogEvent.target).files;
+          if (fileList && fileList.length === 1) {
+            let reader: FileReader = new FileReader(); 
+            reader.onload = ((readerEvent: Event) => {
+              let jsonGameMap = JSON.parse((<any>readerEvent.target).result);
+              FileIO._gameMap.fromJSON(jsonGameMap).then((res: GameMap) => {
+                resolve(res);
+              }).catch(err => reject(err));
+            });
+            reader.readAsText(fileList[0]);            
+          } else {
+            reject(['Error: Could not open GameMap file']);
+          }
+        });
+      });
+    },
+    'loadFromServer': (filename: string): Promise<GameMap> => {
+      return new Promise<GameMap>((resolve, reject) => {
+        fetch(filename).then(res => res.json()).then(res => {
+          FileIO._gameMap.fromJSON(res).then((res: GameMap) => {
+            resolve(res);
+          }).catch(err => reject(err));
+        }).catch(err => reject(err));
+      });
+    },
+    'save': (gameMap: GameMap): void => {
+      FileIO._saveBlob(new Blob(
+        [JSON.stringify(FileIO._gameMap.toJSON(gameMap))], 
+        {type: 'application/json'}
+      ), gameMap.title + '.json');
+    }
+  }; private static _gameMap = {
+    'fromJSON': (gameMapJSON: any): Promise<GameMap> => {
+      return new Promise<GameMap>((resolve, reject) => {
+        let validationErrors = ValidationService.prototype.validate(gameMapJSON, FileIO._schemas.gameMap);
+        if (!validationErrors.length) {
+          FileIO._isoTileSet.fromJSON(gameMapJSON.tileset).then((tileset: IsoTileSet) => {
+            let newMap: GameMap = new GameMap(
+              gameMapJSON.properties.xSize,
+              gameMapJSON.properties.ySize,
+              tileset
+            );
+            newMap.setMap(gameMapJSON.map);
+            resolve(newMap);
+          }).catch(err => reject(err));
+        } else {
+          reject(validationErrors);
+        }
+      });
+    },
+    'toJSON': (gameMap: GameMap): any => {
+      return {
+        'title': gameMap.title,
+        'properties': {
+          'xSize': gameMap.getSize.x(),
+          'ySize': gameMap.getSize.y()
+        },
+        'tileset': FileIO._isoTileSet.toJSON(gameMap.getTileSet()),
+        'map': gameMap.getMap()
+      }
+    }
+  }
 
   private static _schemas = {
     'isoTileSet': {
@@ -211,6 +266,17 @@ export class FileIO {
           }
         }
       }
+    },
+    'gameMap': {
+      'title': { 'required': true, 'type': 'string' },
+      'properties': { 
+        'required': true, 
+        'type': {
+          'xSize': { 'required': true, 'type': 'number', 'min': 1 },
+          'ySize': { 'required': true, 'type': 'number', 'min': 1 }
+        } 
+      },
+      'map': { 'required': true }
     }
   }
 
@@ -222,9 +288,22 @@ export class FileIO {
     if (multi) inputElement.setAttribute('multiple', '');
     inputElement.addEventListener('change', onload, false);
     document.body.appendChild(inputElement);
-      inputElement.click();
-      setTimeout(function() {
-          document.body.removeChild(inputElement);  
-      }, 0);
+    inputElement.click();
+    setTimeout(function() {
+        document.body.removeChild(inputElement);  
+    }, 0);
+  }
+  private static _saveBlob(blob: Blob, filename: string) {
+    let anchor = document.createElement('a');
+    anchor.setAttribute('style', 'display:none');
+    let url = URL.createObjectURL(blob);
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    setTimeout(function() {
+      document.body.removeChild(anchor);
+      window.URL.revokeObjectURL(url);  
+    }, 0);
   }
 }

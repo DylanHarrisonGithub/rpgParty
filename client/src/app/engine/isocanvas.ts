@@ -93,6 +93,7 @@ export class IsoCanvas {
 
     public gameAssets = {
         getMap: () => { return this._gameAssets.map; },
+        setMap: (map: GameMap) => { this._gameAssets.map = map },
         tileset: {
             set: (tset: IsoTileSet) => {
                 this._gameAssets.tileset = tset;
