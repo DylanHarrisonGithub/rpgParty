@@ -1,5 +1,12 @@
-<div style="width: 30%; height: 50%; margin-left: auto; margin-right: auto;">
-  <app-touchpad [(config)]="touchpadConfig" #myTouchpad></app-touchpad>
+<div style="left:0;right:300px;top:0;position:absolute; background-color:blue;"> 
+  <div style="height:300px;">
+    <div style="width: 40%; height: 100%; margin-left: auto; margin-right: auto;">
+      <app-touchpad [(config)]="touchpadConfig" #myTouchpad></app-touchpad>
+    </div>
+  </div>
+  {{ touchpadData | json }}
+  {{ touchpadData.mx*touchpadData.mx + touchpadData.my*touchpadData.my }}
 </div>
-{{ touchpadData | json }}
-{{ touchpadData.mx*touchpadData.mx + touchpadData.my*touchpadData.my }}
+<div style="right:0;top:0;width:300px;position:absolute;">
+  <app-tilepicker [(tileset)]="tileset" (newTilesetLoaded)="tl()" #myTilepicker></app-tilepicker>
+</div>

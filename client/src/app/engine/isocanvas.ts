@@ -426,6 +426,28 @@ export class IsoCanvas {
                 );
             }
         },
+        'drawIsoTileAlpha':(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D, alpha: number) => {
+
+            if (tile && tile.image && !tile.properties.isHidden) {
+
+                let topLeft = this.transformations.isoToCanvas({
+                    'x': isoCoord.x + 0.5 +
+                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x) +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x,
+                    'y': isoCoord.y + 0.5 +
+                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y) +
+                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
+                });
+                ctx.globalAlpha = alpha;
+                ctx.drawImage(
+                    tile.image,
+                    tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
+                    topLeft.x, topLeft.y,
+                    this._metrics.canvasTileSize.x, (1 + tile.properties.cellHeight)*this._metrics.canvasTileSize.y
+                );
+                ctx.globalAlpha = 1.0;
+            }
+        },
         'drawCellStack': (x: number, y: number, minHeigt: number, ctx: CanvasRenderingContext2D) => {
             var stackingHeight = 0;
             let cell = this._gameAssets.map.getCell(x, y);

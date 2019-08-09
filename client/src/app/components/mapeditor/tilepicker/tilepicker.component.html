@@ -1,0 +1,15 @@
+<ul class="list-group">
+  <li class="list-group-item text-center">
+    <div class="float-none btn-group" role="group">
+      <button type="button" class="btn btn-primary" (click)="buttons.tileset.load()">Load</button>
+      <button type="button" class="btn btn-primary" (click)="buttons.tileset.join()">Join</button>
+    </div>
+  </li>
+  <li class="list-group-item">
+    selected: 
+    <span class="float-right" *ngIf="selectedTile">
+      <img *ngIf="selectedTilePreviewImg" style="width:60px; height:60px;" src="{{ selectedTilePreviewImg.src }}">
+    </span>
+  </li>
+  <span #tilePreviewSpan></span>
+</ul>

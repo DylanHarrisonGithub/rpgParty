@@ -1,5 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { TouchpadComponent } from '../controller/touchpad/touchpad.component';
+import { TilepickerComponent } from '../mapeditor/tilepicker/tilepicker.component';
+import { IsoTileSet } from 'src/app/engine/isotileset';
+import { FileIO } from 'src/app/engine/fileIO';
+
+import config from '../../config/config.json';
 
 @Component({
   selector: 'app-sandbox',
@@ -9,6 +14,7 @@ import { TouchpadComponent } from '../controller/touchpad/touchpad.component';
 export class SandboxComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('myTouchpad') myTouchpad: TouchpadComponent;
+  @ViewChild('myTilepicker') myTilepicker: TilepickerComponent;
 
   public touchpadConfig = {
     inactiveColor: '#d3d3d3',
@@ -19,9 +25,14 @@ export class SandboxComponent implements OnInit, AfterViewInit, OnDestroy {
   touchpadData = { x: 0, y: 0 };
   touchpadDataSubscription;
 
+  public tileset: IsoTileSet;
+
   constructor() { }
 
   ngOnInit() {
+    FileIO.isoTileSet.loadFromServer([
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/brickwall.json'
+    ]).then(res => this.tileset = res[0]).catch(err => console.log(err));
   }
 
   ngAfterViewInit() {
@@ -34,6 +45,10 @@ export class SandboxComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.touchpadDataSubscription.unsubscribe();
+  }
+
+  tl() {
+    console.log(this.tileset.tiles.getLength());
   }
 
 }

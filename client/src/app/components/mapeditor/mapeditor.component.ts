@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { IsoCanvas } from '../../engine/isocanvas';
 import { GameMap } from '../../engine/gamemap';
 import { IsoTile } from '../../engine/isotile';
@@ -9,19 +9,20 @@ import { ActorMap } from 'src/app/engine/actormap';
 import { FileIO } from 'src/app/engine/fileIO';
 
 import config from '../../config/config.json';
+import { TilepickerComponent } from './tilepicker/tilepicker.component';
 
 @Component({
   selector: 'app-mapeditor',
   templateUrl: './mapeditor.component.html',
   styleUrls: ['./mapeditor.component.css']
 })
-export class MapeditorComponent implements OnInit {
+export class MapeditorComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('myTilepicker') myTilepicker: TilepickerComponent;
+  
   myCanvas: IsoCanvas;
   myMap: GameMap;
   myTileset: IsoTileSet;
-  tilePreviews: HTMLImageElement[] = [];
-  tilePreviewSize = {'width': 70, 'height': 70};
   selectedTile: IsoTile;
   selectedTool: MapEdTool;
   mapedTools: MapEdTool[];
@@ -32,12 +33,12 @@ export class MapeditorComponent implements OnInit {
     mousemove: null
   }
 
-  private tileTemplateLength: number;
-
   constructor() { }
 
   ngOnInit() {
+  }
 
+  ngAfterViewInit() {
     this.layoutVertical = window.innerHeight > window.innerWidth;
     if (this.layoutVertical) {
       document.getElementById('vcontainer').style.bottom = '200px';
@@ -51,17 +52,24 @@ export class MapeditorComponent implements OnInit {
       document.getElementById('toolpanel2').style.height = '0px';
     }
 
+    this.myTilepicker.getSelectedTileSubscription().subscribe((selectedTile: IsoTile) => { this.selectedTile = selectedTile });
+
     FileIO.isoTileSet.loadFromServer([
       config.URI[config.ENVIRONMENT] + 'assets/tilesets/brickwall.json',
       config.URI[config.ENVIRONMENT] + 'assets/tilesets/mapedtools.json'
     ]).then((res: Array<IsoTileSet>) => {
 
-      let tset = res[0];
-      let mapedtoolicons = res[1];
+      let tset, mapedtoolicons;
+      if (res[0].properties.tileSetName === 'mapedtools') {
+        tset = res[1];
+        mapedtoolicons = res[0];
+      } else {
+        tset = res[0];
+        mapedtoolicons = res[1];
+      }
 
       this.myTileset = tset;
       this.selectedTile = this.myTileset.tiles.get(0);
-      this.tileTemplateLength = Math.floor(tset.tiles.getLength() / 4) - 1;
       this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
       this.myCanvas = new IsoCanvas(
         <HTMLDivElement>document.getElementById('isocanvas'), 
@@ -118,53 +126,8 @@ export class MapeditorComponent implements OnInit {
         this.selectedTool.mouseUpListener(ev);
       });
 
-      this.renderTilePreviews();
       this.myCanvas.drawing.paint();
-
     }).catch(err => console.log(err));
-    
-  }
-
-  renderTilePreviews() {
-    if (this.myTileset) {
-      this.tilePreviews = [];
-      this.myTileset.tiles.forEach((tile,i) => {
-        let pCanvas = document.createElement('canvas');
-        pCanvas.width = this.tilePreviewSize.width;
-        pCanvas.height = this.tilePreviewSize.height;
-        let ctx = pCanvas.getContext('2d');
-
-        if (tile.image) {
-          ctx.drawImage(
-            tile.image,
-            tile.properties.subImageX, tile.properties.subImageY,
-            tile.properties.subImageWidth, tile.properties.subImageHeight,
-            0,0,
-            pCanvas.width, pCanvas.height
-          );
-        } else {
-          ctx.font = '45px Arial';
-          ctx.fillStyle = 'red';
-          ctx.textAlign = 'center';
-          ctx.fillText('!', 25, 40);
-        }
-        let pimg = new Image();
-        pimg.src = pCanvas.toDataURL();
-        pimg.addEventListener("click", (e) => {
-          this.buttons.tiles.select(tile);
-        });
-        this.tilePreviews.push(pimg);
-      });
-    }
-    let tilePreview = document.getElementById("tilesetlist");
-    for (let i = 0; i < this.tilePreviews.length; i += 4) {
-      let div = document.createElement('div');
-      div.appendChild(this.tilePreviews[i]);
-      div.appendChild(this.tilePreviews[i+1]);
-      div.appendChild(this.tilePreviews[i+2]);
-      div.appendChild(this.tilePreviews[i+3]);
-      tilePreview.appendChild(div);
-    }
   }
 
   templating = {
@@ -179,9 +142,6 @@ export class MapeditorComponent implements OnInit {
   };
 
   buttons = {
-    tiles: {
-      select: (tile: IsoTile) => { this.selectedTile = tile; }
-    },
     tools: {
       select: (tool: MapEdTool) => { 
         this.selectedTool = tool;
@@ -191,7 +151,6 @@ export class MapeditorComponent implements OnInit {
       new: () => {
         this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
         this.myCanvas.gameAssets.setMap(this.myMap);
-        this.renderTilePreviews();
         this.myCanvas.drawing.paint();
       },
       load: () => {
@@ -201,7 +160,6 @@ export class MapeditorComponent implements OnInit {
           this.myMap.setMap(map.getMap());
           this.myCanvas.gameAssets.tileset.set(this.myTileset);
           this.myCanvas.gameAssets.setMap(this.myMap);
-          this.renderTilePreviews();
           this.myCanvas.drawing.paint();
         }).catch(err => console.log(err));
       },
@@ -209,5 +167,12 @@ export class MapeditorComponent implements OnInit {
         FileIO.gameMap.save(this.myMap);
       }
     }
+  }
+
+  newTilesetLoaded() {
+    this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
+    this.myCanvas.gameAssets.tileset.set(this.myTileset);
+    this.myCanvas.gameAssets.setMap(this.myMap);
+    this.myCanvas.drawing.paint();
   }
 }

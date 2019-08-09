@@ -38,14 +38,7 @@
           <span style="color: rgb(37, 137, 204);">Tiles</span>
       </div>      
       <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-          <ul id="tilesetlist" class="list-group">
-            <li class="list-group-item">
-              selected: 
-              <span class="float-right" *ngIf="selectedTile">
-                <img style="width:60px; height:60px;" src="{{ selectedTile.image.src }}">
-              </span>
-            </li>
-          </ul>
+        <app-tilepicker [(tileset)]="myTileset" (newTilesetLoaded)="newTilesetLoaded()" #myTilepicker></app-tilepicker>
       </div>
     </div>
     <!--Map-->

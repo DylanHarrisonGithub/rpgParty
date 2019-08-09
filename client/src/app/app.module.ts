@@ -29,6 +29,7 @@ import { WaitingComponent } from './components/waiting/waiting.component';
 import { ControllerComponent } from './components/controller/controller.component';
 import { SandboxComponent } from './components/sandbox/sandbox.component';
 import { TouchpadComponent } from './components/controller/touchpad/touchpad.component';
+import { TilepickerComponent } from './components/mapeditor/tilepicker/tilepicker.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { TouchpadComponent } from './components/controller/touchpad/touchpad.com
     ControllerComponent,
     SandboxComponent,
     TouchpadComponent,
+    TilepickerComponent
   ],
   imports: [
     BrowserModule,
