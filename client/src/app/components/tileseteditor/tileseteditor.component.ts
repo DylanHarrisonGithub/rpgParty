@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
+import { FileIO } from '../../engine/fileIO';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TilesetLoadDialogComponent } from '../modals/tileset-load-dialog/tileset-load-dialog.component';
@@ -173,9 +174,13 @@ export class TileseteditorComponent implements OnInit {
             });
           } else {
             // todo: should be handled by asset-service
-            this.tileset.dumbLoad(() => {
+            //this.tileset.dumbLoad(() => {
+            //  this.render.tilePreviews();
+            //});
+            FileIO.isoTileSet.loadFromClient().then((newTileSet: IsoTileSet) => {
+              this.tileset = newTileSet;
               this.render.tilePreviews();
-            });
+            }).catch(err => console.log(err));
           }
         });
       },
@@ -201,9 +206,12 @@ export class TileseteditorComponent implements OnInit {
     },
     image: {
       import: () => { 
-        this.tileset.loadImageFromClient((img: HTMLImageElement) => {
+        FileIO.image.loadFromClient().then((images: Array<HTMLImageElement>) => {
+          this.tileset.images.insert(images);
           if (this.autoTile) {
-            this.tileset.tiles.insertOne(new IsoTile(img, {}));
+            images.forEach((image: HTMLImageElement) => {
+              this.tileset.tiles.insertOne(new IsoTile(image, {}));
+            });
             this.render.tilePreviews();
           }
         });

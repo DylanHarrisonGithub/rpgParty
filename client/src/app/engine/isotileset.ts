@@ -14,24 +14,24 @@ export class IsoTileSet {
     constructor() {}
 
     tiles = {
-        getLength: () => { return this._isoTiles.length; },
-        get: (index: number) => {
+        getLength: (): number => { return this._isoTiles.length; },
+        get: (index: number): IsoTile => {
             if (index > -1 && index < this.tiles.getLength()) {
                 return this._isoTiles[index];
             } else {
                 return null;
             }
         },
-        insertOne: (tile: IsoTile) => { 
+        insertOne: (tile: IsoTile): void => { 
             this._isoTiles.push(tile);
             for (let subtile of tile.subTiles) {
                 this._subTiles.push(subtile);
             }
         },
-        insertArray: (tileArray: IsoTile[]) => { 
+        insertArray: (tileArray: IsoTile[]): void => { 
             for (let tile of tileArray) this.tiles.insertOne(tile);
         },
-        removeOne: (tile: IsoTile) => { 
+        removeOne: (tile: IsoTile): void => { 
             let index = this._isoTiles.indexOf(tile);
             if (index > -1) {
                 this._isoTiles.splice(index, 1);
@@ -41,17 +41,17 @@ export class IsoTileSet {
                 }
             }
         },
-        removeArray: (tileArray: IsoTile[]) => {
+        removeArray: (tileArray: IsoTile[]): void => {
             for (let tile of tileArray) this.tiles.removeOne(tile);
         },
-        contains: (tile: IsoTile) => { return (this._isoTiles.indexOf(tile) > -1) },
-        indexOf: (tile: IsoTile) => { return (this._isoTiles.indexOf(tile)) },
+        contains: (tile: IsoTile): boolean => { return (this._isoTiles.indexOf(tile) > -1) },
+        indexOf: (tile: IsoTile): number => { return (this._isoTiles.indexOf(tile)) },
         forEach: (f: (value: IsoTile, index: number) => any) => { 
             for (let i = 0; i < this._isoTiles.length; i++) {
                 f(this._isoTiles[i], i);
             }
         },
-        moveUp: (tile: IsoTile) => {
+        moveUp: (tile: IsoTile): void => {
             if (this.tiles.contains(tile)) {
                 let index = this.tiles.indexOf(tile);
                 if (index > 0) {
@@ -61,7 +61,7 @@ export class IsoTileSet {
                 }
             }
         },
-        moveDown: (tile: IsoTile) => {
+        moveDown: (tile: IsoTile): void => {
             if (this.tiles.contains(tile)) {
                 let index = this.tiles.indexOf(tile);
                 if (index < (this.tiles.getLength()-1)) {
@@ -73,8 +73,8 @@ export class IsoTileSet {
         }
     };
     subTiles = {
-        contains: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile) > -1; },
-        indexOf: (subTile: IsoTile) => { return this._subTiles.indexOf(subTile); },
+        contains: (subTile: IsoTile): boolean => { return this._subTiles.indexOf(subTile) > -1; },
+        indexOf: (subTile: IsoTile): number => { return this._subTiles.indexOf(subTile); },
         get: (index: number): IsoTile => {
             return this._subTiles[index];
         },
@@ -85,7 +85,14 @@ export class IsoTileSet {
         }
     }
     images = {
-        remove: (image: HTMLImageElement) => {
+        insert: (images: HTMLImageElement | Array<HTMLImageElement>): void => {
+            if (images instanceof HTMLImageElement) {
+                this._images.push(images);
+            } else {
+                this._images = this._images.concat(images);
+            }
+        },
+        remove: (image: HTMLImageElement): HTMLImageElement => {
             if (this.images.contains(image)) {
                 let removed = this._images.splice(this._images.indexOf(image), 1)[0];
                 this._isoTiles.forEach(tile => {
@@ -96,8 +103,15 @@ export class IsoTileSet {
                 return null;
             }
         },
-        contains: (image: HTMLImageElement) => {
+        contains: (image: HTMLImageElement): boolean => {
             return this._images.indexOf(image) > -1;
+        },
+        get: (index: number): HTMLImageElement => {
+            if (index >= 0 && index < this._images.length) {
+                return this._images[index];
+            } else {
+                return null;
+            }
         }
     }
 

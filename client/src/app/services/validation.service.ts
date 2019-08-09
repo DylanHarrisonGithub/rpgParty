@@ -22,7 +22,7 @@ export class ValidationService {
     let errors = [];
     for (let key in schema) {
 
-      if (input.hasOwnProperty(key) && input[key]) {
+      if (input.hasOwnProperty(key) && !(input[key] === undefined || input[key] === null)) {
 
         if (typeof schema[key]['type'] === 'object') {
 
