@@ -7,6 +7,8 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TilesetLoadDialogComponent } from '../modals/tileset-load-dialog/tileset-load-dialog.component';
 import { AssetService } from '../../services/asset.service';
 
+import config from '../../config/config.json';
+
 @Component({
   selector: 'app-tileseteditor',
   templateUrl: './tileseteditor.component.html',
@@ -169,9 +171,10 @@ export class TileseteditorComponent implements OnInit {
           this.selectedTile = null;
           this.tilePreviews = [];
           if (val != 'Upload a custom tile set') {           
-            this.tileset.loadFromServer('http://localhost:3000/assets/tilesets/' + val, () => {
+            FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
+              res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.render.tilePreviews();
-            });
+            }).then(err => console.log(err));
           } else {
             FileIO.isoTileSet.loadFromClient().then((newTileSets: Array<IsoTileSet>) => {
               newTileSets.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
@@ -180,13 +183,12 @@ export class TileseteditorComponent implements OnInit {
           }
         });
       },
-      save: () => { this.tileset.dumbSave(); },
+      save: () => { FileIO.isoTileSet.save(this.tileset); },
       join: () => {
-        let jSet = new IsoTileSet();
         let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
         tilesetModal.result.then(val => {
           if (val != 'Upload a custom tile set') {
-            FileIO.isoTileSet.loadFromServer('http://localhost:3000/assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
+            FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.render.tilePreviews();
             }).catch(err => console.log(err));

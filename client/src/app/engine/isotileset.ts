@@ -1,292 +1,140 @@
 import { IsoTile } from './isotile';
 export class IsoTileSet {
 
-    public properties = {
-        tileSetName: 'untitled set',
-        isAnimation: false,
-        animationLoops: false,
-        fps: 0.0
-    };
-    private _images: HTMLImageElement[] = [];
-    private _isoTiles: IsoTile[] = [];
-    private _subTiles: IsoTile[] = [];
+  public properties = {
+    tileSetName: 'untitled set',
+    isAnimation: false,
+    animationLoops: false,
+    fps: 0.0
+  };
+  private _images: HTMLImageElement[] = [];
+  private _isoTiles: IsoTile[] = [];
+  private _subTiles: IsoTile[] = [];
 
-    constructor() {}
+  constructor() {}
 
-    tiles = {
-        getLength: (): number => { return this._isoTiles.length; },
-        get: (index: number): IsoTile => {
-            if (index > -1 && index < this.tiles.getLength()) {
-                return this._isoTiles[index];
-            } else {
-                return null;
-            }
-        },
-        insertOne: (tile: IsoTile): void => { 
-            this._isoTiles.push(tile);
-            for (let subtile of tile.subTiles) {
-                this._subTiles.push(subtile);
-            }
-        },
-        insertArray: (tileArray: IsoTile[]): void => { 
-            for (let tile of tileArray) this.tiles.insertOne(tile);
-        },
-        removeOne: (tile: IsoTile): void => { 
-            let index = this._isoTiles.indexOf(tile);
-            if (index > -1) {
-                this._isoTiles.splice(index, 1);
-                for (let subtile of tile.subTiles) {
-                    let subIndex = this._subTiles.indexOf(subtile);
-                    if (subIndex > -1) this._subTiles.splice(subIndex, 1);
-                }
-            }
-        },
-        removeArray: (tileArray: IsoTile[]): void => {
-            for (let tile of tileArray) this.tiles.removeOne(tile);
-        },
-        contains: (tile: IsoTile): boolean => { return (this._isoTiles.indexOf(tile) > -1) },
-        indexOf: (tile: IsoTile): number => { return (this._isoTiles.indexOf(tile)) },
-        forEach: (f: (value: IsoTile, index: number) => any) => { 
-            for (let i = 0; i < this._isoTiles.length; i++) {
-                f(this._isoTiles[i], i);
-            }
-        },
-        moveUp: (tile: IsoTile): void => {
-            if (this.tiles.contains(tile)) {
-                let index = this.tiles.indexOf(tile);
-                if (index > 0) {
-                    let temp = this._isoTiles[index-1];
-                    this._isoTiles[index-1] = this._isoTiles[index];
-                    this._isoTiles[index] = temp;
-                }
-            }
-        },
-        moveDown: (tile: IsoTile): void => {
-            if (this.tiles.contains(tile)) {
-                let index = this.tiles.indexOf(tile);
-                if (index < (this.tiles.getLength()-1)) {
-                    let temp = this._isoTiles[index+1];
-                    this._isoTiles[index+1] = this._isoTiles[index];
-                    this._isoTiles[index] = temp;
-                }
-            }
+  tiles = {
+    getLength: (): number => { return this._isoTiles.length; },
+    get: (index: number): IsoTile => {
+      if (index > -1 && index < this.tiles.getLength()) {
+        return this._isoTiles[index];
+      } else {
+        return null;
+      }
+    },
+    insertOne: (tile: IsoTile): void => { 
+      this._isoTiles.push(tile);
+      for (let subtile of tile.subTiles) {
+        this._subTiles.push(subtile);
+      }
+    },
+    insertArray: (tileArray: IsoTile[]): void => { 
+      for (let tile of tileArray) this.tiles.insertOne(tile);
+    },
+    removeOne: (tile: IsoTile): void => { 
+      let index = this._isoTiles.indexOf(tile);
+      if (index > -1) {
+        this._isoTiles.splice(index, 1);
+        for (let subtile of tile.subTiles) {
+          let subIndex = this._subTiles.indexOf(subtile);
+          if (subIndex > -1) this._subTiles.splice(subIndex, 1);
         }
-    };
-    subTiles = {
-        contains: (subTile: IsoTile): boolean => { return this._subTiles.indexOf(subTile) > -1; },
-        indexOf: (subTile: IsoTile): number => { return this._subTiles.indexOf(subTile); },
-        get: (index: number): IsoTile => {
-            return this._subTiles[index];
-        },
-        forEach: (f: (value: IsoTile, index: number) => any) => { 
-            for (let i = 0; i < this._subTiles.length; i++) {
-                f(this._subTiles[i], i);
-            }
+      }
+    },
+    removeArray: (tileArray: IsoTile[]): void => {
+      for (let tile of tileArray) this.tiles.removeOne(tile);
+    },
+    contains: (tile: IsoTile): boolean => { return (this._isoTiles.indexOf(tile) > -1) },
+    indexOf: (tile: IsoTile): number => { return (this._isoTiles.indexOf(tile)) },
+    forEach: (f: (value: IsoTile, index: number) => any): void => { 
+      for (let i = 0; i < this._isoTiles.length; i++) {
+        f(this._isoTiles[i], i);
+      }
+    },
+    moveUp: (tile: IsoTile): void => {
+      if (this.tiles.contains(tile)) {
+        let index = this.tiles.indexOf(tile);
+        if (index > 0) {
+          let temp = this._isoTiles[index-1];
+          this._isoTiles[index-1] = this._isoTiles[index];
+          this._isoTiles[index] = temp;
         }
+      }
+    },
+    moveDown: (tile: IsoTile): void => {
+      if (this.tiles.contains(tile)) {
+        let index = this.tiles.indexOf(tile);
+        if (index < (this.tiles.getLength()-1)) {
+          let temp = this._isoTiles[index+1];
+          this._isoTiles[index+1] = this._isoTiles[index];
+          this._isoTiles[index] = temp;
+        }
+      }
     }
-    images = {
-        insert: (images: HTMLImageElement | Array<HTMLImageElement>): void => {
-            if (images instanceof HTMLImageElement) {
-                this._images.push(images);
-            } else {
-                this._images = this._images.concat(images);
-            }
-        },
-        remove: (image: HTMLImageElement): HTMLImageElement => {
-            if (this.images.contains(image)) {
-                let removed = this._images.splice(this._images.indexOf(image), 1)[0];
-                this._isoTiles.forEach(tile => {
-                    if (tile.image == image) tile.image = null;
-                });
-                return removed;
-            } else {
-                return null;
-            }
-        },
-        contains: (image: HTMLImageElement): boolean => {
-            return this._images.indexOf(image) > -1;
-        },
-        indexOf: (image: HTMLImageElement): number => {
-            return this._images.indexOf(image);
-        },
-        get: (index: number): HTMLImageElement => {
-            if (index >= 0 && index < this._images.length) {
-                return this._images[index];
-            } else {
-                return null;
-            }
-        },
-        forEach: (f: (value: HTMLImageElement, index: number) => any) => {
-            for (let i = 0; i < this._images.length; i++) {
-                f(this._images[i], i);
-            }
-        }
+  };
+  subTiles = {
+    contains: (subTile: IsoTile): boolean => { return this._subTiles.indexOf(subTile) > -1; },
+    indexOf: (subTile: IsoTile): number => { return this._subTiles.indexOf(subTile); },
+    get: (index: number): IsoTile => {
+      return this._subTiles[index];
+    },
+    forEach: (f: (value: IsoTile, index: number) => any): void => { 
+      for (let i = 0; i < this._subTiles.length; i++) {
+        f(this._subTiles[i], i);
+      }
     }
-
-    union(tileSet: IsoTileSet) {
-        for (let image of tileSet._images) {
-            if (!this.images.contains(image)) {
-                this._images.push(image);
-            }
-        }
-        for (let tile of tileSet._isoTiles) {
-            this.tiles.insertOne(new IsoTile(
-                this._images[this._images.indexOf(tile.image)],
-                JSON.parse(JSON.stringify(tile.properties))         // clone json obj hack
-            ));
-        }
-    }
-
-    loadImageFromClient(onload: (img: HTMLImageElement) => void) { 
-        let inputElement = document.createElement('input');
-        inputElement.setAttribute('type', 'file');
-        inputElement.setAttribute('style', 'display:none');
-        inputElement.setAttribute('multiple', '');
-        inputElement.addEventListener('change', (ev) => {
-            if (inputElement.files.length > 0) {
-                for (let fNum = 0; fNum < inputElement.files.length; fNum++) {
-                    let newImage = new Image();
-                    let reader = new FileReader();
-                    reader.onload = ((event) => {
-                        newImage.src = (<any>event.target).result;
-                        newImage.onload = ((event) => {
-                            this._images.push(newImage);
-                            onload(newImage);
-                        });
-                    });
-                    reader.readAsDataURL(inputElement.files[fNum]);
-                }
-            }
-        }, false);
-        document.body.appendChild(inputElement);
-        inputElement.click();
-        setTimeout(function() {
-            document.body.removeChild(inputElement);  
-        }, 0);        
-    }
-
-    dumbSave() {
-
-        let filename = this.properties.tileSetName + '.json';
-        
-        let images = [];
-        for (let img of this._images) {
-            images.push(img.src);
-        }
-        
-        let tiles = [];
-        for (let tile of this._isoTiles) {
-            tiles.push({
-                'index': this._images.indexOf(tile.image),
-                'properties': tile.properties
-            });
-        }
-        let file = new Blob([JSON.stringify({
-            'properties': this.properties,
-            'images': images,
-            'tiles': tiles            
-        })], {type: 'application/json'});        
-        let anchor = document.createElement('a');
-        anchor.setAttribute('style', 'display:none');
-        let url = URL.createObjectURL(file);
-        anchor.href = url;
-        anchor.download = filename;
-        document.body.appendChild(anchor);
-        anchor.click();
-        setTimeout(function() {
-            document.body.removeChild(anchor);
-            window.URL.revokeObjectURL(url);  
-        }, 0);        
-    }
-
-    dumbLoad(onloaded: Function) {
-        let inputElement = document.createElement('input');
-        inputElement.setAttribute('type', 'file');
-        inputElement.setAttribute('style', 'display:none');
-        inputElement.addEventListener('change', (ev) => {
-            if (inputElement.files.length > 0) {
-                var reader = new FileReader();
-                reader.onload = ((event) => {
-                    let file = JSON.parse((<any>event.target).result);
-                    this.properties = file.properties;
-                    
-                    this._images = [];                    
-                    let numImages = file.images.length;
-                    let loadedCounter = 0;
-                    for (let fileImg of file.images) {
-                        let newImage = new Image();
-                        this._images.push(newImage);
-                        newImage.onload = ((event) => {
-                            loadedCounter++;
-                            if (loadedCounter == numImages) {
-                                this._isoTiles = [];
-                                for (let tile of file.tiles) {
-                                    this._isoTiles.push(new IsoTile(
-                                        this._images[tile.index],
-                                        tile.properties
-                                    ));
-                                    //console.log(tile);
-                                }
-                                onloaded();
-                            }
-                        });
-                        newImage.onerror = function() {
-                            console.log('image did not load');
-                            numImages--;
-                        }
-                        newImage.src = fileImg;
-                    }
-                    //onloaded();
-                });
-                reader.readAsText(inputElement.files[0]);
-            }
-        }, false);
-        document.body.appendChild(inputElement);
-        inputElement.click();
-        setTimeout(function() {
-            document.body.removeChild(inputElement);  
-        }, 0);        
-    }
-
-    loadFromServer(filename: string, onload: Function) {
-        fetch(filename).then(res => res.json()).then(file => {
-            if (file.error) {
-                console.log(file);
-            } else {
-                this.properties = file.properties;
-                this._images = [];                    
-                let numImages = file.images.length;
-                //console.log('numImages: ', numImages);
-                let loadedCounter = 0;
-                for (let fileImg of file.images) {
-                    let newImage = new Image();
-                    this._images.push(newImage);
-                    newImage.onload = ((event) => {
-                        newImage.onload = null;
-                        loadedCounter++;
-                        //console.log('loading progress: ', loadedCounter);
-                        if (loadedCounter == numImages) {
-                            this._isoTiles = [];
-                            for (let tile of file.tiles) {
-                                this.tiles.insertOne(new IsoTile(
-                                    this._images[tile.index],
-                                    tile.properties
-                                ));
-                            }
-                            //console.log('tileset loading complete');
-                            onload();
-                        }
-                    });
-                    newImage.onerror = function(e) {
-                        console.log('image did not load', e);
-                        numImages--;
-                    }
-                    newImage.src = fileImg;
-                }
-            }
-            
-            //onload();
+  }
+  images = {
+    insert: (images: HTMLImageElement | Array<HTMLImageElement>): void => {
+      if (images instanceof HTMLImageElement) {
+        this._images.push(images);
+      } else {
+        this._images = this._images.concat(images);
+      }
+    },
+    remove: (image: HTMLImageElement): HTMLImageElement => {
+      if (this.images.contains(image)) {
+        let removed = this._images.splice(this._images.indexOf(image), 1)[0];
+        this._isoTiles.forEach(tile => {
+          if (tile.image == image) tile.image = null;
         });
+        return removed;
+      } else {
+        return null;
+      }
+    },
+    contains: (image: HTMLImageElement): boolean => {
+      return this._images.indexOf(image) > -1;
+    },
+    indexOf: (image: HTMLImageElement): number => {
+      return this._images.indexOf(image);
+    },
+    get: (index: number): HTMLImageElement => {
+      if (index >= 0 && index < this._images.length) {
+        return this._images[index];
+      } else {
+        return null;
+      }
+    },
+    forEach: (f: (value: HTMLImageElement, index: number) => any): void => {
+      for (let i = 0; i < this._images.length; i++) {
+        f(this._images[i], i);
+      }
     }
+  }
+
+  union(tileSet: IsoTileSet): void {
+    for (let image of tileSet._images) {
+      if (!this.images.contains(image)) {
+        this._images.push(image);
+      }
+    }
+    for (let tile of tileSet._isoTiles) {
+      this.tiles.insertOne(new IsoTile(
+        this._images[this._images.indexOf(tile.image)],
+        JSON.parse(JSON.stringify(tile.properties))     // clone json obj hack
+      ));
+    }
+  }
 
 }

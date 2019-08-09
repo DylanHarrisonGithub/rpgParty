@@ -13,6 +13,9 @@ import { ToastrService } from 'ngx-toastr';
 import { ActorMap } from 'src/app/engine/actormap';
 import { Actor } from 'src/app/engine/actor';
 
+import config from '../../config/config.json';
+import { FileIO } from 'src/app/engine/fileIO';
+
 @Component({
   selector: 'app-play',
   templateUrl: './play.component.html',
@@ -68,50 +71,50 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    let tset = new IsoTileSet();
-    tset.loadFromServer('http://localhost:3000/assets/tilesets/dirt.json', () => {
-      let anim = new IsoTileSet();
-      anim.loadFromServer('http://localhost:3000/assets/tilesets/animationtest.json', () => {
-        this.myTileset = tset;
-        this.myMap = GameMap.generateRandomMap(64, 64, 2, tset); //new GameMap(64, 64, tset); //
-        
-        this.myActors = new Array<Actor>();
-        this.players.forEach(player => {
-          let a = new Actor(0,0,0,0,100,[anim],anim);
-          player.actor = a;
-          this.myActors.push(a);
-        });
+    FileIO.isoTileSet.loadFromServer([
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/dirt.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/animationtest.json'
+    ]).then((res: Array<IsoTileSet>) => {
 
-        this.myActorMap = new ActorMap(64, 64, this.myActors, this.myMap);
-        this.myCanvas = new IsoCanvas(
-          this.myCanvasElement.nativeElement, 
-          this.myMap,
-          this.myActorMap
-        );
-        
-        this.myCanvas.gameAssets.tileset.set(tset);
+      this.myTileset = res[0];
+      let anim = res[1];
+
+      this.myMap = GameMap.generateRandomMap(64, 64, 2, this.myTileset); //new GameMap(64, 64, tset); //
+      this.myActors = new Array<Actor>();
+      this.players.forEach(player => {
+        let a = new Actor(0,0,0,0,100,[anim],anim);
+        player.actor = a;
+        this.myActors.push(a);
+      });
+      this.myActorMap = new ActorMap(64, 64, this.myActors, this.myMap);
+      this.myCanvas = new IsoCanvas(
+        this.myCanvasElement.nativeElement, 
+        this.myMap,
+        this.myActorMap
+      );
+
+      this.myCanvas.gameAssets.tileset.set(this.myTileset);
+      this.paint();
+      window.addEventListener('resize', (ev) => {
         this.paint();
-        window.addEventListener('resize', (ev) => {
-          this.paint();
-        });
-        this.myCanvasElement.nativeElement.addEventListener('click', (ev) => {
-          this.myCanvas.eventListeners.defaultMouseClickListener(ev);
-          this.paint();
-        });
-        this.myCanvasElement.nativeElement.addEventListener('mousemove', (ev) => this.myCanvas.eventListeners.defaultMouseMoveListener(ev));
-        this.myCanvasElement.nativeElement.addEventListener('wheel', (ev) => {
-          this.myCanvas.eventListeners.defaultMouseWheelListener(ev);
-          this.paint();
-        });
-        
-        //timer
-        setInterval(() => {
-          this.myActorMap.stage(1/26, this.myMap);
-          this.paint();
-        }, 1000/26);
+      });
+      this.myCanvasElement.nativeElement.addEventListener('click', (ev) => {
+        this.myCanvas.eventListeners.defaultMouseClickListener(ev);
+        this.paint();
+      });
+      this.myCanvasElement.nativeElement.addEventListener('mousemove', (ev) => this.myCanvas.eventListeners.defaultMouseMoveListener(ev));
+      this.myCanvasElement.nativeElement.addEventListener('wheel', (ev) => {
+        this.myCanvas.eventListeners.defaultMouseWheelListener(ev);
+        this.paint();
       });
       
-    });
+      //timer
+      setInterval(() => {
+        this.myActorMap.stage(1/26, this.myMap);
+        this.paint();
+      }, 1000/26);
+
+    }).catch(err => console.log(err));
 
     //router
     this.mySockSubstription = this._socketService.onMessage().subscribe(msg => {

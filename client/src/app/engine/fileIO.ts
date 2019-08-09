@@ -99,26 +99,12 @@ export class FileIO {
     },
     'save': (tileSet: IsoTileSet): void => {
 
-      let filename = tileSet.properties.tileSetName + '.json';
-      let images = [];
-      tileSet.images.forEach((value, index) => images.push(value.src));
-      let tiles = [];
-      tileSet.tiles.forEach((value, index) => tiles.push({
-        'index': tileSet.images.indexOf(value.image),
-        'properties': value.properties
-      }));
-
-      let file = new Blob([JSON.stringify({
-          'properties': tileSet.properties,
-          'images': images,
-          'tiles': tiles            
-      })], {type: 'application/json'});
-
+      let file = FileIO._isoTileSet.toBlob(tileSet);
       let anchor = document.createElement('a');
       anchor.setAttribute('style', 'display:none');
       let url = URL.createObjectURL(file);
       anchor.href = url;
-      anchor.download = filename;
+      anchor.download = tileSet.properties.tileSetName + '.json';
       document.body.appendChild(anchor);
       anchor.click();
       setTimeout(function() {
@@ -159,6 +145,23 @@ export class FileIO {
             reject(schemaErrors);
           }
       });
+    },
+    'toBlob': (tileSet: IsoTileSet): Blob => {
+      let images = [];
+      tileSet.images.forEach((value, index) => images.push(value.src));
+      let tiles = [];
+      tileSet.tiles.forEach((value, index) => tiles.push({
+        'index': tileSet.images.indexOf(value.image),
+        'properties': value.properties
+      }));
+
+      let blob = new Blob([JSON.stringify({
+          'properties': tileSet.properties,
+          'images': images,
+          'tiles': tiles            
+      })], {type: 'application/json'});
+
+      return blob;
     }
   };
 
