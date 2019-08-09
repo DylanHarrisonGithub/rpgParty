@@ -1,7 +1,6 @@
 import { ValidationService } from '../services/validation.service';
 import { IsoTile } from './isotile';
 import { IsoTileSet } from './isotileset';
-import { reject } from 'q';
 
 export class FileIO {
 
@@ -45,46 +44,104 @@ export class FileIO {
   }
 
   public static isoTileSet = {
-    'loadFromClient': (): Promise<IsoTileSet> => {
-      return new Promise<IsoTileSet>((resolve, reject) => {
-        let tileSet = new IsoTileSet();
+    'loadFromClient': (): Promise<Array<IsoTileSet>> => {
+      return new Promise<Array<IsoTileSet>>((resolve, reject) => {
+        let tileSets = new Array<IsoTileSet>();
         FileIO._openFileDialog(true, 'application/json', (dialogEvent: Event) => {
           let fileList: FileList = (<HTMLInputElement>dialogEvent.target).files;
           if (fileList && fileList.length) {
             let fileCounter = 0;
             Array.from(fileList).forEach((file: File) => {
-              FileIO._isoTileSet.fromFile(file).then((res: IsoTileSet) => {
-                tileSet.union(res);
-                fileCounter++;
-                if (fileCounter === fileList.length) {
-                  resolve(tileSet);
-                }
-              }).catch(err => reject(err));
+              let reader: FileReader = new FileReader(); 
+              reader.onload = ((readerEvent: Event) => {
+                let jsonTileSet = JSON.parse((<any>readerEvent.target).result);
+                FileIO._isoTileSet.fromJSON(jsonTileSet).then((res: IsoTileSet) => {
+                  tileSets.push(res);
+                  fileCounter++;
+                  if (fileCounter === fileList.length) {
+                    resolve(tileSets);
+                  }
+                }).catch(err => reject(err));
+              });
+              reader.readAsText(file);
             });
           } else {
-            resolve(tileSet);
+            resolve(tileSets);
           }
         });
       });
+    },
+    'loadFromServer': (filename: string | Array<string>): Promise<Array<IsoTileSet>> => {
+      return new Promise((resolve, reject) => {
+        let tileSets = new Array<IsoTileSet>();
+        if (typeof filename === 'string') {
+          fetch(filename).then(res => res.json()).then(res => {
+            FileIO._isoTileSet.fromJSON(res).then((res: IsoTileSet) => {
+              tileSets.push(res);
+              resolve(tileSets);
+            }).catch(err => reject(err));
+          }).catch(err => reject(err));
+        } else {
+          let fileCount = 0;
+          filename.forEach((file: string) => {
+            fetch(file).then(res => res.json()).then(res => {
+              FileIO._isoTileSet.fromJSON(res).then((res: IsoTileSet) => {
+                tileSets.push(res);
+                fileCount++;
+                if (fileCount === filename.length) {
+                  resolve(tileSets);
+                }
+              }).catch(err => reject(err));
+            }).catch(err => reject(err));
+          });
+        }
+      });
+    },
+    'save': (tileSet: IsoTileSet): void => {
+
+      let filename = tileSet.properties.tileSetName + '.json';
+      let images = [];
+      tileSet.images.forEach((value, index) => images.push(value.src));
+      let tiles = [];
+      tileSet.tiles.forEach((value, index) => tiles.push({
+        'index': tileSet.images.indexOf(value.image),
+        'properties': value.properties
+      }));
+
+      let file = new Blob([JSON.stringify({
+          'properties': tileSet.properties,
+          'images': images,
+          'tiles': tiles            
+      })], {type: 'application/json'});
+
+      let anchor = document.createElement('a');
+      anchor.setAttribute('style', 'display:none');
+      let url = URL.createObjectURL(file);
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      setTimeout(function() {
+          document.body.removeChild(anchor);
+          window.URL.revokeObjectURL(url);  
+      }, 0);
+
     }
   }; private static _isoTileSet = {
-    'fromFile': (isoTilesetFile: File): Promise<IsoTileSet> => {
-      return new Promise((resolve, reject) => {
+    'fromJSON': (isoTileSetJSON: any): Promise<IsoTileSet> => {
+      return new Promise<IsoTileSet>((resolve, reject) => {
         let tileSet = new IsoTileSet();
-        let reader: FileReader = new FileReader();
-        reader.onload = ((readerEvent: Event) => {
-          let file = JSON.parse((<any>readerEvent.target).result);
-          let schemaErrors: Array<string> = ValidationService.prototype.validate(file, FileIO._schemas.isoTileSet);
+        let schemaErrors: Array<string> = ValidationService.prototype.validate(isoTileSetJSON, FileIO._schemas.isoTileSet);
           if (!schemaErrors.length) {
-            tileSet.properties = file.properties;
+            tileSet.properties = isoTileSetJSON.properties;
             let loadedImagesCounter: number = 0;
-            for (let fileImg of file.images) {
+            for (let fileImg of isoTileSetJSON.images) {
               let newImage = new Image();
               tileSet.images.insert(newImage);
               newImage.onload = ((imgLoadEvent: Event) => {
                 loadedImagesCounter++;
-                if (loadedImagesCounter === file.images.length) {
-                  for (let tile of file.tiles) {
+                if (loadedImagesCounter === isoTileSetJSON.images.length) {
+                  for (let tile of isoTileSetJSON.tiles) {
                     tileSet.tiles.insertOne(new IsoTile(
                         tileSet.images.get(tile.index),
                         tile.properties
@@ -101,8 +158,6 @@ export class FileIO {
           } else {
             reject(schemaErrors);
           }
-        });
-        reader.readAsText(isoTilesetFile);
       });
     }
   };

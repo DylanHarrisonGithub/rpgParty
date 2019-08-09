@@ -106,11 +106,19 @@ export class IsoTileSet {
         contains: (image: HTMLImageElement): boolean => {
             return this._images.indexOf(image) > -1;
         },
+        indexOf: (image: HTMLImageElement): number => {
+            return this._images.indexOf(image);
+        },
         get: (index: number): HTMLImageElement => {
             if (index >= 0 && index < this._images.length) {
                 return this._images[index];
             } else {
                 return null;
+            }
+        },
+        forEach: (f: (value: HTMLImageElement, index: number) => any) => {
+            for (let i = 0; i < this._images.length; i++) {
+                f(this._images[i], i);
             }
         }
     }

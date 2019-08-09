@@ -173,12 +173,8 @@ export class TileseteditorComponent implements OnInit {
               this.render.tilePreviews();
             });
           } else {
-            // todo: should be handled by asset-service
-            //this.tileset.dumbLoad(() => {
-            //  this.render.tilePreviews();
-            //});
-            FileIO.isoTileSet.loadFromClient().then((newTileSet: IsoTileSet) => {
-              this.tileset = newTileSet;
+            FileIO.isoTileSet.loadFromClient().then((newTileSets: Array<IsoTileSet>) => {
+              newTileSets.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.render.tilePreviews();
             }).catch(err => console.log(err));
           }
@@ -189,17 +185,16 @@ export class TileseteditorComponent implements OnInit {
         let jSet = new IsoTileSet();
         let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
         tilesetModal.result.then(val => {
-          if (val != 'Upload a custom tile set') {           
-            jSet.loadFromServer('http://localhost:3000/assets/tilesets/' + val, () => {
-              this.tileset.union(jSet);
+          if (val != 'Upload a custom tile set') {
+            FileIO.isoTileSet.loadFromServer('http://localhost:3000/assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
+              res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.render.tilePreviews();
-            });
+            }).catch(err => console.log(err));
           } else {
-            // todo: should be handled by asset-service
-            jSet.dumbLoad(() => {
-              this.tileset.union(jSet);
+            FileIO.isoTileSet.loadFromClient().then((res: Array<IsoTileSet>) => {
+              res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.render.tilePreviews();
-            });
+            }).catch(err => console.log(err));
           }       
         });
       }
