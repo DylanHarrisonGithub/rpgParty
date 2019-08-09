@@ -10,6 +10,7 @@ import { FileIO } from 'src/app/engine/fileIO';
 
 import config from '../../config/config.json';
 import { TilepickerComponent } from './tilepicker/tilepicker.component';
+import { ToolpickerComponent } from './toolpicker/toolpicker.component';
 
 @Component({
   selector: 'app-mapeditor',
@@ -19,13 +20,12 @@ import { TilepickerComponent } from './tilepicker/tilepicker.component';
 export class MapeditorComponent implements OnInit, AfterViewInit {
 
   @ViewChild('myTilepicker') myTilepicker: TilepickerComponent;
-  
+  @ViewChild('myToolpicker') myToolpicker: ToolpickerComponent;
+
   myCanvas: IsoCanvas;
   myMap: GameMap;
   myTileset: IsoTileSet;
   selectedTile: IsoTile;
-  selectedTool: MapEdTool;
-  mapedTools: MapEdTool[];
   layoutVertical: boolean; // 0:horizontal, 1:vertical
   activeMouseListeners = {
     mouseclick: null,
@@ -52,24 +52,16 @@ export class MapeditorComponent implements OnInit, AfterViewInit {
       document.getElementById('toolpanel2').style.height = '0px';
     }
 
-    this.myTilepicker.getSelectedTileSubscription().subscribe((selectedTile: IsoTile) => { this.selectedTile = selectedTile });
+    this.myTilepicker.getSelectedTileSubscription().subscribe((selectedTile: IsoTile) => { 
+      this.selectedTile = selectedTile 
+    });
 
     FileIO.isoTileSet.loadFromServer([
-      config.URI[config.ENVIRONMENT] + 'assets/tilesets/brickwall.json',
-      config.URI[config.ENVIRONMENT] + 'assets/tilesets/mapedtools.json'
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/brickwall.json'
     ]).then((res: Array<IsoTileSet>) => {
 
-      let tset, mapedtoolicons;
-      if (res[0].properties.tileSetName === 'mapedtools') {
-        tset = res[1];
-        mapedtoolicons = res[0];
-      } else {
-        tset = res[0];
-        mapedtoolicons = res[1];
-      }
-
+      let tset = res[0];
       this.myTileset = tset;
-      this.selectedTile = this.myTileset.tiles.get(0);
       this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
       this.myCanvas = new IsoCanvas(
         <HTMLDivElement>document.getElementById('isocanvas'), 
@@ -101,31 +93,7 @@ export class MapeditorComponent implements OnInit, AfterViewInit {
         }
       };
 
-      this.mapedTools = new Array<MapEdTool>();
-      this.mapedTools.push(new HandTool(this.myCanvas, mapedtoolicons.tiles.get(0)));
-      this.mapedTools.push(new BrushTool(this, mapedtoolicons.tiles.get(1)));
-      this.mapedTools.push(new LineTool(this, mapedtoolicons.tiles.get(2)));
-      this.mapedTools.push(new BoxTool(this, mapedtoolicons.tiles.get(3)));
-      this.mapedTools.push(new BucketTool(this, mapedtoolicons.tiles.get(4)));
-      this.mapedTools.push(new EraserTool(this, mapedtoolicons.tiles.get(5)));
-      this.buttons.tools.select(this.mapedTools[0]);
-      let ican = document.getElementById('isocanvas');     
-      ican.addEventListener('click', (ev) => {
-        this.selectedTool.mouseClickListener(ev);
-      });
-      ican.addEventListener('mousemove', (ev) => {
-        this.selectedTool.mouseMoveListener(ev);
-      });
-      ican.addEventListener('wheel', (ev) => {
-        this.selectedTool.mouseWheelListener(ev);
-      });
-      ican.addEventListener('mousedown', (ev) => {
-        this.selectedTool.mouseDownListener(ev);
-      });
-      ican.addEventListener('mouseup', (ev) => {
-        this.selectedTool.mouseUpListener(ev);
-      });
-
+      this.myToolpicker.init(this);
       this.myCanvas.drawing.paint();
     }).catch(err => console.log(err));
   }
@@ -142,11 +110,6 @@ export class MapeditorComponent implements OnInit, AfterViewInit {
   };
 
   buttons = {
-    tools: {
-      select: (tool: MapEdTool) => { 
-        this.selectedTool = tool;
-      }
-    },
     map: {
       new: () => {
         this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);

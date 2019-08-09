@@ -895,4 +895,6 @@ export class IsoCanvas {
         return {'x': u.x + t*(v.x - u.x), 'y': u.y + t*(v.y - u.y)};
     }
 
+    getDelegateDiv() { return this._div };
+    getCanvas() { return this._canvas };
 }

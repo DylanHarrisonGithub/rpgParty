@@ -8,5 +8,6 @@
   {{ touchpadData.mx*touchpadData.mx + touchpadData.my*touchpadData.my }}
 </div>
 <div style="right:0;top:0;width:300px;position:absolute;">
+  <app-toolpicker></app-toolpicker>
   <app-tilepicker [(tileset)]="tileset" (newTilesetLoaded)="tl()" #myTilepicker></app-tilepicker>
 </div>

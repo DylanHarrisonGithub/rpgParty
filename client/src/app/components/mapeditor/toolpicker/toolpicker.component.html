@@ -1,0 +1,30 @@
+<ul class="list-group" *ngIf="mapedTools">
+  <li class="list-group-item">
+    selected: 
+    <span class="float-right" *ngIf="selectedTool">
+      <img style="width:60px; height:60px;" src="{{ selectedTool.icon.image.src }}">
+    </span>
+  </li>
+  <span *ngIf="mapedTools.length">
+    <li class="list-group-item pl-0 pr-0">
+      <div class="text-center">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[0].icon.image.src }}" (click)="select(mapedTools[0])">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[1].icon.image.src }}" (click)="select(mapedTools[1])">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[2].icon.image.src }}" (click)="select(mapedTools[2])">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[3].icon.image.src }}" (click)="select(mapedTools[3])">
+      </div>
+      <div class="text-center">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[4].icon.image.src }}" (click)="select(mapedTools[4])">
+        <img style="width:60px; height:60px;" src="{{ mapedTools[5].icon.image.src }}" (click)="select(mapedTools[5])">
+      </div>
+    </li>
+    <li class="list-group-item" *ngFor="let item of selectedTool?.properties | keyvalue; trackBy:templating.trackByFn">
+      {{ item.key }}
+      <span class="float-right">
+        <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+        <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+        <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTool.properties[item.key]" name="{{ item.key }}">
+      </span>
+    </li>
+  </span>
+</ul>
