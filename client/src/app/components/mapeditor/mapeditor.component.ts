@@ -1,10 +1,8 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IsoCanvas } from '../../engine/isocanvas';
 import { GameMap } from '../../engine/gamemap';
 import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
-import { MapEdTool, HandTool, BrushTool, LineTool, BoxTool, BucketTool, EraserTool } from '../../engine/mapedtools/mapedtool';
-import { TileseteditorComponent } from '../tileseteditor/tileseteditor.component';
 import { ActorMap } from 'src/app/engine/actormap';
 import { FileIO } from 'src/app/engine/fileIO';
 
@@ -17,21 +15,17 @@ import { ToolpickerComponent } from './toolpicker/toolpicker.component';
   templateUrl: './mapeditor.component.html',
   styleUrls: ['./mapeditor.component.css']
 })
-export class MapeditorComponent implements OnInit, AfterViewInit {
+export class MapeditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('myTilepicker') myTilepicker: TilepickerComponent;
   @ViewChild('myToolpicker') myToolpicker: ToolpickerComponent;
+
+  @ViewChild('myIsoCanvas') myIsoCanvas: ElementRef;
 
   myCanvas: IsoCanvas;
   myMap: GameMap;
   myTileset: IsoTileSet;
   selectedTile: IsoTile;
-  layoutVertical: boolean; // 0:horizontal, 1:vertical
-  activeMouseListeners = {
-    mouseclick: null,
-    mousewheel: null,
-    mousemove: null
-  }
 
   constructor() { }
 
@@ -39,18 +33,6 @@ export class MapeditorComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.layoutVertical = window.innerHeight > window.innerWidth;
-    if (this.layoutVertical) {
-      document.getElementById('vcontainer').style.bottom = '200px';
-      document.getElementById('toolpanel1').style.width = '0px';
-      document.getElementById('isocanvas').style.right = '0px';
-      document.getElementById('toolpanel2').style.height = '200px';
-    } else {
-      document.getElementById('vcontainer').style.bottom = '0px';
-      document.getElementById('toolpanel1').style.width = '300px';
-      document.getElementById('isocanvas').style.right = '300px';
-      document.getElementById('toolpanel2').style.height = '0px';
-    }
 
     this.myTilepicker.getSelectedTileSubscription().subscribe((selectedTile: IsoTile) => { 
       this.selectedTile = selectedTile 
@@ -60,42 +42,33 @@ export class MapeditorComponent implements OnInit, AfterViewInit {
       config.URI[config.ENVIRONMENT] + 'assets/tilesets/brickwall.json'
     ]).then((res: Array<IsoTileSet>) => {
 
-      let tset = res[0];
-      this.myTileset = tset;
-      this.myMap = new GameMap(64, 64, tset); //GameMap.generateRandomMap(64, 64, 1, tset);
+      this.myTileset = res[0];
+      this.myMap = new GameMap(64, 64, this.myTileset);
       this.myCanvas = new IsoCanvas(
-        <HTMLDivElement>document.getElementById('isocanvas'), 
+        this.myIsoCanvas.nativeElement, 
         this.myMap,
         new ActorMap(64, 64, [], this.myMap)
       );      
-      this.myCanvas.gameAssets.tileset.set(tset);
-      window.addEventListener('resize', (ev) => {      
-        if (window.innerHeight > window.innerWidth != this.layoutVertical) {
-          this.layoutVertical = window.innerHeight > window.innerWidth;
-          if (this.layoutVertical) {
-            document.getElementById('vcontainer').style.bottom = '200px';
-            document.getElementById('toolpanel1').style.width = '0px';
-            document.getElementById('isocanvas').style.right = '0px';
-            document.getElementById('toolpanel2').style.height = '200px';
-          } else {
-            document.getElementById('vcontainer').style.bottom = '0px';
-            document.getElementById('toolpanel1').style.width = '300px';
-            document.getElementById('isocanvas').style.right = '300px';
-            document.getElementById('toolpanel2').style.height = '0px';
-          }
-        }
-        this.myCanvas.drawing.paint();
-      });
+      this.myCanvas.gameAssets.tileset.set(this.myTileset);
+
       document.onkeypress = (event) => {
         if (event.key == 'r') {
           this.myCanvas.transformations.rotate(1);
           this.myCanvas.drawing.paint();
         }
       };
+      window.addEventListener('resize', ev => {
+        this.myCanvas.eventListeners.defaultWindowResizeListner(ev);
+        this.myCanvas.drawing.paint();
+      });
 
       this.myToolpicker.init(this);
       this.myCanvas.drawing.paint();
     }).catch(err => console.log(err));
+  }
+
+  ngOnDestroy() {
+
   }
 
   templating = {

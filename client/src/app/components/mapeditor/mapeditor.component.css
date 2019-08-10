@@ -1,0 +1,44 @@
+#container {
+  top: 0; bottom: 0; left: 0; right: 0; position: absolute; overflow-y: auto;
+}
+#canvasContainer {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#isocanvas {
+  height: 0;
+  padding-bottom: 100%;
+}
+#toolpanel {
+  width: 100%;
+}
+@media screen and (min-width: 600px) {
+  #container {
+    overflow-y: hidden;
+  }
+  #canvasContainer {
+    right: 300px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    width: auto;
+    height: auto;
+    position: absolute;
+  }
+  #isocanvas {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    position: absolute;
+  }
+  #toolpanel {
+    width: 300px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    overflow-y: auto;
+  }
+}
