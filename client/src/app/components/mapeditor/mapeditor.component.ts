@@ -92,8 +92,7 @@ export class MapeditorComponent implements OnInit, AfterViewInit, OnDestroy {
       load: () => {
         FileIO.gameMap.loadFromClient().then((map: GameMap) => {
           this.myTileset = map.getTileSet();
-          this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
-          this.myMap.setMap(map.getMap());
+          this.myMap = map;
           this.myCanvas.gameAssets.tileset.set(this.myTileset);
           this.myCanvas.gameAssets.setMap(this.myMap);
           this.myCanvas.drawing.paint();

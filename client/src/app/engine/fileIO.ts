@@ -120,8 +120,8 @@ export class FileIO {
                 if (loadedImagesCounter === isoTileSetJSON.images.length) {
                   for (let tile of isoTileSetJSON.tiles) {
                     tileSet.tiles.insertOne(new IsoTile(
-                        tileSet.images.get(tile.index),
-                        tile.properties
+                      tileSet.images.get(tile.index),
+                      tile.properties
                     ));
                   }
                   resolve(tileSet);
@@ -139,7 +139,7 @@ export class FileIO {
     },
     'toJSON': (tileSet: IsoTileSet): any => {
       let images = [];
-      tileSet.images.forEach((value, index) => images.push(value.src));
+      tileSet.tiles.forEach((value, index) => images.push(value.image.src));
       let tiles = [];
       tileSet.tiles.forEach((value, index) => tiles.push({
         'index': tileSet.images.indexOf(value.image),
@@ -275,7 +275,7 @@ export class FileIO {
           'xSize': { 'required': true, 'type': 'number', 'min': 1 },
           'ySize': { 'required': true, 'type': 'number', 'min': 1 }
         } 
-      },
+      }, 
       'map': { 'required': true }
     }
   }

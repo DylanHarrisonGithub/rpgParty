@@ -141,11 +141,11 @@ export class GameMap {
                 let stack = this.getCell(x, y);
                 let stackingHeight = 0;
                 for (var tileIndex of stack) {
-                    stackingHeight += this._tileset.tiles.get(tileIndex).properties.cellHeight;
+                    stackingHeight += this._tileset.subTiles.get(tileIndex).properties.cellHeight;
                 }
                 this._heightmap[y][x].stackingHeight = stackingHeight;
                 this._heightmap[y][x].tileHeight = stack.length;
-                this._heightmap[y][x].topTile = this._tileset.tiles.get(tileIndex);
+                this._heightmap[y][x].topTile = this._tileset.subTiles.get(tileIndex);
             }
         }
     }
