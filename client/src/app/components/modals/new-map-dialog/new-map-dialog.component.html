@@ -1,0 +1,44 @@
+<div role="document" class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="text-center w-100">New Map</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col text-left">Title:</div>
+        <div class="col text-right">
+          <input class="form-control" type="text" placeholder="Map Title"
+            [(ngModel)]="properties.title"
+            (ngModelChange)="validate()"
+            [ngClass]="{'is-invalid' :  hasError('title') && !formIsClear(),
+                        'is-valid'   : !hasError('title') && !formIsClear() }"/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-left">Width:</div>
+        <div class="col text-right">
+          <input class="form-control" type="number" placeholder="Map Width"
+            [(ngModel)]="properties.xSize"
+            (ngModelChange)="validate()"
+            [ngClass]="{'is-invalid' :  hasError('xSize') && !formIsClear(),
+                        'is-valid'   : !hasError('xSize') && !formIsClear() }"/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-left">Length:</div>
+        <div class="col text-right">
+          <input class="form-control" type="number" placeholder="Map Length"
+            [(ngModel)]="properties.ySize"            
+            (ngModelChange)="validate()"
+            [ngClass]="{'is-invalid' :  hasError('ySize') && !formIsClear(),
+                        'is-valid'   : !hasError('ySize') && !formIsClear() }"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer text-center">
+      <button type="button" class="btn btn-success w-100" (click)="activeModal.close(properties)" [disabled]="errors.length">Accept</button>
+      <button type="button" class="btn btn-danger w-100" (click)="activeModal.dismiss('Cancelled')">Cancel</button>
+    </div>
+    <div *ngIf="errors.length && !formIsClear()" class="alert-danger text-center">{{ errors[0].message }}</div>
+  </div>
+</div>

@@ -6,9 +6,13 @@ import { IsoTileSet } from '../../engine/isotileset';
 import { ActorMap } from 'src/app/engine/actormap';
 import { FileIO } from 'src/app/engine/fileIO';
 
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import config from '../../config/config.json';
 import { TilepickerComponent } from './tilepicker/tilepicker.component';
 import { ToolpickerComponent } from './toolpicker/toolpicker.component';
+
+import { NewMapDialogComponent } from '../modals/new-map-dialog/new-map-dialog.component';
 
 @Component({
   selector: 'app-mapeditor',
@@ -27,7 +31,7 @@ export class MapeditorComponent implements OnInit, AfterViewInit, OnDestroy {
   myTileset: IsoTileSet;
   selectedTile: IsoTile;
 
-  constructor() { }
+  constructor(private _modalService: NgbModal) { }
 
   ngOnInit() {
   }
@@ -85,9 +89,13 @@ export class MapeditorComponent implements OnInit, AfterViewInit, OnDestroy {
   buttons = {
     map: {
       new: () => {
-        this.myMap = new GameMap(this.myMap.getSize.x(), this.myMap.getSize.y(), this.myTileset);
-        this.myCanvas.gameAssets.setMap(this.myMap);
-        this.myCanvas.drawing.paint();
+        let newMapModal = this._modalService.open(NewMapDialogComponent);
+        newMapModal.result.then(res => {
+          this.myMap = new GameMap(res.xSize, res.ySize, this.myTileset);
+          this.myMap.title = res.title;
+          this.myCanvas.gameAssets.setMap(this.myMap);
+          this.myCanvas.drawing.paint();
+        }).catch(err => {});
       },
       load: () => {
         FileIO.gameMap.loadFromClient().then((map: GameMap) => {
