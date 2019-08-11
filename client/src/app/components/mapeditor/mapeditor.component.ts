@@ -13,6 +13,7 @@ import { TilepickerComponent } from './tilepicker/tilepicker.component';
 import { ToolpickerComponent } from './toolpicker/toolpicker.component';
 
 import { NewMapDialogComponent } from '../modals/new-map-dialog/new-map-dialog.component';
+import { MapLoadDialogComponent } from '../modals/map-load-dialog/map-load-dialog.component';
 
 @Component({
   selector: 'app-mapeditor',
@@ -98,13 +99,28 @@ export class MapeditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }).catch(err => {});
       },
       load: () => {
-        FileIO.gameMap.loadFromClient().then((map: GameMap) => {
-          this.myTileset = map.getTileSet();
-          this.myMap = map;
-          this.myCanvas.gameAssets.tileset.set(this.myTileset);
-          this.myCanvas.gameAssets.setMap(this.myMap);
-          this.myCanvas.drawing.paint();
-        }).catch(err => console.log(err));
+        let loadMapModal = this._modalService.open(MapLoadDialogComponent);
+        loadMapModal.result.then(res => {
+          if (res === "Upload a custom map") {
+            FileIO.gameMap.loadFromClient().then((map: GameMap) => {
+              this.myTileset = map.getTileSet();
+              this.myMap = map;
+              this.myCanvas.gameAssets.tileset.set(this.myTileset);
+              this.myCanvas.gameAssets.setMap(this.myMap);
+              this.myCanvas.drawing.paint();
+            }).catch(err => console.log(err));
+          } else {
+            FileIO.gameMap.loadFromServer(
+              config.URI[config.ENVIRONMENT] + 'assets/maps/' + res
+            ).then((map: GameMap) => {
+              this.myTileset = map.getTileSet();
+              this.myMap = map;
+              this.myCanvas.gameAssets.tileset.set(this.myTileset);
+              this.myCanvas.gameAssets.setMap(this.myMap);
+              this.myCanvas.drawing.paint();
+            }).catch(err => console.log(err));
+          }
+        }).catch(err => {console.log(err);});
       },
       save: () => {
         FileIO.gameMap.save(this.myMap);

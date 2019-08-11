@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,7 +16,7 @@ import config from '../../../config/config.json';
   templateUrl: './tilepicker.component.html',
   styleUrls: ['./tilepicker.component.css']
 })
-export class TilepickerComponent implements OnInit, AfterViewInit, OnChanges {
+export class TilepickerComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   @Input() tilePreviewSize: number = 70;
 
@@ -27,8 +27,11 @@ export class TilepickerComponent implements OnInit, AfterViewInit, OnChanges {
   public selectedTilePreviewImg: HTMLImageElement;
 
   private selectedTile: BehaviorSubject<IsoTile> = new BehaviorSubject<IsoTile>(null);
-  private tilePreviews: Array<HTMLDivElement> = [];
-  @ViewChild('tilePreviewSpan') private tilePreviewSpan: ElementRef;
+  private tilePreviews: Array<{
+    img: HTMLImageElement,
+    listenerFn: (event: Event) => void
+  }> = [];
+  @ViewChild('tilePreviewLi') private tilePreviewLi: ElementRef;
   
   constructor(private _modalService: NgbModal) { }
 
@@ -36,6 +39,13 @@ export class TilepickerComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     this.resetTilePreviews();
+  }
+
+  ngOnDestroy() {
+    this.tilePreviews.forEach(preview => {
+      preview.img.removeEventListener('click', preview.listenerFn);
+      preview.img.removeEventListener('tap', preview.listenerFn);
+    });
   }
 
   ngOnChanges() {
@@ -71,26 +81,32 @@ export class TilepickerComponent implements OnInit, AfterViewInit, OnChanges {
         }
         let pimg = new Image();
         pimg.src = pCanvas.toDataURL();
-        pimg.addEventListener("click", (e) => {
-          this.buttons.tiles.select(tile);
-        });
-        this.tilePreviews.push(pimg);
+        
+        let tilePreview = {
+          img: pimg,
+          listenerFn: (event: Event) => {
+            this.buttons.tiles.select(tile);
+          }
+        };
+        pimg.addEventListener('click', tilePreview.listenerFn);
+        pimg.addEventListener('tap', tilePreview.listenerFn);
+        this.tilePreviews.push(tilePreview);
       });
     }
-    (<HTMLSpanElement>this.tilePreviewSpan.nativeElement).innerHTML = '';
+    (<HTMLLIElement>this.tilePreviewLi.nativeElement).innerHTML = '';
     for (var i = 0; i < this.tilePreviews.length; i += 4) {
       let div = document.createElement('div');
-      div.appendChild(this.tilePreviews[i]);
+      div.appendChild(this.tilePreviews[i].img);
       if (i+1 < this.tilePreviews.length) {
-        div.appendChild(this.tilePreviews[i+1]);
+        div.appendChild(this.tilePreviews[i+1].img);
         if (i+2 < this.tilePreviews.length) {
-          div.appendChild(this.tilePreviews[i+2]);
+          div.appendChild(this.tilePreviews[i+2].img);
           if (i+3 < this.tilePreviews.length) { 
-            div.appendChild(this.tilePreviews[i+3]); 
+            div.appendChild(this.tilePreviews[i+3].img); 
           }
         }
       }
-      (<HTMLSpanElement>this.tilePreviewSpan.nativeElement).appendChild(div);
+      (<HTMLLIElement>this.tilePreviewLi.nativeElement).appendChild(div);
     }
   }
 
