@@ -32,6 +32,7 @@ import { TouchpadComponent } from './components/controller/touchpad/touchpad.com
 import { TilepickerComponent } from './components/mapeditor/tilepicker/tilepicker.component';
 import { ToolpickerComponent } from './components/mapeditor/toolpicker/toolpicker.component';
 import { NewMapDialogComponent } from './components/modals/new-map-dialog/new-map-dialog.component';
+import { MapLoadDialogComponent } from './components/modals/map-load-dialog/map-load-dialog.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { NewMapDialogComponent } from './components/modals/new-map-dialog/new-ma
     TouchpadComponent,
     TilepickerComponent,
     ToolpickerComponent,
-    NewMapDialogComponent
+    NewMapDialogComponent,
+    MapLoadDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +78,8 @@ import { NewMapDialogComponent } from './components/modals/new-map-dialog/new-ma
     QuestLoadDialogComponent,
     CreateCharacterComponent,
     DeleteCharacterComponent,
-    NewMapDialogComponent
+    NewMapDialogComponent,
+    MapLoadDialogComponent
   ]
 })
 export class AppModule { }

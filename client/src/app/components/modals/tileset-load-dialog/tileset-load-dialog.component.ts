@@ -10,8 +10,8 @@ import { AssetService } from '../../../services/asset.service';
 })
 export class TilesetLoadDialogComponent implements OnInit {
 
-  private tilesetList = [];
-  private selected = 'Upload a custom tile set';
+  public tilesetList: Array<string> = [];
+  public selected: string = 'Upload a custom tile set';
 
   constructor(
     private activeModal: NgbActiveModal,
