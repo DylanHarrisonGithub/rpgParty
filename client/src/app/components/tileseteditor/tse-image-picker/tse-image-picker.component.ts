@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IsoTileSet } from 'src/app/engine/isotileset';
 import { FileIO } from 'src/app/engine/fileIO';
-import { IsoTile } from 'src/app/engine/isotile';
 
 @Component({
   selector: 'app-tse-image-picker',
@@ -34,5 +33,5 @@ export class TseImagePickerComponent implements OnInit {
       this.remove.emit(image);
     }
   }
-  
+
 }

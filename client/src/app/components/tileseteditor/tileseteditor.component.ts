@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { IsoTile } from '../../engine/isotile';
 import { IsoTileSet } from '../../engine/isotileset';
 import { FileIO } from '../../engine/fileIO';
@@ -8,14 +8,17 @@ import { TilesetLoadDialogComponent } from '../modals/tileset-load-dialog/tilese
 import { AssetService } from '../../services/asset.service';
 
 import config from '../../config/config.json';
+import { TseTilePickerComponent } from './tse-tile-picker/tse-tile-picker.component';
 
 @Component({
   selector: 'app-tileseteditor',
   templateUrl: './tileseteditor.component.html',
   styleUrls: ['./tileseteditor.component.css']
 })
-export class TileseteditorComponent implements OnInit {
+export class TileseteditorComponent implements OnInit, AfterViewInit {
   
+  @ViewChild('myTilePicker') myTilePicker: TseTilePickerComponent;
+
   layoutVertical = false; // false:horizontal, true:vertical
   cursor = {
     public: {
@@ -63,46 +66,17 @@ export class TileseteditorComponent implements OnInit {
     this.tileset = new IsoTileSet();
     this.canvas = document.createElement('canvas');
     document.getElementById('canvas').appendChild(this.canvas);
-
-    // responsive layout
-    this.eventListeners.window.resize();
-
-    window.addEventListener('resize', (ev) => { this.eventListeners.window.resize() });    
+   
     this.canvas.addEventListener('mousemove', (e) => { this.eventListeners.canvas.mouseMove(e) });
     this.canvas.addEventListener('click', (e) => { this.eventListeners.canvas.mouseClick(e) });
 
   }
 
+  ngAfterViewInit() {
+
+  }
+
   render = {
-    tilePreviews: () => {
-      if (this.tileset) {
-        this.tilePreviews = [];
-        this.tileset.tiles.forEach((tile, i) => {
-          let pCanvas = document.createElement('canvas');
-          pCanvas.width = this.tilePreviewSize.width;
-          pCanvas.height = this.tilePreviewSize.height;
-          let ctx = pCanvas.getContext('2d');
-  
-          if (tile.image) {
-            ctx.drawImage(
-              tile.image,
-              tile.properties.subImageX, tile.properties.subImageY,
-              tile.properties.subImageWidth, tile.properties.subImageHeight,
-              0,0,
-              pCanvas.width, pCanvas.height
-            );
-          } else {
-            ctx.font = '45px Arial';
-            ctx.fillStyle = 'red';
-            ctx.textAlign = 'center';
-            ctx.fillText('!', 25, 40);
-          }
-          let pimg = new Image();
-          pimg.src = pCanvas.toDataURL();
-          this.tilePreviews.push(pimg);
-        });
-      }
-    },
     selectedTile: () => {
       let ctx = this.canvas.getContext('2d');
       ctx.fillStyle = 'red';
@@ -173,12 +147,12 @@ export class TileseteditorComponent implements OnInit {
           if (val != 'Upload a custom tile set') {           
             FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
-              this.render.tilePreviews();
+              this.myTilePicker.renderPreviews();
             }).then(err => console.log(err));
           } else {
             FileIO.isoTileSet.loadFromClient().then((newTileSets: Array<IsoTileSet>) => {
               newTileSets.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
-              this.render.tilePreviews();
+              this.myTilePicker.renderPreviews();
             }).catch(err => console.log(err));
           }
         });
@@ -190,12 +164,12 @@ export class TileseteditorComponent implements OnInit {
           if (val != 'Upload a custom tile set') {
             FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
-              this.render.tilePreviews();
+              this.myTilePicker.renderPreviews();
             }).catch(err => console.log(err));
           } else {
             FileIO.isoTileSet.loadFromClient().then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
-              this.render.tilePreviews();
+              this.myTilePicker.renderPreviews();
             }).catch(err => console.log(err));
           }       
         });
@@ -207,7 +181,7 @@ export class TileseteditorComponent implements OnInit {
           images.forEach((image: HTMLImageElement) => {
             this.tileset.tiles.insertOne(new IsoTile(image, {}));
           });
-          this.render.tilePreviews();
+          this.myTilePicker.renderPreviews();
         }
       },
       select: (img: HTMLImageElement) => {
@@ -219,20 +193,16 @@ export class TileseteditorComponent implements OnInit {
           this.canvas.width = img.width;
           this.canvas.height = img.height;
           this.selectedTile.image = img;
-          this.render.tilePreviews();
+          this.myTilePicker.renderPreviews();
           this.render.selectedTile();
         }
       },       
       remove: (image: HTMLImageElement) => {
-        this.render.tilePreviews();
+        this.myTilePicker.renderPreviews();
         this.render.selectedTile();
       }
     },
     tile: {
-      new: () => {
-        this.tileset.tiles.insertOne(new IsoTile(null, {}));
-        this.render.tilePreviews();
-      },
       animate: () => { 
         if (this.tileset.properties.isAnimation && this.tileset.properties.fps > 0) {
           if (this.isAnimating) {
@@ -283,19 +253,6 @@ export class TileseteditorComponent implements OnInit {
           this.canvas.height = 128;
         }
         this.render.selectedTile();
-      },
-      remove: (tile: IsoTile) => {
-        let index = this.tileset.tiles.indexOf(tile);
-        this.tilePreviews.splice(index, 1);
-        this.tileset.tiles.removeOne(tile);
-      },
-      moveUp: (tile: IsoTile) => {
-        this.tileset.tiles.moveUp(tile);
-        this.render.tilePreviews();
-      },
-      moveDown: (tile: IsoTile) => {
-        this.tileset.tiles.moveDown(tile);
-        this.render.tilePreviews();
       }
     },
     autoSplit: {
@@ -315,7 +272,7 @@ export class TileseteditorComponent implements OnInit {
                 }));
               }
             }
-            this.render.tilePreviews();
+            this.myTilePicker.renderPreviews();
 
           }
         }
@@ -336,28 +293,6 @@ export class TileseteditorComponent implements OnInit {
   };
 
   eventListeners = {
-    window: {
-      resize: () => {
-        if (window.innerWidth < 650 != this.layoutVertical) {
-          this.layoutVertical = window.innerWidth < 650;
-          if (this.layoutVertical) {
-            document.getElementById('vcontainer').style.bottom = '200px';
-            document.getElementById('toolpanelLeft').style.width = '0px';
-            document.getElementById('toolpanelRight').style.width = '0px';
-            document.getElementById('canvas').style.left = '0px';
-            document.getElementById('canvas').style.right = '0px';
-            document.getElementById('toolpanelBottom').style.height = '200px';
-          } else {
-            document.getElementById('vcontainer').style.bottom = '0px';
-            document.getElementById('toolpanelLeft').style.width = '300px';
-            document.getElementById('toolpanelRight').style.width = '300px';
-            document.getElementById('canvas').style.left = '300px';
-            document.getElementById('canvas').style.right = '300px';
-            document.getElementById('toolpanelBottom').style.height = '0px';
-          }
-        }
-      }
-    },
     canvas: {
       mouseMove: (e: MouseEvent) => {
         if (this.cursor.public.cursor) {
@@ -392,7 +327,7 @@ export class TileseteditorComponent implements OnInit {
             this.selectedTile.properties.subImageWidth = this.cursor.public.width;
             this.selectedTile.properties.subImageHeight = this.cursor.public.height;
 
-            this.render.tilePreviews();
+            this.myTilePicker.renderPreviews();
 
           }
         }

@@ -1,0 +1,43 @@
+<div class="card">
+  <div class="card-header btn" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">     
+    <span style="color: rgb(37, 137, 204);">Tiles</span>              
+  </div>
+  <div id="collapseFour" class="collapse show" aria-labelledby="headingFour">
+    <ul class="list-group">
+      <li class="list-group-item text-center">
+        <div  class="float-none btn-group" role="group">
+          <button type="button" class="btn btn-primary" (click)="buttons.new()">New</button>
+          <button type="button" class="btn btn-primary rp-animate-button" (click)="buttons.animate()" #animateButton>Animate</button>
+        </div>
+      </li>
+      <li class="list-group-item" *ngFor="let preview of tilePreviews; let i = index">
+        <img class="btn" style="width:50px; height:50px; padding: 0;" src="{{ preview.src }}" (click)="buttons.select(tileset.tiles.get(i))">
+        <span class="float-right">
+          <button type="button" class="btn btn-primary btn-md" (click)="buttons.remove(tileset.tiles.get(i))">Remove</button>
+          <div class="btn-group-vertical">
+            <button  type="button" class="btn btn-primary btn-sm" (click)="buttons.moveUp(tileset.tiles.get(i))">^</button>
+            <button  type="button" class="btn btn-primary btn-sm" (click)="buttons.moveDown(tileset.tiles.get(i))">v</button>
+          </div>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+<!--Tile Properties-->
+<div class="card">
+  <div class="card-header btn" id="headingFive" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+      <span style="color: rgb(37, 137, 204);">Tile Properties</span>  
+  </div>
+  <div id="collapseFive" class="collapse show" aria-labelledby="headingFive">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let item of selectedTile?.properties | keyvalue; trackBy:templating.trackByFn">
+        {{ item.key }}
+        <span class="float-right">
+          <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+          <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+          <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="selectedTile.properties[item.key]" name="{{ item.key }}">
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
