@@ -9,28 +9,18 @@ import { AssetService } from '../../services/asset.service';
 
 import config from '../../config/config.json';
 import { TseTilePickerComponent } from './tse-tile-picker/tse-tile-picker.component';
+import { TseTileCanvasComponent } from './tse-tile-canvas/tse-tile-canvas.component';
 
 @Component({
   selector: 'app-tileseteditor',
   templateUrl: './tileseteditor.component.html',
   styleUrls: ['./tileseteditor.component.css']
 })
-export class TileseteditorComponent implements OnInit, AfterViewInit {
+export class TileseteditorComponent {
   
   @ViewChild('myTilePicker') myTilePicker: TseTilePickerComponent;
+  @ViewChild('myTileCanvas') myTileCanvas: TseTileCanvasComponent;
 
-  layoutVertical = false; // false:horizontal, true:vertical
-  cursor = {
-    public: {
-      'cursor': false,
-      'width': 128,
-      'height': 128,
-    },
-    private: {
-      'x': 0,
-      'y': 0
-    }
-  };
   autoSplit = {
     'cellWidth': 1,
     'cellDepth': 1,
@@ -48,11 +38,21 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
       }
     }
   };
-  tileset: IsoTileSet = null;
+  cursor =  {
+    public: {
+      cursor: false,
+      width: 128,
+      height: 128,
+    },
+    private: {
+      x: 0,
+      y: 0
+    }
+  };
+
+  tileset: IsoTileSet = new IsoTileSet();
   selectedTile: IsoTile;
-  tilePreviews: HTMLImageElement[] = [];
   tilePreviewSize = {'width': 50, 'height': 50};
-  canvas: HTMLCanvasElement;
   isAnimating = false;
   autoTile = true;
 
@@ -61,98 +61,34 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
     private _assetService: AssetService
   ) {}
 
-  ngOnInit() {
-
-    this.tileset = new IsoTileSet();
-    this.canvas = document.createElement('canvas');
-    document.getElementById('canvas').appendChild(this.canvas);
-   
-    this.canvas.addEventListener('mousemove', (e) => { this.eventListeners.canvas.mouseMove(e) });
-    this.canvas.addEventListener('click', (e) => { this.eventListeners.canvas.mouseClick(e) });
-
+  cursorClick(event) {
+    this.myTilePicker.renderPreviews();
   }
-
-  ngAfterViewInit() {
-
-  }
-
-  render = {
-    selectedTile: () => {
-      let ctx = this.canvas.getContext('2d');
-      ctx.fillStyle = 'red';
-      ctx.fillRect(0,0,this.canvas.width, this.canvas.height);
-      if (this.selectedTile && this.selectedTile.image) {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0,0,this.canvas.width, this.canvas.height);
-        ctx.drawImage(this.selectedTile.image, 0, 0);
-        if (this.cursor.public.cursor) {
-          ctx.beginPath();
-          ctx.strokeStyle = 'green';
-          ctx.rect(
-            this.cursor.private.x,
-            this.cursor.private.y,
-            this.cursor.public.width,
-            this.cursor.public.height
-          )
-          ctx.stroke();
-        }
-        ctx.beginPath();
-        ctx.strokeStyle = 'red';
-        ctx.rect(
-          this.selectedTile.properties.subImageX,
-          this.selectedTile.properties.subImageY,
-          this.selectedTile.properties.subImageWidth,
-          this.selectedTile.properties.subImageHeight
-        );
-        ctx.stroke();
-      }
-    }
-  }
-
   buttons = {
     tileSet: {
       new: () => {
-        this.cursor = {
-          public: {
-            'cursor': false,
-            'width': 128,
-            'height': 128,
-          },
-          private: {
-            'x': 0,
-            'y': 0
-          }
-        }
-        this.tileset = new IsoTileSet();
         this.selectedTile = null;
-        this.tilePreviews = [];
+        this.tileset = new IsoTileSet();
+        this.myTileCanvas.resetCursor();
+        this.myTilePicker.renderPreviews();
       },
       load: () => {
         let tilesetModal = this._modalService.open(TilesetLoadDialogComponent);
         tilesetModal.result.then(val => {
-          this.cursor = {
-            public: {
-              'cursor': false,
-              'width': 128,
-              'height': 128,
-            },
-            private: {
-              'x': 0,
-              'y': 0
-            }
-          }
-          this.tileset = new IsoTileSet();
           this.selectedTile = null;
-          this.tilePreviews = [];
+          this.tileset = new IsoTileSet();
+          this.myTileCanvas.resetCursor();
           if (val != 'Upload a custom tile set') {           
             FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.myTilePicker.renderPreviews();
+              this.myTileCanvas.render();
             }).then(err => console.log(err));
           } else {
             FileIO.isoTileSet.loadFromClient().then((newTileSets: Array<IsoTileSet>) => {
               newTileSets.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.myTilePicker.renderPreviews();
+              this.myTileCanvas.render();
             }).catch(err => console.log(err));
           }
         });
@@ -165,11 +101,13 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
             FileIO.isoTileSet.loadFromServer(config.URI[config.ENVIRONMENT] + 'assets/tilesets/' + val).then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.myTilePicker.renderPreviews();
+              this.myTileCanvas.render();
             }).catch(err => console.log(err));
           } else {
             FileIO.isoTileSet.loadFromClient().then((res: Array<IsoTileSet>) => {
               res.forEach((tileset: IsoTileSet) => { this.tileset.union(tileset); });
               this.myTilePicker.renderPreviews();
+              this.myTileCanvas.render();
             }).catch(err => console.log(err));
           }       
         });
@@ -190,29 +128,22 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
           this.selectedTile.properties.subImageY = 0;
           this.selectedTile.properties.subImageWidth = img.width;
           this.selectedTile.properties.subImageHeight = img.height;
-          this.canvas.width = img.width;
-          this.canvas.height = img.height;
           this.selectedTile.image = img;
           this.myTilePicker.renderPreviews();
-          this.render.selectedTile();
+          this.myTileCanvas.render();
         }
       },       
       remove: (image: HTMLImageElement) => {
         this.myTilePicker.renderPreviews();
-        this.render.selectedTile();
+        this.myTileCanvas.render();
       }
     },
     tile: {
       animate: () => { 
         if (this.tileset.properties.isAnimation && this.tileset.properties.fps > 0) {
           if (this.isAnimating) {
-            let btns = document.getElementsByClassName('rp-animate-button');
-            // ??? can't iterate over htmlcollection?
-            for (let btn of <any>btns) { btn.innerHTML = "Animate" }
             this.isAnimating = false;
           } else {
-            let btns = document.getElementsByClassName('rp-animate-button');
-            for (let btn of <any>btns) { btn.innerHTML = "Stop" }
             this.isAnimating = true;
             let tileNum = 0;
             let timeoutFunction = () => {
@@ -245,14 +176,8 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
       },
       select: (tile: IsoTile) => {
         this.selectedTile = tile;
-        if (this.selectedTile.image) {
-          this.canvas.width = this.selectedTile.image.width;
-          this.canvas.height = this.selectedTile.image.height;
-        } else {
-          this.canvas.width = 128;
-          this.canvas.height = 128;
-        }
-        this.render.selectedTile();
+        this.myTileCanvas.selectedTile = tile;
+        this.myTileCanvas.render();
       }
     },
     autoSplit: {
@@ -292,46 +217,4 @@ export class TileseteditorComponent implements OnInit, AfterViewInit {
     trackByFn(index,item){ return item.key; }
   };
 
-  eventListeners = {
-    canvas: {
-      mouseMove: (e: MouseEvent) => {
-        if (this.cursor.public.cursor) {
-          let canvasRect = (<HTMLDivElement>e.target).getBoundingClientRect();
-          let mouseCanvas = {
-            "x": this.cursor.public.width*Math.floor((e.clientX-canvasRect.left) / this.cursor.public.width), 
-            "y": this.cursor.public.width*Math.floor((e.clientY-canvasRect.top) / this.cursor.public.height)
-          };
-          if (mouseCanvas.x != this.cursor.private.x || mouseCanvas.y != this.cursor.private.y) {
-            this.cursor.private.x = mouseCanvas.x;
-            this.cursor.private.y = mouseCanvas.y;
-            this.render.selectedTile();
-          }
-        }
-      },
-      mouseClick: (e: MouseEvent) => {
-        if (this.cursor.public.cursor) {
-          let canvasRect = (<HTMLDivElement>e.target).getBoundingClientRect();
-          let mouseCanvas = {
-            "x": this.cursor.public.width*Math.floor((e.clientX-canvasRect.left) / this.cursor.public.width), 
-            "y": this.cursor.public.width*Math.floor((e.clientY-canvasRect.top) / this.cursor.public.height)
-          };
-          if (
-            mouseCanvas.x != this.selectedTile.properties.subImageX ||
-            mouseCanvas.y != this.selectedTile.properties.subImageY ||
-            this.cursor.public.width != this.selectedTile.properties.subImageWidth ||
-            this.cursor.public.height != this.selectedTile.properties.subImageHeight
-          ) {
-
-            this.selectedTile.properties.subImageX = mouseCanvas.x;
-            this.selectedTile.properties.subImageY = mouseCanvas.y;
-            this.selectedTile.properties.subImageWidth = this.cursor.public.width;
-            this.selectedTile.properties.subImageHeight = this.cursor.public.height;
-
-            this.myTilePicker.renderPreviews();
-
-          }
-        }
-      }
-    }
-  };
 }

@@ -69,7 +69,14 @@
 
   </div>
 
-  <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white; overflow: auto;"></div>
+  <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white; overflow: auto;">
+    <app-tse-tile-canvas
+      [(selectedTile)]="selectedTile"
+      [(cursor)]="cursor"
+      (cursorClick)="cursorClick($event)" 
+      #myTileCanvas
+    ></app-tse-tile-canvas>
+  </div>
 
   <!--Horizontal Layout-->
   <div id='toolpanelRight' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
