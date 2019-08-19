@@ -202,18 +202,15 @@ export class TileseteditorComponent implements OnInit {
       }
     },
     image: {
-      import: () => { 
-        FileIO.image.loadFromClient().then((images: Array<HTMLImageElement>) => {
-          this.tileset.images.insert(images);
-          if (this.autoTile) {
-            images.forEach((image: HTMLImageElement) => {
-              this.tileset.tiles.insertOne(new IsoTile(image, {}));
-            });
-            this.render.tilePreviews();
-          }
-        });
+      import: (images: Array<HTMLImageElement>) => {
+        if (this.autoTile) {
+          images.forEach((image: HTMLImageElement) => {
+            this.tileset.tiles.insertOne(new IsoTile(image, {}));
+          });
+          this.render.tilePreviews();
+        }
       },
-      assign: (img: HTMLImageElement) => {
+      select: (img: HTMLImageElement) => {
         if (this.selectedTile) {
           this.selectedTile.properties.subImageX = 0;
           this.selectedTile.properties.subImageY = 0;
@@ -227,7 +224,6 @@ export class TileseteditorComponent implements OnInit {
         }
       },       
       remove: (image: HTMLImageElement) => {
-        this.tileset.images.remove(image);
         this.render.tilePreviews();
         this.render.selectedTile();
       }

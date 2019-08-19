@@ -72,4 +72,10 @@ export class Actor {
      // }
     //}
   }
+
+  public setCurrentAnimation(n: number) {
+    if ((n > -1) && (n < this.animations.length)) {
+      this.currentAnimation = this.animations[n];
+    }
+  }
 }

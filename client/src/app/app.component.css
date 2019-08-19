@@ -1,0 +1,7 @@
+#app-component-main {
+  width:100%; 
+  bottom: 0px; 
+  top: 56px; 
+  position:absolute; 
+  overflow-y: auto;
+}

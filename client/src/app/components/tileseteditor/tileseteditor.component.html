@@ -86,24 +86,12 @@
       </div>
 
       <!--Images-->
-      <div class="card">
-        <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-          <span style="color: rgb(37, 137, 204);">Images</span>
-        </div>
-        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-          <ul class="list-group">
-            <li class="list-group-item text-center">
-              <div  class="float-none btn-group" role="group">
-                <button type="button" class="btn btn-primary" (click)="buttons.image.import()">Import</button>
-              </div>
-            </li>
-            <li class="list-group-item" *ngFor="let image of tileset._images">
-              <img style="width:50px; height:50px;" src="{{ image.src }}" (click)="buttons.image.assign(image)">
-              <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.image.remove(image)">Remove</button></span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <app-tse-image-picker 
+        [(tileset)]="tileset"
+        (import)="buttons.image.import($event)"
+        (remove)="buttons.image.remove($event)"
+        (select)="buttons.image.select($event)"
+      ></app-tse-image-picker>
 
     </div>
 
@@ -253,24 +241,12 @@
     </div>
 
     <!--Images-->
-    <div class="card">
-      <div class="card-header btn" id="headingThree"data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-        <span style="color: rgb(37, 137, 204);">Images</span>
-      </div>
-      <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
-        <ul class="list-group">
-          <li class="list-group-item text-center">
-            <div  class="float-none btn-group" role="group">
-              <button type="button" class="btn btn-primary" (click)="buttons.image.import()">Import</button>
-            </div>
-          </li>
-          <li class="list-group-item" *ngFor="let image of tileset._images">
-            <img style="width:50px; height:50px;" src="{{ image.src }}" (click)="buttons.image.assign(image)">
-            <span class="float-right"><button type="button" class="btn btn-primary btn-lg" (click)="buttons.image.remove(image)">Remove</button></span>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <app-tse-image-picker 
+      [(tileset)]="tileset"
+      (import)="buttons.image.import($event)"
+      (remove)="buttons.image.remove($event)"
+      (select)="buttons.image.select($event)"
+    ></app-tse-image-picker>
 
     <!--Tiles-->
     <div class="card">

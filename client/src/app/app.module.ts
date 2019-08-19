@@ -33,6 +33,7 @@ import { TilepickerComponent } from './components/mapeditor/tilepicker/tilepicke
 import { ToolpickerComponent } from './components/mapeditor/toolpicker/toolpicker.component';
 import { NewMapDialogComponent } from './components/modals/new-map-dialog/new-map-dialog.component';
 import { MapLoadDialogComponent } from './components/modals/map-load-dialog/map-load-dialog.component';
+import { TseImagePickerComponent } from './components/tileseteditor/tse-image-picker/tse-image-picker.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { MapLoadDialogComponent } from './components/modals/map-load-dialog/map-
     TilepickerComponent,
     ToolpickerComponent,
     NewMapDialogComponent,
-    MapLoadDialogComponent
+    MapLoadDialogComponent,
+    TseImagePickerComponent
   ],
   imports: [
     BrowserModule,

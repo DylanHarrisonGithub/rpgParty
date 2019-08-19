@@ -73,16 +73,55 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     FileIO.isoTileSet.loadFromServer([
       config.URI[config.ENVIRONMENT] + 'assets/tilesets/dirt.json',
-      config.URI[config.ENVIRONMENT] + 'assets/tilesets/animationtest.json'
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk0.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk1.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk2.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk3.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk4.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk5.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk6.json',
+      config.URI[config.ENVIRONMENT] + 'assets/tilesets/walk7.json'
     ]).then((res: Array<IsoTileSet>) => {
 
-      this.myTileset = res[0];
-      let anim = res[1];
+      console.log(res);
+      let walkAnimation: Array<IsoTileSet> = Array<IsoTileSet>(8).fill(null);
+      res.forEach((tileset: IsoTileSet) => {
+        switch(tileset.properties.tileSetName) {
+          case 'dirt':
+            this.myTileset = tileset;
+            break;
+          case 'walk0':
+            walkAnimation[4] = tileset;
+            break;
+          case 'walk1':
+            walkAnimation[3] = tileset;
+            break;
+          case 'walk2':
+            walkAnimation[2] = tileset;
+            break;
+          case 'walk3':
+            walkAnimation[1] = tileset;
+            break;
+          case 'walk4':
+            walkAnimation[0] = tileset;
+            break;
+          case 'walk5':
+            walkAnimation[7] = tileset;
+            break;
+          case 'walk6':
+            walkAnimation[6] = tileset;
+            break;
+          case 'walk7':
+            walkAnimation[5] = tileset;
+            break;
+        }
+      });
+      console.log(walkAnimation);
 
       this.myMap = GameMap.generateRandomMap(64, 64, 2, this.myTileset); //new GameMap(64, 64, tset); //
       this.myActors = new Array<Actor>();
       this.players.forEach(player => {
-        let a = new Actor(0,0,0,0,100,[anim],anim);
+        let a = new Actor(0,0,0,0,100,walkAnimation,walkAnimation[0]);
         player.actor = a;
         this.myActors.push(a);
       });
@@ -140,8 +179,12 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
         if (player.length === 1) {
           switch(msg.msg.route) {
             case 'touchPad':
+              let theta = Math.atan2(-msg.msg.data.y, msg.msg.data.x); 
+              if (theta < 0) theta += Math.PI*2;
+              let n = Math.floor((8*theta)/(2*Math.PI));
               player[0].actor.vx = msg.msg.data.x*Math.cos(-Math.PI/4) - msg.msg.data.y*Math.sin(-Math.PI/4);
               player[0].actor.vy = msg.msg.data.x*Math.sin(-Math.PI/4) + msg.msg.data.y*Math.cos(-Math.PI/4);
+              player[0].actor.setCurrentAnimation(n);
               break;
             default:
               break;
