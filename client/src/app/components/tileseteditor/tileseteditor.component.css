@@ -1,0 +1,79 @@
+.tse-input {
+  width:120px; 
+  height: 28px;
+  text-align: right;
+}
+.tse-accordion-label {
+  color: rgb(37, 137, 204);
+} .tse-accordion-label:hover {
+  cursor: pointer;
+}
+
+#tse-container {
+  top: 0; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  position: absolute; 
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#tse-canvas-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color:white; 
+  overflow: auto;
+  min-height: 50%;
+}
+#tse-toolpanel-left {
+  background-color:whitesmoke;
+}
+#tse-toolpanel-right {
+  background-color:whitesmoke;
+}
+@media screen and (min-width: 600px) {
+  #tse-canvas-container {
+    height: 100%;
+    left: 0;
+    right: 300px;
+    position: absolute;
+  }
+  #tse-toolpanel {
+    height: 100%;
+    width: 300px;
+    right: 0px;
+    position: absolute;
+  }
+  @media screen and (min-width: 900px) {
+    #tse-canvas-container {
+      height: 100%;
+      left: 300px; 
+      right: 300px; 
+      position:absolute; 
+    }
+    #tse-toolpanel {
+      height: 100%;
+      width: 100%;
+      right: auto;
+      left: auto;
+      position: absolute;
+    }
+    #tse-toolpanel-left {
+      height:100%;
+      width:300px;
+      left:0px;
+      position:absolute; 
+      overflow-y:scroll; 
+      overflow-x:hidden;
+    }
+    #tse-toolpanel-right {
+      height:100%;
+      width:300px;
+      right:0px;
+      position:absolute; 
+      overflow-y:scroll; 
+      overflow-x:hidden;
+    }
+  }
+}

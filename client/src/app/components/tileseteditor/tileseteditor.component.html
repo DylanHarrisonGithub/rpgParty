@@ -1,33 +1,18 @@
-<div id="vcontainer" style="width:100%;top:0px;bottom:0px;position:absolute;">
-  
-  <!--Horizontal Layout-->
-  <div id="toolpanelLeft" style="height:100%;width:300px;left:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">
-
-    <div id="accordianLeft">
-
-      <!--Cursor-->
-      <div class="card">
-        <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            <span style="color: rgb(37, 137, 204);">Cursor</span>
-        </div>      
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-            <ul class="list-group">
-              <li class="list-group-item" *ngFor="let item of cursor.public | keyvalue; trackBy:templating.trackByFn">
-                {{ item.key }}
-                <span class="float-right">
-                  <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
-                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
-                  <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
-                </span>
-              </li>
-            </ul>
-        </div>
-      </div>
-
+<div id="tse-container">
+  <div id='tse-canvas-container'>
+    <app-tse-tile-canvas
+      [(selectedTile)]="selectedTile"
+      [(cursor)]="cursor"
+      (cursorClick)="cursorClick($event)" 
+      #myTileCanvas
+    ></app-tse-tile-canvas>
+  </div>
+  <div id="tse-toolpanel">
+    <div id="tse-toolpanel-left">
       <!--Tile Set-->
       <div class="card">
         <div class="card-header btn" id="headingTwo"  data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          <span style="color: rgb(37, 137, 204);">Tile Set</span>
+          <span class="tse-accordion-label">Tile Set</span>
         </div>
         <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
           <ul class="list-group">
@@ -43,8 +28,8 @@
               {{ item.key }}
               <span class="float-right">
                 <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
-                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
-                <input style="width:120px; height: 28px; text-align: right;" class="form-control" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                <input class="form-control tse-input" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
+                <input class="form-control tse-input" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="tileset.properties[item.key]" name="item.key">
               </span>
             </li>
             <li class="list-group-item">
@@ -56,7 +41,6 @@
           </ul>
         </div>
       </div>
-
       <!--Images-->
       <app-tse-image-picker 
         [(tileset)]="tileset"
@@ -64,25 +48,8 @@
         (remove)="buttons.image.remove($event)"
         (select)="buttons.image.select($event)"
       ></app-tse-image-picker>
-
     </div>
-
-  </div>
-
-  <div id='canvas' style="height:100%; left: 300px; right: 300px; position:absolute; background-color:white; overflow: auto;">
-    <app-tse-tile-canvas
-      [(selectedTile)]="selectedTile"
-      [(cursor)]="cursor"
-      (cursorClick)="cursorClick($event)" 
-      #myTileCanvas
-    ></app-tse-tile-canvas>
-  </div>
-
-  <!--Horizontal Layout-->
-  <div id='toolpanelRight' style="height:100%;width:300px;right:0px;background-color:whitesmoke;position:absolute; overflow-y:scroll; overflow-x:hidden;">      
-    
-    <div id="accordionRight">
-      
+    <div id='tse-toolpanel-right'>
       <!--Tiles-->
       <app-tse-tile-picker 
         [(tileset)]="tileset"
@@ -91,11 +58,24 @@
         (remove)="buttons.tile.remove($event)"
         #myTilePicker
       ></app-tse-tile-picker>
-
-      
-
-    </div>
-
+      <!--Cursor-->
+      <div class="card">
+        <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            <span style="color: rgb(37, 137, 204);">Cursor</span>
+        </div>      
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of cursor.public | keyvalue; trackBy:templating.trackByFn">
+              {{ item.key }}
+              <span class="float-right">
+                <input type="checkbox" *ngIf="templating.typeCheckers.isBoolean(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                <input class="form-control tse-input" type='number' *ngIf="templating.typeCheckers.isNumber(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+                <input class="form-control tse-input" type='text' *ngIf="templating.typeCheckers.isString(item.value)" [(ngModel)]="cursor.public[item.key]" name="{{ item.key }}">
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div> 
   </div>
-
 </div>
