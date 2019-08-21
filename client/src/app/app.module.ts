@@ -36,6 +36,8 @@ import { MapLoadDialogComponent } from './components/modals/map-load-dialog/map-
 import { TseImagePickerComponent } from './components/tileseteditor/tse-image-picker/tse-image-picker.component';
 import { TseTilePickerComponent } from './components/tileseteditor/tse-tile-picker/tse-tile-picker.component';
 import { TseTileCanvasComponent } from './components/tileseteditor/tse-tile-canvas/tse-tile-canvas.component';
+import { QuesteditorComponent } from './components/questeditor/questeditor.component';
+import { QeActorPickerComponent } from './components/questeditor/qe-actor-picker/qe-actor-picker.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,9 @@ import { TseTileCanvasComponent } from './components/tileseteditor/tse-tile-canv
     MapLoadDialogComponent,
     TseImagePickerComponent,
     TseTilePickerComponent,
-    TseTileCanvasComponent
+    TseTileCanvasComponent,
+    QuesteditorComponent,
+    QeActorPickerComponent
   ],
   imports: [
     BrowserModule,

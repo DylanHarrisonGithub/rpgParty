@@ -1,0 +1,8 @@
+.card-header:hover {
+  cursor: pointer;
+}
+.editor-card-label {
+  color: rgb(37, 137, 204);
+} .editor-card-label:hover {
+  color: rgb(100, 100, 255);
+}

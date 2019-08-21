@@ -14,6 +14,7 @@ import { SandboxComponent } from './components/sandbox/sandbox.component';
 import { AuthGuard } from './guards/auth.guard';
 import { BkgCrossfaderComponent } from './components/bkg-crossfader/bkg-crossfader.component';
 import { WaitingComponent } from './components/waiting/waiting.component';
+import { QuesteditorComponent } from './components/questeditor/questeditor.component';
 
 const routes: Routes = [
   { path: 'sandbox', component: SandboxComponent },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'waiting', component: WaitingComponent, canActivate: [AuthGuard] },
   { path: 'play', component: PlayComponent, canActivate: [AuthGuard] },
   { path: 'controller', component: ControllerComponent, canActivate: [AuthGuard] },
+  { path: 'questeditor', component: QuesteditorComponent },
   { path: 'mapeditor', component: MapeditorComponent },
   { path: 'tileseteditor', component: TileseteditorComponent },
   { path: 'register', component: RegisterComponent },

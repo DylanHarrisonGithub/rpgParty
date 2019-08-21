@@ -1,0 +1,40 @@
+<div id="qe-container">
+  <div id="qe-canvas-container" #qeCanvasContainer></div>
+  <div id="qe-toolbar" #qeToolbar>
+      
+    <div class="card">
+      <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#qe-quest" aria-expanded="false" aria-controls="collapseOne">
+        <span class="editor-card-label">Quest</span>
+      </div>      
+      <div id="qe-quest" class="collapse show" aria-labelledby="headingOne">
+        <ul class="list-group">              
+          <li class="list-group-item text-center">
+            <div  class="float-none btn-group" role="group">
+              <button type="button" class="btn btn-primary" (click)="buttons.quest.new()">New</button>
+              <button type="button" class="btn btn-primary" (click)="buttons.quest.load()">Load</button>
+              <button type="button" class="btn btn-primary" (click)="buttons.quest.save()">Save</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header btn" id="headingOne" data-toggle="collapse" data-target="#qe-map" aria-expanded="false" aria-controls="collapseOne">
+        <span class="editor-card-label">Map</span>
+      </div>      
+      <div id="qe-map" class="collapse show" aria-labelledby="headingOne">
+        <ul class="list-group">              
+          <li class="list-group-item text-center">
+            <div  class="float-none btn-group" role="group">
+              <button type="button" class="btn btn-primary" (click)="buttons.map.load()">Load</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <app-qe-actor-picker></app-qe-actor-picker>
+
+  </div>
+</div>

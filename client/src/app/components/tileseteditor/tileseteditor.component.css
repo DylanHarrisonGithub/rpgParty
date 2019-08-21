@@ -8,14 +8,12 @@
 } .tse-accordion-label:hover {
   cursor: pointer;
 }
-
 #tse-container {
   top: 0; 
   bottom: 0; 
   left: 0; 
   right: 0; 
-  position: absolute; 
-  overflow-y: auto;
+  position: absolute;
   overflow-x: hidden;
 }
 #tse-canvas-container {
@@ -44,6 +42,7 @@
     width: 300px;
     right: 0px;
     position: absolute;
+    overflow-y: auto;
   }
   @media screen and (min-width: 900px) {
     #tse-canvas-container {
