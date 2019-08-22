@@ -5,6 +5,8 @@ import { IsoTileSet } from 'src/app/engine/isotileset';
 import { ActorMap } from 'src/app/engine/actormap';
 import { Actor } from 'src/app/engine/actor';
 
+import { ResizedEvent } from 'angular-resize-event';
+
 @Component({
   selector: 'app-questeditor',
   templateUrl: './questeditor.component.html',
@@ -32,9 +34,20 @@ export class QuesteditorComponent implements OnInit, AfterViewInit {
       gameMap,
       new ActorMap(128, 128, [], gameMap)
     );
-    //(<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('mousemove', this.myIsoCanvas.eventListeners.defaultMouseMoveListener);
-    //(<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('scroll', this.myIsoCanvas.eventListeners.defaultMouseWheelListener);
-    //(<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('click', this.myIsoCanvas.eventListeners.defaultMouseClickListener);
+    (<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('mousemove', e => this.myIsoCanvas.eventListeners.defaultMouseMoveListener(e));
+    (<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('wheel', e => {
+      this.myIsoCanvas.eventListeners.defaultMouseWheelListener(e);
+      this.myIsoCanvas.drawing.paint();
+    });
+    (<HTMLDivElement>this.myCanvasContainer.nativeElement).addEventListener('click', e => {
+      this.myIsoCanvas.eventListeners.defaultMouseClickListener(e);
+      this.myIsoCanvas.drawing.paint();
+    });
+    this.myIsoCanvas.drawing.paint();
+  }
+
+  onResized(event: ResizedEvent) {
+    this.myIsoCanvas.eventListeners.defaultWindowResizeListner();
     this.myIsoCanvas.drawing.paint();
   }
 

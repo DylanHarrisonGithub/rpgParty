@@ -787,7 +787,7 @@ export class IsoCanvas {
             this._position.location.x = this._mouse.cartesian.x;
             this._position.location.y = this._mouse.cartesian.y;
         },
-        'defaultWindowResizeListner': (ev: UIEvent) => {
+        'defaultWindowResizeListner': (ev?: UIEvent) => {
             this._canvas.width = this._div.clientWidth;
             this._canvas.height = this._div.clientHeight;        
             this._metrics.halfResolution.x = this._canvas.width / 2;

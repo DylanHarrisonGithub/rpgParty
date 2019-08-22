@@ -121,7 +121,7 @@ export class PlayComponent implements OnInit, AfterViewInit, OnDestroy {
       this.myMap = GameMap.generateRandomMap(64, 64, 2, this.myTileset); //new GameMap(64, 64, tset); //
       this.myActors = new Array<Actor>();
       this.players.forEach(player => {
-        let a = new Actor(0,0,0,0,100,walkAnimation,walkAnimation[0]);
+        let a = new Actor(0,0,0,0,walkAnimation,walkAnimation[0]);
         player.actor = a;
         this.myActors.push(a);
       });

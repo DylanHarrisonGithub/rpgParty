@@ -1,5 +1,7 @@
 <div id="qe-container">
-  <div id="qe-canvas-container" #qeCanvasContainer></div>
+  <div id="qe-canvas-container"  
+    (resized)="onResized($event)"
+    #qeCanvasContainer></div>
   <div id="qe-toolbar" #qeToolbar>
       
     <div class="card">

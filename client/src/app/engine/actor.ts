@@ -11,22 +11,16 @@ export class Actor {
   public vy: number = 0;
   public height: number = 0;
   
-  public jumpHeight = .5;
-
-  public isClipped: boolean = false;
-  public stacks: boolean = false;
-
   private animations: Array<IsoTileSet>;
   private currentAnimation: IsoTileSet;
   private currentFrame: IsoTile;
   private animationTimer: number = 0;
 
-  constructor(x0: number, y0: number, vx0: number, vy0: number, jumpHeight: number, animations: Array<IsoTileSet>, currentAnimation: IsoTileSet) {
+  constructor(x0: number, y0: number, vx0: number, vy0: number, animations: Array<IsoTileSet>, currentAnimation: IsoTileSet) {
     this.x = x0;
     this.y = y0;
     this.vx = vx0;
     this.vy = vy0;
-    this.jumpHeight = jumpHeight;
     this.animations = animations;
     this.currentAnimation = currentAnimation;
     this.animate(0);
