@@ -405,7 +405,7 @@ export class IsoCanvas {
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();        
         },
-        'drawIsoTile':(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D) => {
+        'drawIsoTile':(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D, alpha?: number) => {
 
             if (tile && tile.image && !tile.properties.isHidden) {
 
@@ -417,28 +417,7 @@ export class IsoCanvas {
                         tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y) +
                         this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
                 });
-
-                ctx.drawImage(
-                    tile.image,
-                    tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
-                    topLeft.x, topLeft.y,
-                    this._metrics.canvasTileSize.x, (1 + tile.properties.cellHeight)*this._metrics.canvasTileSize.y
-                );
-            }
-        },
-        'drawIsoTileAlpha':(isoCoord:  {'x': number, 'y': number}, tile: IsoTile, ctx: CanvasRenderingContext2D, alpha: number) => {
-
-            if (tile && tile.image && !tile.properties.isHidden) {
-
-                let topLeft = this.transformations.isoToCanvas({
-                    'x': isoCoord.x + 0.5 +
-                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x) +
-                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].x,
-                    'y': isoCoord.y + 0.5 +
-                        tile.properties.cellHeight*(this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y) +
-                        this._metrics.relativeIsoRotationDirections[this._position.rotation][3].y
-                });
-                ctx.globalAlpha = alpha;
+                if (alpha) ctx.globalAlpha = alpha;
                 ctx.drawImage(
                     tile.image,
                     tile.properties.subImageX, tile.properties.subImageY, tile.properties.subImageWidth, tile.properties.subImageHeight,
@@ -450,11 +429,11 @@ export class IsoCanvas {
         },
         'drawCellStack': (x: number, y: number, minHeigt: number, ctx: CanvasRenderingContext2D) => {
             var stackingHeight = 0;
-            let cell = this._gameAssets.map.getCell(x, y);
+            let cell: Array<{tileIndex: number, alpha: number}> = this._gameAssets.map.getCell(x, y);
             for (var level = 0; level < cell.length; level++) {
                 // todo: detect if tile is visible or obscured to speed up drawing
 
-                let subTile = (<IsoTileSet>this._gameAssets.tileset).subTiles.get(cell[level]);
+                let subTile = (<IsoTileSet>this._gameAssets.tileset).subTiles.get(cell[level].tileIndex);
                 let parent = subTile.parent;
                 let index = (<IsoTileSet>this._gameAssets.tileset).tiles.indexOf(parent);
                 let q = Math.floor(index / 4);
@@ -469,7 +448,7 @@ export class IsoCanvas {
                     this.drawing.drawIsoTile({
                         'x': x + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].x*stackingHeight,
                         'y': y + this._metrics.relativeIsoRotationDirections[this._position.rotation][2].y*stackingHeight   
-                    }, rotatedSubTile, ctx);
+                    }, rotatedSubTile, ctx, cell[level].alpha);
                 }
                 stackingHeight += rotatedSubTile.properties.cellHeight;
             }
