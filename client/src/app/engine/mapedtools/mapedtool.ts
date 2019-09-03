@@ -109,7 +109,7 @@ export class BrushTool implements MapEdTool {
       r = Math.floor(Math.random()*4);
     }
     index = 4*q + r;
-    tile = this.delegateMapEditor.myTileset.tiles.get(index);
+    tile = this.delegateMapEditor.myTileset.subTiles.get(index);
     let tileCell = this.delegateMapEditor.myCanvas.mouse.getTileCell();
     let cellHeight = this.delegateMapEditor.myMap.getCellTileHeight(tileCell.x, tileCell.y);
     if (cellHeight > 0) {
@@ -324,6 +324,7 @@ export class EraserTool implements MapEdTool {
   icon: IsoTile;
   properties = {}
   delegateMapEditor: MapeditorComponent;
+  prevCell: { x: number, y: number } = null;
   
   constructor(delegateMapEditor: MapeditorComponent, icon: IsoTile) {
     this.icon = icon;
@@ -338,6 +339,34 @@ export class EraserTool implements MapEdTool {
   }
   mouseMoveListener(ev) {
     //this.delegateMapEditor.myCanvas.eventListeners.defaultMouseMoveListener(ev);
+    
+    let cell = this.delegateMapEditor.myCanvas.mouse.getCell();
+    let cellTileHeight = this.delegateMapEditor.myMap.getCellTileHeight(cell.x, cell.y);
+    if (this.prevCell) {
+      if (this.prevCell.x !== cell.x || this.prevCell.y !== cell.y) {
+        let prevCellTileHeight = this.delegateMapEditor.myMap.getCellTileHeight(this.prevCell.x, this.prevCell.y);
+        if (prevCellTileHeight) {
+          let prevCellTopTileData = this.delegateMapEditor.myMap.pop(this.prevCell.x, this.prevCell.y);
+          this.delegateMapEditor.myMap.push(
+            this.prevCell.x, this.prevCell.y,
+            this.delegateMapEditor.myTileset.subTiles.get(prevCellTopTileData.tileIndex),
+            1.0
+          );
+        }       
+        if (cellTileHeight) {
+          let topTileData = this.delegateMapEditor.myMap.pop(cell.x, cell.y);
+          console.log(topTileData);
+          this.delegateMapEditor.myMap.push(
+            cell.x, 
+            cell.y, 
+            this.delegateMapEditor.myTileset.subTiles.get(topTileData.tileIndex),
+            .751235
+          );
+        }
+      }
+    }
+    this.prevCell = { x: cell.x, y: cell.y };
+    this.delegateMapEditor.myCanvas.drawing.paint();
   }
   mouseWheelListener(ev) {
     this.delegateMapEditor.myCanvas.eventListeners.defaultMouseWheelListener(ev);

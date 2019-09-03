@@ -134,15 +134,20 @@ export class GameMap {
             if (index) {
                 this._heightmap[y][x].stackingHeight -= this._tileset.subTiles.get(index.tileIndex).properties.cellHeight;
                 this._heightmap[y][x].tileHeight--;
-                if (this._heightmap[y][x].tileHeight > 0) {
+                console.log(this._heightmap[y][x].tileHeight, this._map[y][x]);
+                if (this._map[y][x].length > 0) {
                     this._heightmap[y][x].topTile = this._tileset.subTiles.get(
-                        this._map[y][x][this._heightmap[y][x]._tileHeight].tileIndex
+                        this._map[y][x][this._map[y][x].length-1].tileIndex
                     );
                 } else {
+                    this._heightmap[y][x].stackingHeight = 0;
+                    this._heightmap[y][x].tileHeight = 0;
                     this._heightmap[y][x].topTile = null;
                 }
                 return index;
             } else {
+                this._heightmap[y][x].stackingHeight = 0;
+                this._heightmap[y][x].tileHeight = 0;
                 return null;
             }
         }           
